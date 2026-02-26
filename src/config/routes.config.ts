@@ -1,0 +1,15 @@
+import type { Express } from 'express';
+import authenticationRouter from '@/common/authentication/authentication.router';
+
+export const configureRoutes = (app: Express): void => {
+  app.get('/health', (_req, res) => {
+    res.json({
+      environment: process.env.NODE_ENV ?? 'development',
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Authentication routes
+  app.use('/api/auth', authenticationRouter);
+};

@@ -1,0 +1,101 @@
+{
+  "name": "express-drizzle-auth-template",
+  "version": "1.0.1",
+  "type": "module",
+  "description": "A production-ready Express.js template with TypeScript, Drizzle ORM, and JWT Authentication",
+  "main": "dist/server.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "npm run lint:fix && npm run compile",
+    "compile": "tsc",
+    "lint": "biome check --max-diagnostics=2000 src/",
+    "lint:fix": "biome check --write --max-diagnostics=2000 src/",
+    "format": "biome format --write src/",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:pull": "drizzle-kit pull"
+  },
+  "keywords": [
+    "express",
+    "typescript",
+    "drizzle",
+    "postgresql",
+    "authentication",
+    "jwt",
+    "template"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
+    "axios": "^1.9.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.38.0",
+    "drizzle-zod": "^0.8.2",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "form-data": "^4.0.4",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "openai": "^5.0.1",
+    "pg": "^8.16.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
+    "postgres": "^3.4.3",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^9.0.1",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/form-data": "^2.5.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^20.10.5",
+    "@types/pg": "^8.15.4",
+    "@types/supertest": "^6.0.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/uuid": "^9.0.8",
+    "@vitest/ui": "^3.2.4",
+    "bcrypt": "^6.0.0",
+    "drizzle-kit": "^0.31.4",
+    "globals": "^16.3.0",
+    "supertest": "^7.1.3",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3",
+    "ultracite": "5.0.47",
+    "vitest": "^3.2.4"
+  }
+}
