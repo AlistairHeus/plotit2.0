@@ -116,6 +116,18 @@ export class AppError extends Error {
   }
 }
 
+export class BadRequestError extends AppError {
+  constructor(message: string, details?: Record<string, unknown>) {
+    super({
+      category: ERROR_CATEGORY.VALIDATION,
+      code: 'BAD_REQUEST',
+      details,
+      message,
+      statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+    });
+  }
+}
+
 export class ConflictError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({

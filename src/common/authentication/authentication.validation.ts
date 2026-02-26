@@ -12,8 +12,6 @@ export const loginSchema = z.object({
     ),
 });
 
-import { VALID_USER_ROLES } from '@/entities/user/user.constants';
-
 export const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 });
@@ -21,7 +19,6 @@ export const refreshTokenSchema = z.object({
 export const jwtPayloadSchema = z.object({
   id: z.string(),
   email: z.string(),
-  role: z.enum(VALID_USER_ROLES),
   iat: z.number().optional(),
   exp: z.number().optional(),
 });

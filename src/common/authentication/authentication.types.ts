@@ -5,7 +5,7 @@ import type {
   refreshTokenSchema,
 } from '@/common/authentication/authentication.validation';
 import type { refreshTokens } from '@/common/authentication/refresh-token.schema';
-import type { AuthenticatedUser, UserDTO } from '@/entities/user/user.types';
+import type { AuthenticatedUser, SafeUser } from '@/entities/user/user.types';
 
 export type JWTPayload = z.infer<typeof jwtPayloadSchema>;
 
@@ -20,13 +20,13 @@ export type CreateRefreshToken = typeof refreshTokens.$inferInsert;
 export type LoginResponse = {
   accessToken: string;
   refreshToken: string;
-  userData: UserDTO;
+  userData: SafeUser;
 };
 
 export type SecureLoginResponse = {
   accessToken: string;
   refreshToken: string; // This will be set as HTTP-only cookie
-  userData: UserDTO;
+  userData: SafeUser;
 };
 
 export type RefreshTokenResponse = {

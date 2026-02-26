@@ -1,8 +1,13 @@
-import { users, usersRelations } from '@/entities/user/user.schema';
+import {
+  universes,
+  universesRelations,
+} from '@/entities/universe/universe.schema';
+import { users } from '@/entities/user/user.schema';
 
 const schema = {
   users,
-  usersRelations,
+  universes,
+  universesRelations,
 };
 
 export default schema;

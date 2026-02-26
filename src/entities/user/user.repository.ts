@@ -28,31 +28,15 @@ export class UserRepository extends BaseRepository<
       email: users.email,
       firstName: users.firstName,
       lastName: users.lastName,
-      role: users.role,
-      dateOfBirth: users.dateOfBirth,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
-      phoneNumber: users.phoneNumber,
-      profilePicture: users.profilePicture,
-      primaryLanguage: users.primaryLanguage,
-      gender: users.gender,
     },
     defaultSortBy: 'createdAt',
   };
 
-  protected buildWhereConditions(queryParams: UserQueryParams): SQL<unknown>[] {
+  protected buildWhereConditions(): SQL<unknown>[] {
     const whereConditions: SQL<unknown>[] = [];
-
-    const filters = queryParams;
-
-    if (filters.role) {
-      whereConditions.push(eq(users.role, filters.role));
-    }
-
-    if (filters.gender) {
-      whereConditions.push(eq(users.gender, filters.gender));
-    }
 
     return whereConditions;
   }
@@ -72,24 +56,6 @@ export class UserRepository extends BaseRepository<
     return {
       success: true,
       data: result,
-    };
-  }
-
-  async findUserWithProfile(id: string) {
-    const userData = await db.query.users.findFirst({
-      columns: {
-        password: false,
-      },
-      where: eq(users.id, id),
-    });
-
-    if (!userData) {
-      throw new Error('User not found');
-    }
-
-    return {
-      user: userData,
-      profile: {},
     };
   }
 

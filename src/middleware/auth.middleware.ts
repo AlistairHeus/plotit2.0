@@ -85,7 +85,6 @@ function validateJwtToken(token: string): ValidationResult {
     success: true,
     user: {
       id: payload.id,
-      role: payload.role as AuthenticatedUser['role'],
       email: payload.email,
     },
   };

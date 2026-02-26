@@ -33,7 +33,7 @@ export class AuthenticationService {
     const { email, password } = loginData;
 
     const userData = await this.validateUserCredentials(email, password);
-    const userProfile = await this.getUserProfile(userData.id);
+    const safeUser = await this.getUserSafe(userData.id);
     await this.updateUserLoginActivity(userData.id);
 
     // Generate both access and refresh tokens
@@ -49,7 +49,7 @@ export class AuthenticationService {
     return {
       accessToken,
       refreshToken: refreshToken.token,
-      userData: userProfile,
+      userData: safeUser,
     };
   }
 
@@ -135,8 +135,17 @@ export class AuthenticationService {
     }
   }
 
-  private async getUserProfile(userId: string) {
-    return await this.userRepository.findUserWithProfile(userId);
+  private async getUserSafe(userId: string) {
+    const result = await this.userRepository.findOne(userId);
+    if (!result.success) {
+      throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
+    }
+    const {
+      password: _password,
+      lastLoginAt: _lastLoginAt,
+      ...safeUser
+    } = result.data;
+    return safeUser;
   }
 
   private async updateUserLoginActivity(userId: string) {
@@ -147,7 +156,6 @@ export class AuthenticationService {
     return this.generateToken({
       id: userData.id,
       email: userData.email,
-      role: userData.role,
     });
   }
 
