@@ -1,11 +1,23 @@
+import {
+  updateUserSchema,
+  userQuerySchema,
+  createUserSchema,
+} from "@/entities/user/user.validation";
 import { z } from "zod";
-import type { users } from "@/entities/user/user.schema";
-import { userQuerySchema } from "@/entities/user/user.validation";
 
-export type User = typeof users.$inferSelect;
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  lastLoginAt: Date | null;
+}
 
-export type CreateUser = typeof users.$inferInsert;
-export type UpdateUser = Partial<typeof users.$inferInsert>;
+export type CreateUser = z.infer<typeof createUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type UserQueryParams = z.infer<typeof userQuerySchema>;
 
 export type SafeUser = Omit<User, "password" | "lastLoginAt">;

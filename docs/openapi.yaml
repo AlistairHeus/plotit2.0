@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: PlotIt API
+  description: A production-ready Express.js template with TypeScript, Drizzle ORM, and JWT Authentication
+  version: 1.0.1
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+  - url: /api
+    description: Relative server URL
+components:
+  securitySchemes:
+    bearerAuth:
+      $ref: './common/shared.yaml#/components/securitySchemes/bearerAuth'
+paths:
+  /auth/login:
+    $ref: './auth/paths.yaml#/~1login'
+  /auth/refresh:
+    $ref: './auth/paths.yaml#/~1refresh'
+  /auth/logout:
+    $ref: './auth/paths.yaml#/~1logout'
+  /auth/verify:
+    $ref: './auth/paths.yaml#/~1verify'
+  /users:
+    $ref: './users/paths.yaml#/~1'
+  /users/{id}:
+    $ref: './users/paths.yaml#/~1{id}'
+  /universes:
+    $ref: './universes/paths.yaml#/~1'
+  /universes/{id}:
+    $ref: './universes/paths.yaml#/~1{id}'

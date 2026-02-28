@@ -1,5 +1,3 @@
-import { asc, desc, type SQL, sql } from "drizzle-orm";
-import type { PgTable } from "drizzle-orm/pg-core";
 import type { Result } from "@/common/common.types";
 import { DatabaseError } from "@/common/error.types";
 import type {
@@ -8,11 +6,13 @@ import type {
   PaginationParams,
 } from "@/common/pagination/pagination.types";
 import { db } from "@/db/connection";
+import { asc, desc, type SQL, sql } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
 
 export async function paginate<TData>(
   config: PaginationConfig<PgTable>,
   params: PaginationParams,
-  queryBuilder?: (options: {
+  queryBuilder: (options: {
     where: SQL | undefined;
     orderBy: SQL;
     limit: number;
@@ -65,22 +65,13 @@ export async function paginate<TData>(
 
   const orderBy = sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn);
 
-  let data: TData[];
-  if (queryBuilder) {
-    data = await queryBuilder({ where: whereClause, orderBy, limit, offset: skip });
-  } else {
-    // We enforce that the DB layer returns structured data matches TData signature
-    const result = await db
-      .select()
-      .from(config.table)
-      .where(whereClause)
-      .orderBy(orderBy)
-      .limit(limit)
-      .offset(skip);
 
-    // Typecast handled by repository schema mapping upstream, generic here
-    data = result;
-  }
+  const data = await queryBuilder({
+    where: whereClause,
+    orderBy,
+    limit,
+    offset: skip
+  });
 
   const totalPages = Math.ceil(count / limit);
 

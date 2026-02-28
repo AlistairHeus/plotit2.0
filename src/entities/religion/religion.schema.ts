@@ -21,10 +21,10 @@ export const religions = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => ({
-    universeIdx: index("religions_universe_idx").on(table.universeId),
-    nameIdx: index("religions_name_idx").on(table.name),
-  }),
+  (table) => [
+    index("religions_universe_idx").on(table.universeId),
+    index("religions_name_idx").on(table.name),
+  ],
 );
 
 export const religionsRelations = relations(religions, ({ one, many }) => ({

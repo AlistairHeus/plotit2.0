@@ -1,18 +1,20 @@
-import {
-  createInsertSchema,
-  createSelectSchema,
-  createUpdateSchema,
-} from "drizzle-zod";
 import { z } from "zod";
 import { createPaginatedQuerySchema } from "@/common/validation.utils";
 import { sortableUserFields } from "@/entities/user/user.constants";
-import { users } from "@/entities/user/user.schema";
 
-export const userSchema = createSelectSchema(users);
+export const createUserSchema = z.object({
+  email: z.string().email(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  password: z.string().min(8),
+});
 
-export const createUserSchema = createInsertSchema(users);
-
-export const updateUserSchema = createUpdateSchema(users);
+export const updateUserSchema = z.object({
+  email: z.string().email().optional(),
+  firstName: z.string().min(1).optional(),
+  lastName: z.string().min(1).optional(),
+  password: z.string().min(8).optional(),
+});
 
 export const userQueryFilters = z.object({});
 

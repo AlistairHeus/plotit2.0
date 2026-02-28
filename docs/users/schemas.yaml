@@ -1,0 +1,88 @@
+User:
+  type: object
+  required:
+    - id
+    - email
+    - firstName
+    - lastName
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    email:
+      type: string
+      format: email
+    firstName:
+      type: string
+    lastName:
+      type: string
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    lastLoginAt:
+      type: string
+      format: date-time
+      nullable: true
+
+UserCreate:
+  type: object
+  required:
+    - email
+    - firstName
+    - lastName
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+    firstName:
+      type: string
+      minLength: 1
+    lastName:
+      type: string
+      minLength: 1
+    password:
+      type: string
+      minLength: 8
+
+UserUpdate:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    firstName:
+      type: string
+      minLength: 1
+    lastName:
+      type: string
+      minLength: 1
+    password:
+      type: string
+      minLength: 8
+
+UserResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/User'
+    message:
+      type: string
+
+UserListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/User'

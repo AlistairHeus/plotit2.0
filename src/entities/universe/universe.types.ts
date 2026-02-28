@@ -1,3 +1,8 @@
+import {
+  universeQuerySchema,
+  updateUniverseSchema
+} from "@/entities/universe/universe.validation";
+import { z } from "zod";
 import type { Character } from "../character/character.types";
 import type { FantasyMap } from "../map/map.types";
 import type { EthnicGroup, Race } from "../race/race.types";
@@ -19,11 +24,10 @@ export interface UniverseWithRelations extends Universe {
   races: Race[];
 }
 
-import type { universes } from "@/entities/universe/universe.schema";
-import { z } from "zod";
-import { universeQuerySchema } from "@/entities/universe/universe.validation";
-
-export type CreateUniverse = typeof universes.$inferInsert;
-export type UpdateUniverse = Partial<typeof universes.$inferInsert>;
-
+export interface CreateUniverse {
+  name: string;
+  description?: string | null | undefined;
+  userId: string;
+}
+export type UpdateUniverse = z.infer<typeof updateUniverseSchema>;
 export type UniverseQueryParams = z.infer<typeof universeQuerySchema>;

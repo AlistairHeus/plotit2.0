@@ -35,11 +35,11 @@ export const constructs = pgTable(
     avatarUrl: text("avatar_url"),
     imageUrls: text("image_urls").array().default([]).notNull(),
   },
-  (table) => ({
-    universeIdx: index("constructs_universe_idx").on(table.universeId),
-    categoryIdx: index("constructs_category_idx").on(table.category),
-    nameIdx: index("constructs_name_idx").on(table.name),
-  }),
+  (table) => [
+    index("constructs_universe_idx").on(table.universeId),
+    index("constructs_category_idx").on(table.category),
+    index("constructs_name_idx").on(table.name),
+  ],
 );
 
 export const constructsRelations = relations(constructs, ({ one }) => ({

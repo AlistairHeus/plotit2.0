@@ -2,7 +2,6 @@ import type {
   jwtPayloadSchema,
   loginSchema
 } from "@/common/authentication/authentication.validation";
-import type { refreshTokens } from "@/common/authentication/refresh-token.schema";
 import type { AuthenticatedUser, SafeUser } from "@/entities/user/user.types";
 import type { z } from "zod";
 
@@ -10,10 +9,26 @@ export type JWTPayload = z.infer<typeof jwtPayloadSchema>;
 
 export type LoginRequest = z.infer<typeof loginSchema>;
 
+export interface RefreshToken {
+  id: string;
+  token: string;
+  userId: string;
+  expiresAt: Date;
+  isRevoked: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deviceInfo: string | null;
+  ipAddress: string | null;
+}
 
-export type RefreshToken = typeof refreshTokens.$inferSelect;
-
-export type CreateRefreshToken = typeof refreshTokens.$inferInsert;
+export interface CreateRefreshToken {
+  token: string;
+  userId: string;
+  expiresAt: Date;
+  isRevoked?: boolean;
+  deviceInfo?: string | null;
+  ipAddress?: string | null;
+}
 
 export interface LoginResponse {
   accessToken: string;

@@ -1,5 +1,4 @@
-import { BaseRepository } from "@/common/base.repository";
-import { DatabaseError } from "@/common/error.types";
+import { DatabaseError, NotFoundError } from "@/common/error.types";
 import { paginate } from "@/common/pagination/pagination.service";
 import type {
   PaginatedResponse,
@@ -11,52 +10,74 @@ import type {
   CreateUniverse,
   Universe,
   UniverseQueryParams,
-  UniverseWithRelations
+  UniverseWithRelations,
+  UpdateUniverse,
 } from "@/entities/universe/universe.types";
 import { eq, type SQL } from "drizzle-orm";
-import { selectUniverseSchema } from "./universe.validation";
 
-export class UniverseRepository extends BaseRepository<
-  Universe,
-  CreateUniverse,
-  UniverseQueryParams
-> {
-  protected table = universes;
-  // selectUniverseSchema is a ZodObject narrower than ZodType<Universe>;
-  // widen through unknown to satisfy the abstract base's { parse(data: unknown): TEntity } contract.
-  protected selectSchema = selectUniverseSchema as unknown as { parse(data: unknown): Universe };
+const paginationConfig: PaginationConfig<typeof universes> = {
+  table: universes,
+  searchColumns: [universes.name],
+  sortableColumns: {
+    id: universes.id,
+    name: universes.name,
+    createdAt: universes.createdAt,
+    updatedAt: universes.updatedAt,
+  },
+  defaultSortBy: "createdAt",
+};
 
-  protected paginationConfig: PaginationConfig<typeof universes> = {
-    table: universes,
-    searchColumns: [universes.name],
-    sortableColumns: {
-      id: universes.id,
-      name: universes.name,
-      createdAt: universes.createdAt,
-      updatedAt: universes.updatedAt,
-    },
-    defaultSortBy: "createdAt",
-  };
+function buildWhereConditions(queryParams: UniverseQueryParams): SQL[] {
+  const whereConditions: SQL[] = [];
 
-  protected buildWhereConditions(queryParams: UniverseQueryParams): SQL[] {
-    const whereConditions: SQL[] = [];
+  if ("name" in queryParams && typeof queryParams.name === "string") {
+    whereConditions.push(eq(universes.name, queryParams.name));
+  }
 
-    if (typeof queryParams.name === "string") {
-      whereConditions.push(eq(universes.name, queryParams.name));
+  return whereConditions;
+}
+
+export class UniverseRepository {
+  async create(data: CreateUniverse): Promise<Universe> {
+    const [result] = await db.insert(universes).values(data).returning();
+    if (!result) {
+      throw new DatabaseError("Failed to create universe");
+    }
+    return result;
+  }
+
+  async update(id: string, data: UpdateUniverse): Promise<Universe> {
+    const [result] = await db
+      .update(universes)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(universes.id, id))
+      .returning();
+
+    if (!result) {
+      throw new NotFoundError("Universe", id);
     }
 
-    return whereConditions;
+    return result;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const [result] = await db
+      .delete(universes)
+      .where(eq(universes.id, id))
+      .returning({ id: universes.id });
+
+    return result !== undefined;
   }
 
   async findAllWithRelations(
     queryParams: UniverseQueryParams,
   ): Promise<PaginatedResponse<UniverseWithRelations>> {
-    const dynamicConditions = this.buildWhereConditions(queryParams);
+    const dynamicConditions = buildWhereConditions(queryParams);
 
     const configWithConditions = {
-      ...this.paginationConfig,
+      ...paginationConfig,
       whereConditions: [
-        ...(this.paginationConfig.whereConditions ?? []),
+        ...(paginationConfig.whereConditions ?? []),
         ...dynamicConditions,
       ],
     };
@@ -104,6 +125,18 @@ export class UniverseRepository extends BaseRepository<
     return result.data;
   }
 
+  async findOne(id: string): Promise<Universe> {
+    const result = await db.query.universes.findFirst({
+      where: eq(universes.id, id),
+    });
+
+    if (!result) {
+      throw new NotFoundError("Universe", id);
+    }
+
+    return result;
+  }
+
   async findOneWithRelations(id: string): Promise<UniverseWithRelations> {
     const result = await db.query.universes.findFirst({
       where: eq(universes.id, id),
@@ -121,7 +154,7 @@ export class UniverseRepository extends BaseRepository<
     });
 
     if (!result) {
-      throw new DatabaseError("Universe not found");
+      throw new NotFoundError("Universe", id);
     }
 
     return result;

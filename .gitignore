@@ -214,8 +214,6 @@ docker-compose*
 # RAG upload temporary files
 temp-uploads/
 
-swagger-routes-generated/
-
 src/docs/utils
 
 src/docs/scripts

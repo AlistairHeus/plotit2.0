@@ -1,16 +1,17 @@
-import {
-  createInsertSchema,
-  createSelectSchema,
-  createUpdateSchema,
-} from "drizzle-zod";
 import { z } from "zod";
 import { createPaginatedQuerySchema } from "@/common/validation.utils";
 import { sortableUniverseFields } from "@/entities/universe/universe.constants";
-import { universes } from "@/entities/universe/universe.schema";
 
-export const createUniverseSchema = createInsertSchema(universes);
-export const updateUniverseSchema = createUpdateSchema(universes);
-export const selectUniverseSchema = createSelectSchema(universes);
+export const createUniverseSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().nullable().optional(),
+  userId: z.string().uuid(),
+});
+
+export const updateUniverseSchema = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().nullable().optional(),
+});
 
 export const universeQuerySchema = createPaginatedQuerySchema(
   sortableUniverseFields,

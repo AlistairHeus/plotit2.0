@@ -1,0 +1,133 @@
+/:
+  get:
+    summary: Get all universes
+    tags:
+      - Universes
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          default: 10
+      - in: query
+        name: sort
+        schema:
+          type: string
+          default: createdAt
+      - in: query
+        name: order
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+      - in: query
+        name: name
+        description: Filter by universe name
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A list of universes
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/UniverseListResponse'
+
+  post:
+    summary: Create a new universe
+    tags:
+      - Universes
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/UniverseCreate'
+    responses:
+      '201':
+        description: Universe created successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/UniverseResponse'
+      '400':
+        description: Validation error
+
+/{id}:
+  get:
+    summary: Get a universe by ID
+    tags:
+      - Universes
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: The universe
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/UniverseResponse'
+      '404':
+        description: Universe not found
+
+  put:
+    summary: Update a universe by ID
+    tags:
+      - Universes
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/UniverseUpdate'
+    responses:
+      '200':
+        description: Universe updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/UniverseResponse'
+      '404':
+        description: Universe not found
+
+  delete:
+    summary: Delete a universe by ID
+    tags:
+      - Universes
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Universe deleted successfully

@@ -126,15 +126,15 @@ export const characterPowerAccess = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (t) => ({
-    unq: unique().on(
+  (t) => [
+    unique().on(
       t.characterId,
       t.powerSystemId,
       t.subSystemId,
       t.categoryId,
       t.abilityId,
     ),
-  }),
+  ],
 );
 
 // Relations
