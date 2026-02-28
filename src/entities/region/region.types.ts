@@ -1,3 +1,13 @@
+import { z } from "zod";
+import type { Planet } from "@/entities/celestial/celestial.types";
+import type { Religion } from "@/entities/religion/religion.types";
+import type { Universe } from "@/entities/universe/universe.types";
+import {
+  createRegionSchema,
+  regionQuerySchema,
+  updateRegionSchema,
+} from "@/entities/region/region.validation";
+
 export const RegionType = {
   CONTINENT: "CONTINENT",
   OCEAN: "OCEAN",
@@ -76,31 +86,14 @@ export interface Region {
   avatarUrl: string | null;
   imageUrls: string[];
 }
-
-export interface CreateRegionRequest {
-  name: string;
-  universeId: string;
-  type: RegionType;
-  description?: string;
-  parentId?: string;
-  planetId?: string;
-  features?: RegionFeatureType[];
-  area?: number;
-  boundaries?: unknown;
-  capital?: string;
-  coastlineLength?: number;
-  coordinates?: unknown;
-  culture?: string;
-  elevation?: number;
-  government?: string;
-  language?: string[];
-  population?: number;
-  religionId?: string;
-  rainfall?: number;
-  temperature?: number;
-  waterBodies?: number;
-  climate?: RegionClimate;
-  resources?: string[];
-  avatarUrl?: string;
-  imageUrls?: string[];
+export interface RegionWithRelations extends Region {
+  universe: Universe;
+  planet: Planet | null;
+  religion: Religion | null;
+  parent: Region | null;
+  subRegions: Region[];
 }
+
+export type CreateRegion = z.infer<typeof createRegionSchema>;
+export type UpdateRegion = z.infer<typeof updateRegionSchema>;
+export type RegionQueryParams = z.infer<typeof regionQuerySchema>;

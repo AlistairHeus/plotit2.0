@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import authenticationRouter from "@/common/authentication/authentication.router";
+import regionRouter from "@/entities/region/region.router";
 import universeRouter from "@/entities/universe/universe.router";
 import userRouter from "@/entities/user/user.router";
 
@@ -20,4 +21,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Universe routes
   app.use("/api/universes", universeRouter);
+
+  // Region routes
+  app.use("/api/regions", regionRouter);
 };

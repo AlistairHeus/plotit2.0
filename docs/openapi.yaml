@@ -29,3 +29,7 @@ paths:
     $ref: './universes/paths.yaml#/~1'
   /universes/{id}:
     $ref: './universes/paths.yaml#/~1{id}'
+  /regions:
+    $ref: './regions/paths.yaml#/~1'
+  /regions/{id}:
+    $ref: './regions/paths.yaml#/~1{id}'

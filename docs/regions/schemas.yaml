@@ -1,0 +1,308 @@
+Region:
+  type: object
+  required:
+    - id
+    - name
+    - universeId
+    - type
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    universeId:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [continent, country, state, province, city, town, village, district, neighborhood, geographical]
+    description:
+      type: string
+      nullable: true
+    parentId:
+      type: string
+      format: uuid
+      nullable: true
+    planetId:
+      type: string
+      format: uuid
+      nullable: true
+    features:
+      type: array
+      items:
+        type: string
+        enum: [mountain, river, lake, forest, desert, plains, coastline, island, valley, cave]
+    area:
+      type: number
+      nullable: true
+    boundaries:
+      type: object
+      nullable: true
+      description: "Any valid JSON representing boundaries"
+    capital:
+      type: string
+      nullable: true
+    coastlineLength:
+      type: number
+      nullable: true
+    coordinates:
+      type: object
+      nullable: true
+      description: "Any valid JSON representing coordinates"
+    culture:
+      type: string
+      nullable: true
+    elevation:
+      type: number
+      nullable: true
+    government:
+      type: string
+      nullable: true
+    language:
+      type: array
+      items:
+        type: string
+    population:
+      type: integer
+      nullable: true
+    religionId:
+      type: string
+      format: uuid
+      nullable: true
+    rainfall:
+      type: number
+      nullable: true
+    temperature:
+      type: number
+      nullable: true
+    waterBodies:
+      type: integer
+      nullable: true
+    climate:
+      type: string
+      enum: [tropical, dry, temperate, continental, polar, alpine]
+      nullable: true
+    resources:
+      type: array
+      items:
+        type: string
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+RegionCreate:
+  type: object
+  required:
+    - name
+    - universeId
+    - type
+  properties:
+    name:
+      type: string
+      minLength: 1
+    universeId:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [continent, country, state, province, city, town, village, district, neighborhood, geographical]
+    description:
+      type: string
+      nullable: true
+    parentId:
+      type: string
+      format: uuid
+      nullable: true
+    planetId:
+      type: string
+      format: uuid
+      nullable: true
+    features:
+      type: array
+      items:
+        type: string
+        enum: [mountain, river, lake, forest, desert, plains, coastline, island, valley, cave]
+    area:
+      type: number
+      nullable: true
+    boundaries:
+      type: object
+      nullable: true
+    capital:
+      type: string
+      nullable: true
+    coastlineLength:
+      type: number
+      nullable: true
+    coordinates:
+      type: object
+      nullable: true
+    culture:
+      type: string
+      nullable: true
+    elevation:
+      type: number
+      nullable: true
+    government:
+      type: string
+      nullable: true
+    language:
+      type: array
+      items:
+        type: string
+    population:
+      type: integer
+      nullable: true
+    religionId:
+      type: string
+      format: uuid
+      nullable: true
+    rainfall:
+      type: number
+      nullable: true
+    temperature:
+      type: number
+      nullable: true
+    waterBodies:
+      type: integer
+      nullable: true
+    climate:
+      type: string
+      enum: [tropical, dry, temperate, continental, polar, alpine]
+      nullable: true
+    resources:
+      type: array
+      items:
+        type: string
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+
+RegionUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    type:
+      type: string
+      enum: [continent, country, state, province, city, town, village, district, neighborhood, geographical]
+    description:
+      type: string
+      nullable: true
+    parentId:
+      type: string
+      format: uuid
+      nullable: true
+    planetId:
+      type: string
+      format: uuid
+      nullable: true
+    features:
+      type: array
+      items:
+        type: string
+        enum: [mountain, river, lake, forest, desert, plains, coastline, island, valley, cave]
+    area:
+      type: number
+      nullable: true
+    boundaries:
+      type: object
+      nullable: true
+    capital:
+      type: string
+      nullable: true
+    coastlineLength:
+      type: number
+      nullable: true
+    coordinates:
+      type: object
+      nullable: true
+    culture:
+      type: string
+      nullable: true
+    elevation:
+      type: number
+      nullable: true
+    government:
+      type: string
+      nullable: true
+    language:
+      type: array
+      items:
+        type: string
+    population:
+      type: integer
+      nullable: true
+    religionId:
+      type: string
+      format: uuid
+      nullable: true
+    rainfall:
+      type: number
+      nullable: true
+    temperature:
+      type: number
+      nullable: true
+    waterBodies:
+      type: integer
+      nullable: true
+    climate:
+      type: string
+      enum: [tropical, dry, temperate, continental, polar, alpine]
+      nullable: true
+    resources:
+      type: array
+      items:
+        type: string
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+
+RegionResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/Region'
+    message:
+      type: string
+
+RegionListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/Region'
