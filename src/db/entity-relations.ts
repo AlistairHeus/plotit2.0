@@ -23,7 +23,12 @@ import {
   constructs,
   constructsRelations,
 } from "@/entities/construct/construct.schema";
-import { maps, mapsRelations } from "@/entities/map/map.schema";
+import {
+  maps,
+  mapsRelations,
+  mapSvgMappings,
+  mapSvgMappingsRelations,
+} from "@/entities/map/map.schema";
 import {
   characterPowerAccess,
   characterPowerAccessRelations,
@@ -108,6 +113,8 @@ const schema = {
   galaxyTypeEnum,
   spectralTypeEnum,
   constructCategoryEnum,
+  mapSvgMappings,
+  mapSvgMappingsRelations,
 };
 
 export default schema;
