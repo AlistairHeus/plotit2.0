@@ -45,3 +45,7 @@ paths:
     $ref: './races/paths.yaml#/~1'
   /races/{id}:
     $ref: './races/paths.yaml#/~1{id}'
+  /races/{id}/ethnic-groups:
+    $ref: './races/paths.yaml#/~1{id}~1ethnic-groups'
+  /races/{id}/ethnic-groups/{groupId}:
+    $ref: './races/paths.yaml#/~1{id}~1ethnic-groups~1{groupId}'

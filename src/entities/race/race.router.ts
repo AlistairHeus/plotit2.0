@@ -7,44 +7,40 @@ import { authenticateToken } from "@/middleware/auth.middleware";
 
 const router = Router();
 
-// Ensure manual composition root definition
 const repository = new RaceRepository();
 const service = new RaceService(repository);
 const controller = new RaceController(service);
 
-// POST /api/races
-router.post(
-    "/",
-    authenticateToken,
-    asyncHandler((req, res) => controller.createRace(req, res)),
-);
+// --- Race CRUD ---
+// POST   /api/races
+router.post("/", authenticateToken, asyncHandler((req, res) => controller.createRace(req, res)));
 
-// GET /api/races
-router.get(
-    "/",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getRaces(req, res)),
-);
+// GET    /api/races
+router.get("/", authenticateToken, asyncHandler((req, res) => controller.getRaces(req, res)));
 
-// GET /api/races/:id
-router.get(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getRaceById(req, res)),
-);
+// GET    /api/races/:id
+router.get("/:id", authenticateToken, asyncHandler((req, res) => controller.getRaceById(req, res)));
 
-// PUT /api/races/:id
-router.put(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.updateRace(req, res)),
-);
+// PUT    /api/races/:id
+router.put("/:id", authenticateToken, asyncHandler((req, res) => controller.updateRace(req, res)));
 
 // DELETE /api/races/:id
-router.delete(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.deleteRace(req, res)),
-);
+router.delete("/:id", authenticateToken, asyncHandler((req, res) => controller.deleteRace(req, res)));
+
+// --- Ethnic Groups (nested under race) ---
+// POST   /api/races/:id/ethnic-groups
+router.post("/:id/ethnic-groups", authenticateToken, asyncHandler((req, res) => controller.createEthnicGroup(req, res)));
+
+// GET    /api/races/:id/ethnic-groups
+router.get("/:id/ethnic-groups", authenticateToken, asyncHandler((req, res) => controller.getEthnicGroupsByRace(req, res)));
+
+// GET    /api/races/:id/ethnic-groups/:groupId
+router.get("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.getEthnicGroupById(req, res)));
+
+// PUT    /api/races/:id/ethnic-groups/:groupId
+router.put("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.updateEthnicGroup(req, res)));
+
+// DELETE /api/races/:id/ethnic-groups/:groupId
+router.delete("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.deleteEthnicGroup(req, res)));
 
 export default router;

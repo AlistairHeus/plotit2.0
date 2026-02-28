@@ -1,3 +1,71 @@
+EthnicGroupCreate:
+  type: object
+  required:
+    - raceId
+    - name
+  properties:
+    raceId:
+      type: string
+      format: uuid
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+
+EthnicGroupUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+
+EthnicGroupResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/EthnicGroup'
+    message:
+      type: string
+
+EthnicGroupListResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: array
+      items:
+        $ref: '#/EthnicGroup'
+    message:
+      type: string
+
 Race:
   type: object
   required:

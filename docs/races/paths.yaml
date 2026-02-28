@@ -168,3 +168,168 @@
         description: Unauthorized
       '404':
         description: Not found
+
+/{id}/ethnic-groups:
+  post:
+    tags:
+      - Races
+    summary: Create an ethnic group
+    description: Creates a new ethnic group belonging to the specified race.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/EthnicGroupCreate'
+    responses:
+      '201':
+        description: Ethnic group created successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/EthnicGroupResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+
+  get:
+    tags:
+      - Races
+    summary: Get ethnic groups for a race
+    description: Returns all ethnic groups that belong to the specified race.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Ethnic groups retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/EthnicGroupListResponse'
+      '401':
+        description: Unauthorized
+
+/{id}/ethnic-groups/{groupId}:
+  get:
+    tags:
+      - Races
+    summary: Get an ethnic group by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Ethnic group retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/EthnicGroupResponse'
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  put:
+    tags:
+      - Races
+    summary: Update an ethnic group
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/EthnicGroupUpdate'
+    responses:
+      '200':
+        description: Ethnic group updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/EthnicGroupResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  delete:
+    tags:
+      - Races
+    summary: Delete an ethnic group
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Ethnic group deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found

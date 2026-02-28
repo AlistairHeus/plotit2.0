@@ -12,10 +12,12 @@
 
 [x] **SvgMapping**
 
-[ ] **Race**
+[x] **Race**
+[ ] **Ethnic Group**
+
 
 [ ] **Religion**
-[ ] **Ethnic Group**
+
 [ ] **Construct**
 [ ] **Power System**
 [ ] **Power Subsystem**
