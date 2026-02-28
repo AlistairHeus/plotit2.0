@@ -18,5 +18,6 @@ export const universeQuerySchema = createPaginatedQuerySchema(
   "createdAt",
   {
     name: z.string().optional(),
+    userId: z.string().uuid().optional(),
   },
 );

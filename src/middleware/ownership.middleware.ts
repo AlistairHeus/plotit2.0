@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { ForbiddenError, NotFoundError } from "@/common/error.types";
+import { ForbiddenError } from "@/common/error.types";
 import { UniverseRepository } from "@/entities/universe/universe.repository";
 
 const universeRepository = new UniverseRepository();
@@ -51,7 +51,13 @@ export const validateUniverseOwnership = async (
   }
 
   try {
-    const universe = await universeRepository.findOne(universeId);
+    const result = await universeRepository.findOne(universeId);
+
+    if (!result.success) {
+      next(result.error); return;
+    }
+
+    const universe = result.data;
 
     if (universe.userId !== user.id) {
       next(new ForbiddenError("You do not have ownership of this universe")); return;
@@ -62,13 +68,6 @@ export const validateUniverseOwnership = async (
 
     next(); return;
   } catch (error) {
-    // Safely check error message without 'any' access
-    const errorMessage = error instanceof Error ? error.message : "";
-
-    next(
-      errorMessage.includes("not found")
-        ? new NotFoundError("Universe", universeId)
-        : error,
-    ); return;
+    next(error); return;
   }
 };

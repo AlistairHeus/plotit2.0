@@ -47,7 +47,10 @@ export class UniverseController {
   async getUniverses(req: Request, res: Response): Promise<void> {
     const universeData = validateQuery(req.query, universeQuerySchema);
 
-    const result = await this.universeService.getUniverses(universeData);
+    // Enforce filtering by the current authenticated user's ID
+    const filterWithUser = { ...universeData, userId: req.user?.id };
+
+    const result = await this.universeService.getUniverses(filterWithUser);
 
     log.info("Universes retrieved successfully", {
       count: result.data.length,

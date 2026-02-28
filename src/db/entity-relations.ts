@@ -11,6 +11,10 @@ import {
   starsRelations,
 } from "@/entities/celestial/celestial.schema";
 import {
+  refreshTokens,
+  refreshTokensRelations,
+} from "@/common/authentication/refresh-token.schema";
+import {
   characters,
   charactersRelations,
 } from "@/entities/character/character.schema";
@@ -99,6 +103,8 @@ const schema = {
   regionFeatureTypeEnum,
   religions,
   religionsRelations,
+  refreshTokens,
+  refreshTokensRelations,
   galaxyTypeEnum,
   spectralTypeEnum,
   constructCategoryEnum,

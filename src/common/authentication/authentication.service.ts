@@ -1,3 +1,4 @@
+import type { Result } from "@/common/common.types";
 import type { UserRepository } from "@/entities/user/user.repository";
 import type { User } from "@/entities/user/user.types";
 import bcrypt from "bcryptjs";
@@ -7,6 +8,7 @@ import { AUTH_CONSTANTS, AUTH_ERRORS } from "./authentication.constants";
 import type {
   JWTPayload,
   LoginRequest,
+  RefreshToken,
   SecureLoginResponse,
   SecureRefreshTokenResponse
 } from "./authentication.types";
@@ -35,7 +37,9 @@ export class AuthenticationService {
     await this.updateUserLoginActivity(user.id);
 
     const accessToken = this.generateAccessToken(user);
-    const refreshToken = await this.generateRefreshToken(user.id);
+    const refreshTokenResult = await this.generateRefreshToken(user.id);
+    if (!refreshTokenResult.success) throw refreshTokenResult.error;
+    const refreshToken = refreshTokenResult.data;
 
     await this.refreshTokenRepository.deleteOldestTokensForUser(
       user.id,
@@ -58,11 +62,18 @@ export class AuthenticationService {
       throw new Error(AUTH_ERRORS.REFRESH_TOKEN_INVALID);
     }
 
-    const tokenData = await this.refreshTokenRepository.findByToken(refreshToken);
-    const user = await this.userRepository.findOne(tokenData.userId);
+    const tokenDataResult = await this.refreshTokenRepository.findByToken(refreshToken);
+    if (!tokenDataResult.success) throw tokenDataResult.error;
+    const tokenData = tokenDataResult.data;
+
+    const userResult = await this.userRepository.findOne(tokenData.userId);
+    if (!userResult.success) throw userResult.error;
+    const user = userResult.data;
 
     const newAccessToken = this.generateAccessToken(user);
-    const newRefreshToken = await this.generateRefreshToken(user.id);
+    const newRefreshTokenResult = await this.generateRefreshToken(user.id);
+    if (!newRefreshTokenResult.success) throw newRefreshTokenResult.error;
+    const newRefreshToken = newRefreshTokenResult.data;
 
     await this.refreshTokenRepository.revokeToken(refreshToken);
 
@@ -83,7 +94,9 @@ export class AuthenticationService {
   }
 
   private async validateUserCredentials(email: string, password: string) {
-    const user = await this.userRepository.findByEmail(email);
+    const result = await this.userRepository.findByEmail(email);
+    if (!result.success) throw result.error;
+    const user = result.data;
     await this.verifyPassword(password, user.password);
     return user;
   }
@@ -96,7 +109,9 @@ export class AuthenticationService {
   }
 
   public async getUserSafe(userId: string) {
-    const user = await this.userRepository.findOne(userId);
+    const result = await this.userRepository.findOne(userId);
+    if (!result.success) throw result.error;
+    const user = result.data;
 
     return {
       id: user.id,
@@ -109,7 +124,8 @@ export class AuthenticationService {
   }
 
   private async updateUserLoginActivity(userId: string) {
-    await this.userRepository.updateLastLogin(userId);
+    const result = await this.userRepository.updateLastLogin(userId);
+    if (!result.success) throw result.error;
   }
 
   private generateAccessToken(user: User): string {
@@ -126,7 +142,7 @@ export class AuthenticationService {
     return jwt.sign(payload, AUTH_CONSTANTS.JWT_SECRET, options);
   }
 
-  private async generateRefreshToken(userId: string) {
+  private async generateRefreshToken(userId: string): Promise<Result<RefreshToken>> {
     const token = this.generateSecureToken();
     const expiresAt = new Date();
     expiresAt.setTime(

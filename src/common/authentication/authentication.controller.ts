@@ -6,6 +6,11 @@ import type { LogoutResponse } from "./authentication.types";
 import { parseExpiryTime } from "./authentication.utils";
 import { loginSchema } from "./authentication.validation";
 
+import {
+  validateBody,
+} from "@/middleware/validation.middleware";
+import log from "@/utils/logger";
+
 export class AuthenticationController {
   private authenticationService: AuthenticationService;
 
@@ -14,7 +19,7 @@ export class AuthenticationController {
   }
 
   async login(req: Request, res: Response): Promise<void> {
-    const validatedData = loginSchema.parse(req.body);
+    const validatedData = validateBody(req.body, loginSchema);
     const result = await this.authenticationService.login(validatedData);
 
     // Set refresh token as HTTP-only cookie
@@ -27,6 +32,11 @@ export class AuthenticationController {
       sameSite: "strict",
       maxAge: refreshTokenExpiry,
       path: "/",
+    });
+
+    log.info("User logged in successfully", {
+      userId: result.user.id,
+      operation: "login",
     });
 
     // Return only access token and user data (no refresh token in response body)
@@ -65,6 +75,10 @@ export class AuthenticationController {
       path: "/",
     });
 
+    log.info("Token refreshed successfully", {
+      operation: "refresh_token",
+    });
+
     // Return only access token (no refresh token in response body)
     res.status(200).json({
       success: true,
@@ -80,6 +94,10 @@ export class AuthenticationController {
     if (typeof refreshToken === "string") {
       await this.authenticationService.logout(refreshToken);
     }
+
+    log.info("User logged out successfully", {
+      operation: "logout",
+    });
 
     // Clear the HTTP-only cookie
     res.clearCookie("refreshToken", {

@@ -1,6 +1,5 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import log from "@/utils/logger";
 
 export interface IFileService {
   save(file: Express.Multer.File, directory: string): Promise<string>;
@@ -46,13 +45,7 @@ export class LocalFileService implements IFileService {
 
   async delete(relativeFilePath: string): Promise<void> {
     const fullPath = path.join(this.uploadDir, relativeFilePath);
-    try {
-      await fs.unlink(fullPath);
-    } catch (error) {
-      log.error(`Failed to delete file at ${fullPath}:`, {
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
+    await fs.unlink(fullPath);
   }
 
   getUrl(relativeFilePath: string): string {

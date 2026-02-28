@@ -48,11 +48,11 @@ export async function paginate<TData>(
 
   // Get total count
   const countResult = await db
-    .select({ count: sql<number>`count(*)` })
+    .select({ count: sql<number | string>`count(*)` })
     .from(config.table)
     .where(whereClause);
 
-  const count = countResult[0]?.count ?? 0;
+  const count = Number(countResult[0]?.count ?? 0);
 
   // Get paginated data with sorting
   const sortColumn = config.sortableColumns[sortBy];
