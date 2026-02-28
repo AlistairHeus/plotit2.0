@@ -5,7 +5,6 @@ export interface Race {
   description: string | null;
   lifespan: string | null;
   languages: string[] | null;
-  origins: string | null;
   avatarUrl: string | null;
   imageUrls: string[];
   createdAt: Date;
@@ -18,14 +17,18 @@ export interface EthnicGroup {
   raceId: string;
   name: string;
   description: string | null;
-  physicalCharacteristics: string[] | null;
-  culturalTraits: string[] | null;
-  regionalAdaptations: string[] | null;
-  climateInfluences: string[] | null;
-  languages: string[] | null;
-  geographicOrigin: string | null;
   avatarUrl: string | null;
   imageUrls: string[];
   createdAt: Date;
   updatedAt: Date;
+
+
+  // todo later 
+
+  // physicalCharacteristics: string[] | null;
+  // culturalTraits: string[] | null;
+  // regionalAdaptations: string[] | null;
+  // climateInfluences: string[] | null;
+  // languages: string[] | null;
+  // geographicOrigin: string | null;
 }

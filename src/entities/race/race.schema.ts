@@ -13,7 +13,6 @@ export const races = pgTable("races", {
   description: text("description"),
   lifespan: text("lifespan"),
   languages: text("languages").array(),
-  origins: text("origins"),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array().default([]).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -29,16 +28,18 @@ export const ethnicGroups = pgTable("ethnic_groups", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  physicalCharacteristics: text("physical_characteristics").array(),
-  culturalTraits: text("cultural_traits").array(),
-  regionalAdaptations: text("regional_adaptations").array(),
-  climateInfluences: text("climate_influences").array(),
-  languages: text("languages").array(),
-  geographicOrigin: text("geographic_origin"),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array().default([]).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+
+  // todo later
+  // physicalCharacteristics: text("physical_characteristics").array(),
+  // culturalTraits: text("cultural_traits").array(),
+  // regionalAdaptations: text("regional_adaptations").array(),
+  // climateInfluences: text("climate_influences").array(),
+  // languages: text("languages").array(),
+  // geographicOrigin: text("geographic_origin"),
 });
 
 export const racesRelations = relations(races, ({ one, many }) => ({

@@ -1,10 +1,36 @@
 ## 🛠️ Server Rewrite Technical Specification
 
+### Entities 
+
+[x] **Users**
+
+[x] **Universe**
+
+[x] **Region**
+
+[x] **Map**
+
+[x] **SvgMapping**
+
+[ ] **Race**
+
+[ ] **Religion**
+[ ] **Ethnic Group**
+[ ] **Construct**
+[ ] **Power System**
+[ ] **Power Subsystem**
+[ ] **Power Category**
+[ ] **Power Ability**
+[ ] **Character Power Access**
+[ ] **Character**
+
+
+
 ### Phase 0: Base Infrastructure (Already Completed)
 * [x] **Registration:** Sign-up flow with email/password.
-* [x] **Authentication:** JWT or Session token issuance.
 * [x] **Profile:** CRUD for `User` (bio, social links, username).
 * [x] **Auth Guard:** Validates session/token.
+* [x] **Authentication:** JWT or Session token issuance.
 * [x] **Validation:** Schema-based input validation (e.g., Zod, Joi, or Pydantic).
 * [x] **Error Handler:** Global wrapper for consistent HTTP status codes.
 
