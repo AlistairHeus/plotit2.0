@@ -34,7 +34,7 @@ export class AuthenticationController {
       success: true,
       data: {
         accessToken: result.accessToken,
-        userData: result.userData,
+        user: result.user,
       },
     });
   }
@@ -94,5 +94,20 @@ export class AuthenticationController {
     };
 
     res.status(200).json(response);
+  }
+
+  async verify(req: Request, res: Response): Promise<void> {
+    if (!req.user?.id) {
+      throw new UnauthorizedError('User not authenticated');
+    }
+
+    const user = await this.authenticationService.getUserSafe(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        user,
+      },
+    });
   }
 }

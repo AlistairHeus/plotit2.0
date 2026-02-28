@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { UserRepository } from '@/entities/user/user.repository';
+import { authenticateToken } from '@/middleware/auth.middleware';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 
@@ -26,6 +27,13 @@ router.post(
 router.post(
   '/logout',
   asyncHandler((req, res) => controller.logout(req, res))
+);
+
+// GET /api/auth/verify
+router.get(
+  '/verify',
+  authenticateToken(),
+  asyncHandler((req, res) => controller.verify(req, res))
 );
 
 export default router;

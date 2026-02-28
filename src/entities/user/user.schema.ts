@@ -1,4 +1,6 @@
+import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { universes } from '@/entities/universe/universe.schema';
 
 // Users table
 export const users = pgTable('users', {
@@ -11,3 +13,7 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').defaultNow(),
   lastLoginAt: timestamp('last_login_at'),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  universes: many(universes),
+}));

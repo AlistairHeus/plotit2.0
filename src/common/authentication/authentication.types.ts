@@ -20,13 +20,13 @@ export type CreateRefreshToken = typeof refreshTokens.$inferInsert;
 export type LoginResponse = {
   accessToken: string;
   refreshToken: string;
-  userData: SafeUser;
+  user: SafeUser;
 };
 
 export type SecureLoginResponse = {
   accessToken: string;
   refreshToken: string; // This will be set as HTTP-only cookie
-  userData: SafeUser;
+  user: SafeUser;
 };
 
 export type RefreshTokenResponse = {

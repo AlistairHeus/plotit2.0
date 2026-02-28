@@ -35,7 +35,7 @@ export const validateUniverseOwnership = async (
       return next(new NotFoundError('Universe', universeId));
     }
 
-    if (universe.ownerId !== user.id) {
+    if (universe.userId !== user.id) {
       return next(
         new ForbiddenError('You do not have ownership of this universe')
       );

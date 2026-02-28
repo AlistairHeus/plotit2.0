@@ -16,7 +16,12 @@ export class UserService {
   }
 
   async createUser(data: CreateUser): Promise<User> {
-    const result = await this.userRepository.create(data);
+    const userData = { ...data };
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    const result = await this.userRepository.create(userData);
 
     if (!result.success) {
       throw result.error;
@@ -26,7 +31,12 @@ export class UserService {
   }
 
   async updateUser(id: string, data: UpdateUser): Promise<User> {
-    const result = await this.userRepository.update(id, data);
+    const userData = { ...data };
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    const result = await this.userRepository.update(id, userData);
 
     if (!result.success) {
       throw result.error;

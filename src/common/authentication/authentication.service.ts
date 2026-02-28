@@ -32,24 +32,24 @@ export class AuthenticationService {
   async login(loginData: LoginRequest): Promise<SecureLoginResponse> {
     const { email, password } = loginData;
 
-    const userData = await this.validateUserCredentials(email, password);
-    const safeUser = await this.getUserSafe(userData.id);
-    await this.updateUserLoginActivity(userData.id);
+    const user = await this.validateUserCredentials(email, password);
+    const safeUser = await this.getUserSafe(user.id);
+    await this.updateUserLoginActivity(user.id);
 
     // Generate both access and refresh tokens
-    const accessToken = this.generateAccessToken(userData);
-    const refreshToken = await this.generateRefreshToken(userData.id);
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = await this.generateRefreshToken(user.id);
 
     // Clean up old tokens for this user
     await this.refreshTokenRepository.deleteOldestTokensForUser(
-      userData.id,
+      user.id,
       AUTH_CONSTANTS.MAX_REFRESH_TOKENS_PER_USER
     );
 
     return {
       accessToken,
       refreshToken: refreshToken.token,
-      userData: safeUser,
+      user: safeUser,
     };
   }
 
@@ -87,11 +87,11 @@ export class AuthenticationService {
       throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
     }
 
-    const userData = userResult.data;
+    const user = userResult.data;
 
     // Generate new tokens
-    const newAccessToken = this.generateAccessToken(userData);
-    const newRefreshToken = await this.generateRefreshToken(userData.id);
+    const newAccessToken = this.generateAccessToken(user);
+    const newRefreshToken = await this.generateRefreshToken(user.id);
 
     // Revoke old refresh token
     await this.refreshTokenRepository.revokeToken(refreshToken);
@@ -135,7 +135,7 @@ export class AuthenticationService {
     }
   }
 
-  private async getUserSafe(userId: string) {
+  public async getUserSafe(userId: string) {
     const result = await this.userRepository.findOne(userId);
     if (!result.success) {
       throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
@@ -152,10 +152,10 @@ export class AuthenticationService {
     await this.userRepository.updateLastLogin(userId);
   }
 
-  private generateAccessToken(userData: User): string {
+  private generateAccessToken(user: User): string {
     return this.generateToken({
-      id: userData.id,
-      email: userData.email,
+      id: user.id,
+      email: user.email,
     });
   }
 
@@ -174,7 +174,7 @@ export class AuthenticationService {
     const expiresAt = new Date();
     expiresAt.setTime(
       expiresAt.getTime() +
-        parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN)
+      parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN)
     );
 
     return await this.refreshTokenRepository.create({

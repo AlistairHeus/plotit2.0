@@ -1,5 +1,6 @@
 import type { Express } from 'express';
 import authenticationRouter from '@/common/authentication/authentication.router';
+import userRouter from '@/entities/user/user.router';
 
 export const configureRoutes = (app: Express): void => {
   app.get('/health', (_req, res) => {
@@ -12,4 +13,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Authentication routes
   app.use('/api/auth', authenticationRouter);
+
+  // User routes
+  app.use('/api/users', userRouter);
 };

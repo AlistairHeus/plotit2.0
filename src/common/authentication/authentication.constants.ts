@@ -18,14 +18,14 @@ export const AUTH_CONSTANTS = {
     const expiresIn = process.env.JWT_EXPIRES_IN;
 
     if (!expiresIn) {
-      throw new Error('JWT_SECRET environment variable is required');
+      throw new Error('JWT_EXPIRES_IN environment variable is required');
     }
     return expiresIn;
   },
   get JWT_REFRESH_EXPIRES_IN() {
     const refreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN;
     if (!refreshExpiresIn) {
-      throw new Error('JWT_SECRET environment variable is required');
+      throw new Error('JWT_REFRESH_EXPIRES_IN environment variable is required');
     }
     return refreshExpiresIn;
   },

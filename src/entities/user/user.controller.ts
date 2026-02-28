@@ -22,8 +22,8 @@ export class UserController {
   }
 
   async createUser(req: Request, res: Response): Promise<void> {
-    const userData = validateBody(req.body, createUserSchema);
-    const user = await this.userService.createUser(userData);
+    const userDataBody = validateBody(req.body, createUserSchema);
+    const user = await this.userService.createUser(userDataBody);
 
     log.info('User created successfully', {
       userId: user.id,
@@ -38,9 +38,9 @@ export class UserController {
   }
 
   async getUsers(req: Request, res: Response): Promise<void> {
-    const userData = validateQuery(req.query, userQuerySchema);
+    const userDataQuery = validateQuery(req.query, userQuerySchema);
 
-    const result = await this.userService.getUsers(userData);
+    const result = await this.userService.getUsers(userDataQuery);
 
     log.info('Users retrieved successfully', {
       count: result.data.length,

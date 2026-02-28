@@ -15,6 +15,27 @@
       "when": 1772133822760,
       "tag": "0001_motionless_sir_ram",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772140471127,
+      "tag": "0002_glorious_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772229421954,
+      "tag": "0003_dry_shadowcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772229499350,
+      "tag": "0004_steep_korvac",
+      "breakpoints": true
     }
   ]
 }
