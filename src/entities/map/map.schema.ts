@@ -4,7 +4,6 @@ import type {
   GridCellData,
   GridSettings,
   MapOverlay,
-  SvgMapping,
 } from "./map.types";
 import { regions } from "@/entities/region/region.schema";
 import { universes } from "@/entities/universe/universe.schema";
@@ -22,7 +21,6 @@ export const maps = pgTable("maps", {
 
   // Basic Map Assets
   imageUrl: text("image_url").notNull(),
-  svgContent: text("svg_content"),
   viewBox: text("view_box"),
 
   // Grid Sizing Definitions
@@ -48,13 +46,6 @@ export const maps = pgTable("maps", {
     .default([])
     .notNull(),
 
-  // State / SVG Mappings
-  // Example: [{"svgStateId": "path-2423", "regionId": "some-uuid"}]
-  svgMappings: jsonb("svg_mappings")
-    .$type<SvgMapping[]>()
-    .default([])
-    .notNull(),
-
   // Grid Data (the thousands of hexes)
   // Stored as a dictionary mapping "row,col" to cell data
   // Example: {"5,10": { "terrainType": "grass", "features": [{ "type": "TOWN", "intensity": 1.0 }], "elevation": 100, "regionId": "some-uuid" }}
@@ -67,8 +58,23 @@ export const maps = pgTable("maps", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Map SVG Mappings Table
+export const mapSvgMappings = pgTable("map_svg_mappings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  mapId: uuid("map_id")
+    .references(() => maps.id, { onDelete: "cascade" })
+    .notNull(),
+  svgElementId: text("svg_element_id").notNull(),
+  featureType: text("feature_type").notNull(), // 'state', 'lake', 'river', 'city', etc.
+  regionId: uuid("region_id")
+    .references(() => regions.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
-export const mapsRelations = relations(maps, ({ one }) => ({
+export const mapsRelations = relations(maps, ({ one, many }) => ({
   universe: one(universes, {
     fields: [maps.universeId],
     references: [universes.id],
@@ -77,4 +83,19 @@ export const mapsRelations = relations(maps, ({ one }) => ({
     fields: [maps.regionId],
     references: [regions.id],
   }),
+  svgMappings: many(mapSvgMappings),
 }));
+
+export const mapSvgMappingsRelations = relations(
+  mapSvgMappings,
+  ({ one }) => ({
+    map: one(maps, {
+      fields: [mapSvgMappings.mapId],
+      references: [maps.id],
+    }),
+    region: one(regions, {
+      fields: [mapSvgMappings.regionId],
+      references: [regions.id],
+    }),
+  }),
+);

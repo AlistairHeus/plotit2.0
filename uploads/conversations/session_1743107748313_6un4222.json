@@ -1,0 +1,14 @@
+{
+  "sessionId": "session_1743107748313_6un4222",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello! is this working"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, it's working. I'm an AI assistant designed to provide factual information about characters, power systems, and their relationships based on the information you provide. Feel free to ask me any specific questions or give more context for a character or system you're interested in."
+    }
+  ],
+  "lastUpdated": "2025-03-27T20:36:02.314Z"
+}
