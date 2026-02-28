@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from "zod";
 
 // Extended pagination schema with coercion for query parameters
 export const paginationQuerySchema = z.object({
@@ -10,4 +10,4 @@ export const paginationQuerySchema = z.object({
   sortOrder: z.string().optional(),
 });
 
-export const paramsSchema = z.uuid().trim();
+export const paramsSchema = z.string().uuid().trim();

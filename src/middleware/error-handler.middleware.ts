@@ -1,5 +1,5 @@
-import type { NextFunction, Request, Response } from 'express';
-import { PG_ERROR_CODES } from '@/common/common.constants';
+import type { NextFunction, Request, Response } from "express";
+import { PG_ERROR_CODES } from "@/common/common.constants";
 import {
   AppError,
   ERROR_CATEGORY,
@@ -9,8 +9,8 @@ import {
   HTTP_STATUS_CODE,
   type HttpStatusCode,
   ValidationError,
-} from '@/common/error.types';
-import { log } from '@/utils/logger';
+} from "@/common/error.types";
+import { log } from "@/utils/logger";
 
 // Define PostgresError interface to properly type Postgres errors
 interface PostgresError extends Error {
@@ -38,11 +38,11 @@ export const globalErrorHandler = (
   error: Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ): void => {
   // Generate request ID for tracking
   const requestId =
-    (req.headers['x-request-id'] as string) || generateRequestId();
+    typeof req.headers["x-request-id"] === "string" ? req.headers["x-request-id"] : generateRequestId();
 
   // Process the error and get error details
   const errorDetails = processError(error);
@@ -55,16 +55,16 @@ export const globalErrorHandler = (
     statusCode: errorDetails.statusCode,
     category: errorDetails.category,
     code: errorDetails.code,
-    userId: (req as Request).user?.id,
+    userId: req.user?.id,
     ip: req.ip,
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
     ...(errorDetails.details && { details: errorDetails.details }),
   };
 
   if (errorDetails.statusCode >= 500) {
-    log.error('Server error occurred', logContext);
+    log.error("Server error occurred", logContext);
   } else if (errorDetails.statusCode >= 400) {
-    log.warn('Client error occurred', logContext);
+    log.warn("Client error occurred", logContext);
   }
 
   // Build standardized error response
@@ -84,7 +84,7 @@ export const globalErrorHandler = (
   };
 
   // Add stack trace in development
-  if (process.env.NODE_ENV === 'development' && error.stack) {
+  if (process.env.NODE_ENV === "development" && error.stack) {
     errorResponse.error.stack = error.stack;
   }
 
@@ -100,44 +100,44 @@ function processError(error: Error): {
   code: string;
   message: string;
   details: Record<string, unknown> | undefined;
-  validationErrors: ValidationError['validationErrors'] | undefined;
+  validationErrors: ValidationError["validationErrors"] | undefined;
 } {
   // Default error values
   let statusCode: HttpStatusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
   let category: ErrorCategory = ERROR_CATEGORY.INTERNAL;
-  let code = 'INTERNAL_ERROR';
-  let message = 'An unexpected error occurred';
+  let code = "INTERNAL_ERROR";
+  let message = "An unexpected error occurred";
   let details: Record<string, unknown> | undefined;
-  let validationErrors: ValidationError['validationErrors'] | undefined;
+  let validationErrors: ValidationError["validationErrors"] | undefined;
 
   // Process different error types
   if (error instanceof AppError) {
     // Handle custom application errors
     statusCode = error.statusCode;
     category = error.category;
-    code = error.code || 'APP_ERROR';
+    code = error.code ?? "APP_ERROR";
     message = error.message;
     details = error.details;
 
     if (error instanceof ValidationError) {
       validationErrors = error.validationErrors;
     }
-  } else if (error.name === 'ZodError') {
+  } else if (error.name === "ZodError") {
     // Handle Zod validation errors that weren't caught by middleware
-    const zodError = error as unknown as {
-      errors: Array<{
-        path: string[];
+    const zodError = error as {
+      errors: {
+        path: (string | number)[];
         message: string;
         code: string;
         received: unknown;
-      }>;
+      }[];
     };
     statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
     category = ERROR_CATEGORY.VALIDATION;
-    code = 'VALIDATION_ERROR';
-    message = 'Request validation failed';
-    validationErrors = zodError.errors?.map((err) => ({
-      field: err.path?.join('.') || 'unknown',
+    code = "VALIDATION_ERROR";
+    message = "Request validation failed";
+    validationErrors = zodError.errors.map((err) => ({
+      field: err.path.join(".") || "unknown",
       message: err.message,
       code: err.code,
       value: err.received,
@@ -151,46 +151,46 @@ function processError(error: Error): {
       message,
       details,
     };
-    handlePostgresError(error as PostgresError, errorInfo);
+    handlePostgresError(error, errorInfo);
     statusCode = errorInfo.statusCode;
     category = errorInfo.category;
     code = errorInfo.code;
     message = errorInfo.message;
     details = errorInfo.details;
   } else if (
-    error.message?.includes('duplicate key') ||
-    error.message?.includes('unique constraint')
+    error.message.includes("duplicate key") ||
+    error.message.includes("unique constraint")
   ) {
     // Fallback for other unique constraint errors
     statusCode = HTTP_STATUS_CODE.CONFLICT;
     category = ERROR_CATEGORY.CONFLICT;
-    code = 'RESOURCE_CONFLICT';
-    message = 'Resource already exists or conflicts with existing data';
+    code = "RESOURCE_CONFLICT";
+    message = "Resource already exists or conflicts with existing data";
     details = { originalError: error.message };
-  } else if (error.message?.includes('foreign key constraint')) {
+  } else if (error.message.includes("foreign key constraint")) {
     // Fallback for other foreign key constraint errors
     statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
     category = ERROR_CATEGORY.VALIDATION;
-    code = 'INVALID_REFERENCE';
-    message = 'Referenced resource does not exist';
+    code = "INVALID_REFERENCE";
+    message = "Referenced resource does not exist";
     details = { originalError: error.message };
   } else if (
-    error.message?.includes('not found') ||
-    error.message?.includes('does not exist')
+    error.message.includes("not found") ||
+    error.message.includes("does not exist")
   ) {
     // Handle generic not found errors
     statusCode = HTTP_STATUS_CODE.NOT_FOUND;
     category = ERROR_CATEGORY.NOT_FOUND;
-    code = 'RESOURCE_NOT_FOUND';
-    message = 'Requested resource not found';
+    code = "RESOURCE_NOT_FOUND";
+    message = "Requested resource not found";
   } else {
     // Handle unexpected errors
     statusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
     category = ERROR_CATEGORY.INTERNAL;
-    code = 'INTERNAL_ERROR';
-    message = 'An unexpected error occurred';
+    code = "INTERNAL_ERROR";
+    message = "An unexpected error occurred";
     details =
-      process.env.NODE_ENV === 'development'
+      process.env.NODE_ENV === "development"
         ? { originalError: error.message }
         : undefined;
   }
@@ -216,7 +216,7 @@ function handlePostgresError(
     code: string;
     message: string;
     details: Record<string, unknown> | undefined;
-  }
+  },
 ): void {
   const errorCode = pgError.code;
   const constraintDetails = extractConstraintDetails(pgError);
@@ -226,9 +226,9 @@ function handlePostgresError(
       // Handle unique constraint violations
       errorInfo.statusCode = HTTP_STATUS_CODE.CONFLICT;
       errorInfo.category = ERROR_CATEGORY.CONFLICT;
-      errorInfo.code = 'RESOURCE_CONFLICT';
+      errorInfo.code = "RESOURCE_CONFLICT";
       errorInfo.message =
-        'Resource already exists or conflicts with existing data';
+        "Resource already exists or conflicts with existing data";
       errorInfo.details = constraintDetails;
       break;
 
@@ -236,27 +236,27 @@ function handlePostgresError(
       // Handle foreign key constraint violations
       errorInfo.statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
       errorInfo.category = ERROR_CATEGORY.VALIDATION;
-      errorInfo.code = 'INVALID_REFERENCE';
+      errorInfo.code = "INVALID_REFERENCE";
 
       // Extract table and constraint information for better error messages
       const referencedTable =
-        constraintDetails.table_name?.toString() || 'unknown';
+        constraintDetails.table_name?.toString() || "unknown";
       const constraintName =
-        constraintDetails.constraint_name?.toString() || 'unknown';
+        constraintDetails.constraint_name?.toString() || "unknown";
 
       // Create a more specific error message
-      const detailStr = constraintDetails.detail?.toString() || '';
-      if (detailStr.includes('is not present')) {
+      const detailStr = String(constraintDetails.detail ?? "");
+      if (detailStr.includes("is not present")) {
         // Extract the key and value from the error detail
-        const keyMatch = detailStr.match(FK_ERROR_REGEX);
+        const keyMatch = FK_ERROR_REGEX.exec(detailStr);
         if (keyMatch && keyMatch.length >= 3) {
           const [, key, value] = keyMatch;
           // Use the new ForeignKeyConstraintError for consistent error messages
           const fkError = new ForeignKeyConstraintError(
             referencedTable,
-            key || 'unknown',
-            value || 'unknown',
-            constraintDetails
+            key || "unknown",
+            value || "unknown",
+            constraintDetails,
           );
           errorInfo.message = fkError.message;
           errorInfo.details = fkError.details;
@@ -275,8 +275,8 @@ function handlePostgresError(
       // Handle not null violations
       errorInfo.statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
       errorInfo.category = ERROR_CATEGORY.VALIDATION;
-      errorInfo.code = 'MISSING_REQUIRED_FIELD';
-      errorInfo.message = 'Required field is missing';
+      errorInfo.code = "MISSING_REQUIRED_FIELD";
+      errorInfo.message = "Required field is missing";
       errorInfo.details = constraintDetails;
       break;
 
@@ -284,8 +284,8 @@ function handlePostgresError(
       // Handle check constraint violations
       errorInfo.statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
       errorInfo.category = ERROR_CATEGORY.VALIDATION;
-      errorInfo.code = 'INVALID_VALUE';
-      errorInfo.message = 'Value does not meet validation requirements';
+      errorInfo.code = "INVALID_VALUE";
+      errorInfo.message = "Value does not meet validation requirements";
       errorInfo.details = constraintDetails;
       break;
 
@@ -293,8 +293,8 @@ function handlePostgresError(
       // Handle other database errors
       errorInfo.statusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
       errorInfo.category = ERROR_CATEGORY.DATABASE;
-      errorInfo.code = 'DATABASE_ERROR';
-      errorInfo.message = 'A database error occurred';
+      errorInfo.code = "DATABASE_ERROR";
+      errorInfo.message = "A database error occurred";
       errorInfo.details = {
         originalError: pgError.message,
         code: pgError.code,
@@ -307,9 +307,9 @@ function handlePostgresError(
  */
 export const notFoundHandler = (req: Request, res: Response): void => {
   const requestId =
-    (req.headers['x-request-id'] as string) || generateRequestId();
+    typeof req.headers["x-request-id"] === "string" ? req.headers["x-request-id"] : generateRequestId();
 
-  log.warn('Route not found', {
+  log.warn("Route not found", {
     requestId,
     method: req.method,
     path: req.path,
@@ -319,7 +319,7 @@ export const notFoundHandler = (req: Request, res: Response): void => {
   const errorResponse: ErrorResponse = {
     success: false,
     error: {
-      code: 'ROUTE_NOT_FOUND',
+      code: "ROUTE_NOT_FOUND",
       message: `Route ${req.method} ${req.path} not found`,
       category: ERROR_CATEGORY.NOT_FOUND,
       timestamp: new Date().toISOString(),
@@ -334,20 +334,20 @@ export const notFoundHandler = (req: Request, res: Response): void => {
  * Generate a simple request ID for tracking
  */
 function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `req_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 }
 
 /**
  * Check if an error is a Postgres error
  */
 function isPostgresError(error: unknown): error is PostgresError {
-  const pgError = error as Partial<PostgresError>;
+  if (!error || typeof error !== "object") return false;
+  const pgError = error as Record<string, unknown>;
   return (
-    !!pgError &&
-    (pgError.name === 'PostgresError' ||
-      (typeof pgError.code === 'string' &&
-        (Object.values(PG_ERROR_CODES).includes(pgError.code) ||
-          pgError.code.startsWith('23'))))
+    pgError.name === "PostgresError" ||
+    (typeof pgError.code === "string" &&
+      (Object.values(PG_ERROR_CODES).includes(pgError.code as keyof typeof PG_ERROR_CODES) ||
+        pgError.code.startsWith("23")))
   );
 }
 
@@ -355,18 +355,18 @@ function isPostgresError(error: unknown): error is PostgresError {
  * Extract constraint details from a Postgres error
  */
 function extractConstraintDetails(
-  error: PostgresError
+  error: PostgresError,
 ): Record<string, unknown> {
   const details: Record<string, unknown> = {};
 
   // Extract common Postgres error fields
-  const fieldsToExtract: Array<keyof PostgresError> = [
-    'detail',
-    'schema_name',
-    'table_name',
-    'column_name',
-    'constraint_name',
-    'code',
+  const fieldsToExtract: (keyof PostgresError)[] = [
+    "detail",
+    "schema_name",
+    "table_name",
+    "column_name",
+    "constraint_name",
+    "code",
   ];
 
   for (const field of fieldsToExtract) {

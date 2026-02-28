@@ -7,22 +7,22 @@ const EXPIRY_REGEX = /^(\d+)([dhm])$/;
  * @returns Expiry time in milliseconds
  */
 export function parseExpiryTime(expiry: string): number {
-  const match = expiry.match(EXPIRY_REGEX);
+  const match = EXPIRY_REGEX.exec(expiry);
   if (!match?.[1]) {
-    throw new Error('Invalid expiry format');
+    throw new Error("Invalid expiry format");
   }
 
   const value = Number.parseInt(match[1], 10);
   const unit = match[2];
 
   switch (unit) {
-    case 'd':
+    case "d":
       return value * 24 * 60 * 60 * 1000; // days to milliseconds
-    case 'h':
+    case "h":
       return value * 60 * 60 * 1000; // hours to milliseconds
-    case 'm':
+    case "m":
       return value * 60 * 1000; // minutes to milliseconds
     default:
-      throw new Error('Invalid expiry unit');
+      throw new Error("Invalid expiry unit");
   }
 }

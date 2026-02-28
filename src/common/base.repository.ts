@@ -1,27 +1,34 @@
-import { eq, inArray, type SQL } from 'drizzle-orm';
-import type { PgTable } from 'drizzle-orm/pg-core';
-import type { Result } from '@/common/common.types';
-import { DatabaseError } from '@/common/error.types';
-import { paginate } from '@/common/pagination/pagination.service';
+import type { Result } from "@/common/common.types";
+import { DatabaseError } from "@/common/error.types";
+import { paginate } from "@/common/pagination/pagination.service";
 import type {
   PaginatedResponse,
   PaginationConfig,
   PaginationParams,
-} from '@/common/pagination/pagination.types';
-import { db } from '@/db/connection';
+} from "@/common/pagination/pagination.types";
+import { db } from "@/db/connection";
+import { eq, getTableColumns, inArray, type SQL } from "drizzle-orm";
+import { PgColumn, type PgTable } from "drizzle-orm/pg-core";
 
 export abstract class BaseRepository<
   TEntity,
   TNewEntity extends Record<string, unknown>,
-  TUpdateEntity extends Record<string, unknown>,
   TQueryParams extends PaginationParams,
 > {
   protected abstract table: PgTable;
   protected abstract paginationConfig: PaginationConfig<PgTable>;
+  protected abstract selectSchema: { parse: (data: unknown) => TEntity };
 
-  protected abstract buildWhereConditions(
-    queryParams: TQueryParams
-  ): SQL<unknown>[];
+  protected abstract buildWhereConditions(queryParams: TQueryParams): SQL[];
+
+  private getIdColumn(): PgColumn {
+    const columns = getTableColumns(this.table);
+    const idColumn = columns.id;
+    if (!(idColumn instanceof PgColumn)) {
+      throw new DatabaseError("Table does not have a valid ID column");
+    }
+    return idColumn;
+  }
 
   async create(data: TNewEntity): Promise<Result<TEntity, DatabaseError>> {
     const result = await db
@@ -33,18 +40,18 @@ export abstract class BaseRepository<
     if (!entity) {
       return {
         success: false,
-        error: new DatabaseError('Failed to create entity - no data returned'),
+        error: new DatabaseError("Failed to create entity - no data returned"),
       };
     }
 
     return {
       success: true,
-      data: entity as TEntity,
+      data: this.selectSchema.parse(entity),
     };
   }
 
   async findAll(
-    queryParams: TQueryParams
+    queryParams: TQueryParams,
   ): Promise<Result<PaginatedResponse<TEntity>, DatabaseError>> {
     const whereConditions = this.buildWhereConditions(queryParams);
     const paginationParams = this.extractPaginationParams(queryParams);
@@ -58,9 +65,7 @@ export abstract class BaseRepository<
   }
 
   async findOne(id: string): Promise<Result<TEntity, DatabaseError>> {
-    // Type assertion for the id column - this is safe as all our tables have string id columns
-    const idColumn = (this.table as unknown as Record<string, unknown>)
-      .id as Parameters<typeof eq>[0];
+    const idColumn = this.getIdColumn();
 
     const result = await db
       .select()
@@ -72,22 +77,21 @@ export abstract class BaseRepository<
     if (!entity) {
       return {
         success: false,
-        error: new DatabaseError('Entity not found'),
+        error: new DatabaseError("Entity not found"),
       };
     }
 
     return {
       success: true,
-      data: entity as TEntity,
+      data: this.selectSchema.parse(entity),
     };
   }
 
   async update(
     id: string,
-    data: TUpdateEntity
+    data: Partial<TNewEntity>,
   ): Promise<Result<TEntity, DatabaseError>> {
-    const idColumn = (this.table as unknown as Record<string, unknown>)
-      .id as Parameters<typeof eq>[0];
+    const idColumn = this.getIdColumn();
 
     const updateData = {
       ...data,
@@ -103,19 +107,18 @@ export abstract class BaseRepository<
     if (!updatedEntity) {
       return {
         success: false,
-        error: new DatabaseError('Updated Entity not found'),
+        error: new DatabaseError("Updated Entity not found"),
       };
     }
 
     return {
       success: true,
-      data: updatedEntity as TEntity,
+      data: this.selectSchema.parse(updatedEntity),
     };
   }
 
   async delete(id: string): Promise<Result<boolean, DatabaseError>> {
-    const idColumn = (this.table as unknown as Record<string, unknown>)
-      .id as Parameters<typeof eq>[0];
+    const idColumn = this.getIdColumn();
 
     const [deletedEntity] = await db
       .delete(this.table)
@@ -125,7 +128,7 @@ export abstract class BaseRepository<
     if (!deletedEntity) {
       return {
         success: false,
-        error: new DatabaseError('Entity not found'),
+        error: new DatabaseError("Entity not found"),
       };
     }
 
@@ -136,25 +139,17 @@ export abstract class BaseRepository<
   }
 
   async deleteMany(ids: string[]): Promise<Result<boolean, DatabaseError>> {
-    if (!ids || ids.length === 0) {
-      return {
-        success: false,
-        error: new DatabaseError('No IDs provided for deletion'),
-      };
-    }
-
-    const idColumn = (this.table as unknown as Record<string, unknown>)
-      .id as Parameters<typeof eq>[0];
+    const idColumn = this.getIdColumn();
 
     const deletedEntities = await db
       .delete(this.table)
       .where(inArray(idColumn, ids))
       .returning();
 
-    if (!deletedEntities || deletedEntities.length === 0) {
+    if (deletedEntities.length === 0) {
       return {
         success: false,
-        error: new DatabaseError('No entities found to delete'),
+        error: new DatabaseError("No entities found to delete"),
       };
     }
 
@@ -165,13 +160,13 @@ export abstract class BaseRepository<
   }
 
   protected extractPaginationParams(
-    queryParams: TQueryParams
+    queryParams: TQueryParams,
   ): PaginationParams {
     const limit = queryParams.limit ?? 20;
     const page = queryParams.page ?? 1;
     const offset = queryParams.offset ?? undefined;
     const sortBy = queryParams.sortBy ?? undefined;
-    const sortOrder = queryParams.sortOrder ?? 'desc';
+    const sortOrder = queryParams.sortOrder ?? "desc";
     const search = queryParams.search ?? undefined;
 
     return {
@@ -185,12 +180,12 @@ export abstract class BaseRepository<
   }
 
   async createMany(
-    data: TNewEntity[]
+    data: TNewEntity[],
   ): Promise<Result<TEntity[], DatabaseError>> {
-    if (!data || data.length === 0) {
+    if (data.length === 0) {
       return {
         success: false,
-        error: new DatabaseError('No data provided for bulk creation'),
+        error: new DatabaseError("No data provided for bulk creation"),
       };
     }
 
@@ -199,11 +194,11 @@ export abstract class BaseRepository<
       .values(data as Record<string, unknown>[])
       .returning();
 
-    if (!result || result.length === 0) {
+    if (result.length === 0) {
       return {
         success: false,
         error: new DatabaseError(
-          'Failed to create entities - no data returned'
+          "Failed to create entities - no data returned",
         ),
       };
     }
@@ -212,14 +207,14 @@ export abstract class BaseRepository<
       return {
         success: false,
         error: new DatabaseError(
-          `Partial creation failure: expected ${data.length} entities, created ${result.length}`
+          `Partial creation failure: expected ${String(data.length)} entities, created ${String(result.length)}`,
         ),
       };
     }
 
     return {
       success: true,
-      data: result as TEntity[],
+      data: result.map((item) => this.selectSchema.parse(item)),
     };
   }
 }

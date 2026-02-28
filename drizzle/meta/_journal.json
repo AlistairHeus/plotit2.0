@@ -36,6 +36,13 @@
       "when": 1772229499350,
       "tag": "0004_steep_korvac",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772272181160,
+      "tag": "0005_elite_boom_boom",
+      "breakpoints": true
     }
   ]
 }

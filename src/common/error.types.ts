@@ -1,16 +1,16 @@
-import type { ZodError } from 'zod/v4';
+import type { ZodError } from "zod";
 
 // Error categories for better error handling
 export const ERROR_CATEGORY = {
-  AUTHENTICATION: 'AUTHENTICATION',
-  AUTHORIZATION: 'AUTHORIZATION',
-  CONFLICT: 'CONFLICT',
-  DATABASE: 'DATABASE',
-  EXTERNAL_SERVICE: 'EXTERNAL_SERVICE',
-  INTERNAL: 'INTERNAL',
-  NOT_FOUND: 'NOT_FOUND',
-  RATE_LIMIT: 'RATE_LIMIT',
-  VALIDATION: 'VALIDATION',
+  AUTHENTICATION: "AUTHENTICATION",
+  AUTHORIZATION: "AUTHORIZATION",
+  CONFLICT: "CONFLICT",
+  DATABASE: "DATABASE",
+  EXTERNAL_SERVICE: "EXTERNAL_SERVICE",
+  INTERNAL: "INTERNAL",
+  NOT_FOUND: "NOT_FOUND",
+  RATE_LIMIT: "RATE_LIMIT",
+  VALIDATION: "VALIDATION",
 } as const;
 
 export type ErrorCategory =
@@ -82,7 +82,7 @@ export class AppError extends Error {
   constructor(data: AppErrorData) {
     super(data.message);
 
-    this.name = 'AppError';
+    this.name = "AppError";
     this.statusCode = data.statusCode;
     this.category = data.category;
     if (data.code !== undefined) {
@@ -120,7 +120,7 @@ export class BadRequestError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({
       category: ERROR_CATEGORY.VALIDATION,
-      code: 'BAD_REQUEST',
+      code: "BAD_REQUEST",
       details,
       message,
       statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
@@ -132,7 +132,7 @@ export class ConflictError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({
       category: ERROR_CATEGORY.CONFLICT,
-      code: 'RESOURCE_CONFLICT',
+      code: "RESOURCE_CONFLICT",
       details,
       message,
       statusCode: HTTP_STATUS_CODE.CONFLICT,
@@ -144,12 +144,12 @@ export class DatabaseError extends AppError {
   constructor(
     message: string,
     cause?: Error,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super({
       category: ERROR_CATEGORY.DATABASE,
       cause,
-      code: 'DATABASE_ERROR',
+      code: "DATABASE_ERROR",
       details,
       message,
       statusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -162,7 +162,7 @@ export class ExternalServiceError extends AppError {
     super({
       category: ERROR_CATEGORY.EXTERNAL_SERVICE,
       cause,
-      code: 'EXTERNAL_SERVICE_ERROR',
+      code: "EXTERNAL_SERVICE_ERROR",
       details: { service },
       message: `External service error (${service}): ${message}`,
       statusCode: HTTP_STATUS_CODE.BAD_GATEWAY,
@@ -171,10 +171,10 @@ export class ExternalServiceError extends AppError {
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message = 'Access forbidden') {
+  constructor(message = "Access forbidden") {
     super({
       category: ERROR_CATEGORY.AUTHORIZATION,
-      code: 'FORBIDDEN',
+      code: "FORBIDDEN",
       message,
       statusCode: HTTP_STATUS_CODE.FORBIDDEN,
     });
@@ -189,7 +189,7 @@ export class NotFoundError extends AppError {
 
     super({
       category: ERROR_CATEGORY.NOT_FOUND,
-      code: 'RESOURCE_NOT_FOUND',
+      code: "RESOURCE_NOT_FOUND",
       details: { identifier, resource },
       message,
       statusCode: HTTP_STATUS_CODE.NOT_FOUND,
@@ -198,10 +198,10 @@ export class NotFoundError extends AppError {
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message = 'Authentication required') {
+  constructor(message = "Authentication required") {
     super({
       category: ERROR_CATEGORY.AUTHENTICATION,
-      code: 'UNAUTHORIZED',
+      code: "UNAUTHORIZED",
       message,
       statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
     });
@@ -215,11 +215,11 @@ export class ValidationError extends AppError {
   constructor(
     message: string,
     validationErrors: ValidationErrorDetail[],
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super({
       category: ERROR_CATEGORY.VALIDATION,
-      code: 'VALIDATION_ERROR',
+      code: "VALIDATION_ERROR",
       details,
       message,
       statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
@@ -234,25 +234,25 @@ export class ValidationError extends AppError {
     // If no specific errors were found, create a generic one
     if (validationErrors.length === 0) {
       validationErrors.push({
-        code: 'validation_error',
-        field: 'unknown',
-        message: 'Validation failed. Please check your input.',
+        code: "validation_error",
+        field: "unknown",
+        message: "Validation failed. Please check your input.",
       });
     }
 
-    return new ValidationError('Validation failed', validationErrors, {
+    return new ValidationError("Validation failed", validationErrors, {
       zodError: zodError.issues,
     });
   }
 
   private static processZodIssues(
-    issues: ZodError['issues']
+    issues: ZodError["issues"],
   ): ValidationErrorDetail[] {
     const validationErrors: ValidationErrorDetail[] = [];
     const processedFields = new Set<string>();
 
     for (const issue of issues) {
-      const field = issue.path.join('.');
+      const field = issue.path.join(".");
 
       // Skip if we've already processed this field (to avoid duplicates)
       if (processedFields.has(field)) {
@@ -262,11 +262,11 @@ export class ValidationError extends AppError {
       processedFields.add(field);
 
       // Get all issues for this field
-      const fieldIssues = issues.filter((i) => i.path.join('.') === field);
+      const fieldIssues = issues.filter((i) => i.path.join(".") === field);
 
       const validationError = ValidationError.createValidationErrorFromIssues(
         field,
-        fieldIssues
+        fieldIssues,
       );
       if (validationError) {
         validationErrors.push(validationError);
@@ -278,19 +278,19 @@ export class ValidationError extends AppError {
 
   private static createValidationErrorFromIssues(
     field: string,
-    fieldIssues: ZodError['issues']
+    fieldIssues: ZodError["issues"],
   ): ValidationErrorDetail | null {
     // For union errors, provide a cleaner message
     if (
       fieldIssues.length > 1 &&
-      fieldIssues.some((i) => i.code === 'invalid_union')
+      fieldIssues.some((i) => i.code === "invalid_union")
     ) {
       return {
-        code: 'invalid_value',
-        field: field || '_root',
+        code: "invalid_value",
+        field: field || "_root",
         message: ValidationError.humanizeErrorMessage(
           field,
-          `Invalid value for ${field || 'input'}. Please check the required format.`
+          `Invalid value for ${field || "input"}. Please check the required format.`,
         ),
       };
     }
@@ -303,48 +303,48 @@ export class ValidationError extends AppError {
 
     return {
       code: ValidationError.getErrorCode(firstIssue.code),
-      field: field || '_root',
+      field: field || "_root",
       message: ValidationError.humanizeErrorMessage(field, firstIssue.message),
-      value: 'received' in firstIssue ? firstIssue.received : undefined,
+      value: "received" in firstIssue ? firstIssue.received : undefined,
     };
   }
 
   private static getErrorCode(zodCode: string): string {
     switch (zodCode) {
-      case 'invalid_type':
-        return 'invalid_type';
-      case 'invalid_literal':
-        return 'invalid_value';
-      case 'unrecognized_keys':
-        return 'unrecognized_keys';
-      case 'invalid_union':
-        return 'invalid_value';
-      case 'invalid_union_discriminator':
-        return 'invalid_value';
-      case 'invalid_enum_value':
-        return 'invalid_enum';
-      case 'invalid_arguments':
-        return 'invalid_arguments';
-      case 'invalid_return_type':
-        return 'invalid_return_type';
-      case 'invalid_date':
-        return 'invalid_date';
-      case 'invalid_string':
-        return 'invalid_format';
-      case 'too_small':
-        return 'too_small';
-      case 'too_big':
-        return 'too_big';
-      case 'invalid_intersection_types':
-        return 'invalid_intersection';
-      case 'not_multiple_of':
-        return 'not_multiple_of';
-      case 'not_finite':
-        return 'not_finite';
-      case 'custom':
-        return 'custom_error';
+      case "invalid_type":
+        return "invalid_type";
+      case "invalid_literal":
+        return "invalid_value";
+      case "unrecognized_keys":
+        return "unrecognized_keys";
+      case "invalid_union":
+        return "invalid_value";
+      case "invalid_union_discriminator":
+        return "invalid_value";
+      case "invalid_enum_value":
+        return "invalid_enum";
+      case "invalid_arguments":
+        return "invalid_arguments";
+      case "invalid_return_type":
+        return "invalid_return_type";
+      case "invalid_date":
+        return "invalid_date";
+      case "invalid_string":
+        return "invalid_format";
+      case "too_small":
+        return "too_small";
+      case "too_big":
+        return "too_big";
+      case "invalid_intersection_types":
+        return "invalid_intersection";
+      case "not_multiple_of":
+        return "not_multiple_of";
+      case "not_finite":
+        return "not_finite";
+      case "custom":
+        return "custom_error";
       default:
-        return 'validation_error';
+        return "validation_error";
     }
   }
 
@@ -352,58 +352,58 @@ export class ValidationError extends AppError {
     // Convert field names to human-readable format
     const humanField = field
       ? field
-          .split('.')
-          .map((part) =>
-            part
-              .replace(/([A-Z])/g, ' $1')
-              .toLowerCase()
-              .trim()
-          )
-          .join(' → ')
-      : 'input';
+        .split(".")
+        .map((part) =>
+          part
+            .replace(/([A-Z])/g, " $1")
+            .toLowerCase()
+            .trim(),
+        )
+        .join(" → ")
+      : "input";
 
     // Improve common error messages
-    if (message.includes('Required')) {
+    if (message.includes("Required")) {
       return `${humanField} is required`;
     }
 
-    if (message.includes('expected string, received undefined')) {
+    if (message.includes("expected string, received undefined")) {
       return `${humanField} is required`;
     }
 
-    if (message.includes('expected string, received number')) {
+    if (message.includes("expected string, received number")) {
       return `${humanField} must be a text value`;
     }
 
-    if (message.includes('expected number, received string')) {
+    if (message.includes("expected number, received string")) {
       return `${humanField} must be a number`;
     }
 
-    if (message.includes('expected number, received undefined')) {
+    if (message.includes("expected number, received undefined")) {
       return `${humanField} is required and must be a number`;
     }
 
-    if (message.includes('Invalid email')) {
+    if (message.includes("Invalid email")) {
       return `${humanField} must be a valid email address`;
     }
 
-    if (message.includes('Invalid input')) {
+    if (message.includes("Invalid input")) {
       return `${humanField} has an invalid value`;
     }
 
-    if (message.includes('String must contain at least')) {
+    if (message.includes("String must contain at least")) {
       return `${humanField} is too short`;
     }
 
-    if (message.includes('String must contain at most')) {
+    if (message.includes("String must contain at most")) {
       return `${humanField} is too long`;
     }
 
-    if (message.includes('Number must be greater than')) {
+    if (message.includes("Number must be greater than")) {
       return `${humanField} must be greater than the minimum value`;
     }
 
-    if (message.includes('Number must be less than')) {
+    if (message.includes("Number must be less than")) {
       return `${humanField} must be less than the maximum value`;
     }
 
@@ -418,11 +418,11 @@ export class ForeignKeyConstraintError extends AppError {
     referencedTable: string,
     keyName: string,
     keyValue: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super({
       category: ERROR_CATEGORY.VALIDATION,
-      code: 'INVALID_REFERENCE',
+      code: "INVALID_REFERENCE",
       details: {
         ...details,
         referencedTable,

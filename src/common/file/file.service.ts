@@ -1,6 +1,6 @@
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import log from '@/utils/logger';
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import log from "@/utils/logger";
 
 export interface IFileService {
   save(file: Express.Multer.File, directory: string): Promise<string>;
@@ -13,11 +13,11 @@ export class LocalFileService implements IFileService {
   private baseUrl: string;
 
   constructor() {
-    this.uploadDir = path.resolve(process.cwd(), 'uploads');
-    this.baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    this.uploadDir = path.resolve(process.cwd(), "uploads");
+    this.baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
 
     // Ensure upload directory exists
-    this.ensureDir(this.uploadDir);
+    void this.ensureDir(this.uploadDir);
   }
 
   private async ensureDir(dir: string) {
@@ -30,18 +30,18 @@ export class LocalFileService implements IFileService {
 
   async save(
     file: Express.Multer.File,
-    directory = 'general'
+    directory = "general",
   ): Promise<string> {
     const targetDir = path.join(this.uploadDir, directory);
     await this.ensureDir(targetDir);
 
-    const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+    const fileName = `${String(Date.now())}-${file.originalname.replace(/\s+/g, "-")}`;
     const filePath = path.join(targetDir, fileName);
 
     await fs.writeFile(filePath, file.buffer);
 
     // Return the relative path for database storage
-    return path.join(directory, fileName).replace(/\\/g, '/');
+    return path.join(directory, fileName).replace(/\\/g, "/");
   }
 
   async delete(relativeFilePath: string): Promise<void> {

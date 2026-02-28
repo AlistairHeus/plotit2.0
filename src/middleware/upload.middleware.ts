@@ -1,6 +1,6 @@
-import type { Request } from 'express';
-import multer, { type FileFilterCallback } from 'multer';
-import { BadRequestError } from '@/common/error.types';
+import type { Request } from "express";
+import multer, { type FileFilterCallback } from "multer";
+import { BadRequestError } from "@/common/error.types";
 
 // Use memory storage since we handle file saving in the FileService
 const storage = multer.memoryStorage();
@@ -8,14 +8,14 @@ const storage = multer.memoryStorage();
 const fileFilter = (
   _req: Request,
   file: Express.Multer.File,
-  cb: FileFilterCallback
+  cb: FileFilterCallback,
 ) => {
   const allowedMimeTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/svg+xml',
-    'application/pdf',
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/svg+xml",
+    "application/pdf",
   ];
 
   if (allowedMimeTypes.includes(file.mimetype)) {
@@ -23,8 +23,8 @@ const fileFilter = (
   } else {
     cb(
       new BadRequestError(
-        `Invalid file type. Allowed types: ${allowedMimeTypes.join(', ')}`
-      )
+        `Invalid file type. Allowed types: ${allowedMimeTypes.join(", ")}`,
+      ),
     );
   }
 };

@@ -1,21 +1,21 @@
 export enum ConstructCategory {
-    AFFLICTIONS = 'AFFLICTIONS',
-    MANIFESTATIONS = 'MANIFESTATIONS',
-    ENTITIES = 'ENTITIES',
-    VESTIGES = 'VESTIGES',
+  AFFLICTIONS = "AFFLICTIONS",
+  MANIFESTATIONS = "MANIFESTATIONS",
+  ENTITIES = "ENTITIES",
+  VESTIGES = "VESTIGES",
 }
 
 export interface Construct {
-    id: string;
-    name: string;
-    description: string | null;
-    category: ConstructCategory;
-    universeId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    properties: any | null;
-    rarity: string | null;
-    tags: string[];
-    avatarUrl: string | null;
-    imageUrls: string[];
+  id: string;
+  name: string;
+  description: string | null;
+  category: ConstructCategory;
+  universeId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  properties: any | null;
+  rarity: string | null;
+  tags: string[];
+  avatarUrl: string | null;
+  imageUrls: string[];
 }

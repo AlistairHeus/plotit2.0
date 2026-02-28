@@ -1,9 +1,9 @@
-import os from 'node:os';
-import pino from 'pino';
-import type { LogMetadata } from '@/common/common.types';
+import os from "node:os";
+import pino from "pino";
+import type { LogMetadata } from "@/common/common.types";
 
-const isProduction = process.env.NODE_ENV === 'production';
-const logLevel = process.env.LOG_LEVEL ?? 'info';
+const isProduction = process.env.NODE_ENV === "production";
+const logLevel = process.env.LOG_LEVEL ?? "info";
 
 const logger = pino({
   level: logLevel,
@@ -13,11 +13,11 @@ const logger = pino({
         transport: {
           options: {
             colorize: true,
-            ignore: 'pid,hostname',
+            ignore: "pid,hostname",
             singleLine: false,
-            translateTime: 'SYS:standard',
+            translateTime: "SYS:standard",
           },
-          target: 'pino-pretty',
+          target: "pino-pretty",
         },
       }),
   base: {

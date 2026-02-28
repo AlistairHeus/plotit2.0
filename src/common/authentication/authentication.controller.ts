@@ -1,10 +1,10 @@
-import type { Request, Response } from 'express';
-import { UnauthorizedError } from '@/common/error.types';
-import { AUTH_CONSTANTS } from './authentication.constants';
-import type { AuthenticationService } from './authentication.service';
-import type { LogoutResponse } from './authentication.types';
-import { parseExpiryTime } from './authentication.utils';
-import { loginSchema } from './authentication.validation';
+import type { Request, Response } from "express";
+import { UnauthorizedError } from "@/common/error.types";
+import { AUTH_CONSTANTS } from "./authentication.constants";
+import type { AuthenticationService } from "./authentication.service";
+import type { LogoutResponse } from "./authentication.types";
+import { parseExpiryTime } from "./authentication.utils";
+import { loginSchema } from "./authentication.validation";
 
 export class AuthenticationController {
   private authenticationService: AuthenticationService;
@@ -19,14 +19,14 @@ export class AuthenticationController {
 
     // Set refresh token as HTTP-only cookie
     const refreshTokenExpiry = parseExpiryTime(
-      AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN
+      AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN,
     );
-    res.cookie('refreshToken', result.refreshToken, {
+    res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: refreshTokenExpiry,
-      path: '/',
+      path: "/",
     });
 
     // Return only access token and user data (no refresh token in response body)
@@ -40,11 +40,14 @@ export class AuthenticationController {
   }
 
   async refresh(req: Request, res: Response): Promise<void> {
-    // Get refresh token from HTTP-only cookie instead of request body
-    const refreshToken = req.cookies?.refreshToken;
+    const cookies = req.cookies as unknown;
+    const refreshToken =
+      cookies && typeof cookies === "object" && "refreshToken" in cookies
+        ? (cookies as Record<string, unknown>).refreshToken
+        : undefined;
 
-    if (!refreshToken) {
-      throw new UnauthorizedError('Refresh token not found');
+    if (typeof refreshToken !== "string") {
+      throw new UnauthorizedError("Refresh token not found");
     }
 
     const result =
@@ -52,14 +55,14 @@ export class AuthenticationController {
 
     // Set new refresh token as HTTP-only cookie
     const refreshTokenExpiry = parseExpiryTime(
-      AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN
+      AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN,
     );
-    res.cookie('refreshToken', result.refreshToken, {
+    res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: refreshTokenExpiry,
-      path: '/',
+      path: "/",
     });
 
     // Return only access token (no refresh token in response body)
@@ -72,25 +75,23 @@ export class AuthenticationController {
   }
 
   async logout(req: Request, res: Response): Promise<void> {
-    // Get refresh token from HTTP-only cookie
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = (req.cookies as Record<string, unknown> | undefined)?.refreshToken;
 
-    // Revoke the refresh token if it exists
-    if (refreshToken) {
+    if (typeof refreshToken === "string") {
       await this.authenticationService.logout(refreshToken);
     }
 
     // Clear the HTTP-only cookie
-    res.clearCookie('refreshToken', {
+    res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
     });
 
     const response: LogoutResponse = {
       success: true,
-      message: 'Logged out successfully',
+      message: "Logged out successfully",
     };
 
     res.status(200).json(response);
@@ -98,7 +99,7 @@ export class AuthenticationController {
 
   async verify(req: Request, res: Response): Promise<void> {
     if (!req.user?.id) {
-      throw new UnauthorizedError('User not authenticated');
+      throw new UnauthorizedError("User not authenticated");
     }
 
     const user = await this.authenticationService.getUserSafe(req.user.id);

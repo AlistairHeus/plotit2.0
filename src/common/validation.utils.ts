@@ -1,5 +1,5 @@
-import { z } from 'zod/v4';
-import { paginationQuerySchema } from '@/common/common.validation';
+import { z } from "zod";
+import { paginationQuerySchema } from "@/common/common.validation";
 
 export function createPaginatedQuerySchema<
   T extends readonly [string, ...string[]],
@@ -12,9 +12,14 @@ export function createPaginatedQuerySchema<
 
   const schemaShape = {
     sortBy: z.enum(sortableFields).optional().default(defaultSortBy),
-    sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
-    ...(additionalFilters || ({} as F)),
+    sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   };
 
-  return baseSchema.extend(schemaShape);
+  const extendedSchema = baseSchema.extend(schemaShape);
+
+  if (additionalFilters) {
+    return extendedSchema.extend(additionalFilters);
+  }
+
+  return extendedSchema;
 }

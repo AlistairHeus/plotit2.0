@@ -1,4 +1,4 @@
-import { BadRequestError } from '@/common/error.types';
+import { BadRequestError } from "@/common/error.types";
 
 export class ImageProcessor {
   /**
@@ -6,21 +6,21 @@ export class ImageProcessor {
    */
   validate(file: Express.Multer.File): void {
     const allowedImageTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'image/svg+xml',
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/svg+xml",
     ];
 
     if (!allowedImageTypes.includes(file.mimetype)) {
       throw new BadRequestError(
-        `Invalid image type: ${file.mimetype}. Allowed: ${allowedImageTypes.join(', ')}`
+        `Invalid image type: ${file.mimetype}. Allowed: ${allowedImageTypes.join(", ")}`,
       );
     }
 
     // Basic size check (though multer handles this, we can do extra here)
     if (file.size > 5 * 1024 * 1024) {
-      throw new BadRequestError('Image size exceeds 5MB limit');
+      throw new BadRequestError("Image size exceeds 5MB limit");
     }
   }
 }

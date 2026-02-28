@@ -17,9 +17,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "moduleResolution": "node",
     "strictNullChecks": true
@@ -27,11 +25,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Strictest",
   "_version": "2.0.0",
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

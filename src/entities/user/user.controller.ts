@@ -1,18 +1,18 @@
-import type { Request, Response } from 'express';
-import { paramsSchema } from '@/common/common.validation';
-import { NotFoundError } from '@/common/error.types';
-import type { UserService } from '@/entities/user/user.service';
+import type { Request, Response } from "express";
+import { paramsSchema } from "@/common/common.validation";
+import { NotFoundError } from "@/common/error.types";
+import type { UserService } from "@/entities/user/user.service";
 import {
   createUserSchema,
   updateUserSchema,
   userQuerySchema,
-} from '@/entities/user/user.validation';
+} from "@/entities/user/user.validation";
 import {
   validateBody,
   validateParams,
   validateQuery,
-} from '@/middleware/validation.middleware';
-import log from '@/utils/logger';
+} from "@/middleware/validation.middleware";
+import log from "@/utils/logger";
 
 export class UserController {
   private userService: UserService;
@@ -25,15 +25,15 @@ export class UserController {
     const userDataBody = validateBody(req.body, createUserSchema);
     const user = await this.userService.createUser(userDataBody);
 
-    log.info('User created successfully', {
+    log.info("User created successfully", {
       userId: user.id,
-      operation: 'create_user',
+      operation: "create_user",
     });
 
     res.status(201).json({
       success: true,
       data: user,
-      message: 'User created successfully',
+      message: "User created successfully",
     });
   }
 
@@ -42,18 +42,18 @@ export class UserController {
 
     const result = await this.userService.getUsers(userDataQuery);
 
-    log.info('Users retrieved successfully', {
+    log.info("Users retrieved successfully", {
       count: result.data.length,
       totalItems: result.pagination.totalItems,
       currentPage: result.pagination.currentPage,
-      operation: 'get_all_users',
+      operation: "get_all_users",
     });
 
     res.status(200).json({
       success: true,
       data: result.data,
       pagination: result.pagination,
-      message: 'Users retrieved successfully',
+      message: "Users retrieved successfully",
     });
   }
 
@@ -64,12 +64,12 @@ export class UserController {
     const user = await this.userService.getUserById(userData);
 
     if (!user) {
-      throw new NotFoundError('User', userData);
+      throw new NotFoundError("User", userData);
     }
     res.status(200).json({
       success: true,
       data: user,
-      message: 'User retrieved successfully',
+      message: "User retrieved successfully",
     });
   }
 
@@ -79,15 +79,15 @@ export class UserController {
 
     const user = await this.userService.updateUser(userId, bodyValidation);
 
-    log.info('User updated successfully', {
+    log.info("User updated successfully", {
       userId: user.id,
-      operation: 'update_user',
+      operation: "update_user",
     });
 
     res.status(200).json({
       success: true,
       data: user,
-      message: 'User updated successfully',
+      message: "User updated successfully",
     });
   }
 
@@ -96,14 +96,14 @@ export class UserController {
 
     await this.userService.deleteUser(userId);
 
-    log.info('User deleted successfully', {
+    log.info("User deleted successfully", {
       userId,
-      operation: 'delete_user',
+      operation: "delete_user",
     });
 
     res.status(200).json({
       success: true,
-      message: 'User deleted successfully',
+      message: "User deleted successfully",
     });
   }
 }

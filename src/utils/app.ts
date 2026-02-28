@@ -1,8 +1,8 @@
-import express from 'express';
+import express from "express";
 
-import { configureErrorHandlers } from '../config/error-handler.config';
-import { configureMiddleware } from '../config/middleware.config';
-import { configureRoutes } from '../config/routes.config';
+import { configureErrorHandlers } from "../config/error-handler.config";
+import { configureMiddleware } from "../config/middleware.config";
+import { configureRoutes } from "../config/routes.config";
 
 export const createApp = (): express.Application => {
   const app = express();

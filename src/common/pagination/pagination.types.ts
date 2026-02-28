@@ -1,12 +1,12 @@
-import type { Column, SQL } from 'drizzle-orm';
-import type { PgTable } from 'drizzle-orm/pg-core';
+import type { Column, SQL } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
 
 export interface PaginationParams {
   limit?: number;
   page?: number;
   offset?: number | undefined;
   sortBy?: string | undefined;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   search?: string | undefined;
 }
 
@@ -15,7 +15,7 @@ export interface PaginationConfig<T extends PgTable> {
   searchColumns?: Column[];
   sortableColumns: Record<string, Column>;
   defaultSortBy: string;
-  whereConditions?: SQL<unknown>[];
+  whereConditions?: SQL[];
 }
 
 export interface PaginatedResponse<T> {

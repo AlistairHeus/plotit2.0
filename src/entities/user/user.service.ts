@@ -1,12 +1,12 @@
-import bcrypt from 'bcryptjs';
-import type { PaginatedResponse } from '@/common/pagination/pagination.types';
-import type { UserRepository } from '@/entities/user/user.repository';
+import bcrypt from "bcryptjs";
+import type { PaginatedResponse } from "@/common/pagination/pagination.types";
+import type { UserRepository } from "@/entities/user/user.repository";
 import type {
   CreateUser,
   UpdateUser,
   User,
   UserQueryParams,
-} from '@/entities/user/user.types';
+} from "@/entities/user/user.types";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -57,13 +57,13 @@ export class UserService {
 
   async verifyPassword(
     plainPassword: string,
-    hashedPassword: string
+    hashedPassword: string,
   ): Promise<boolean> {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
   async getUsers(
-    queryParams: UserQueryParams
+    queryParams: UserQueryParams,
   ): Promise<PaginatedResponse<User>> {
     const result = await this.userRepository.findAll(queryParams);
 

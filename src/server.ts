@@ -1,10 +1,10 @@
-import dotenv from 'dotenv';
-import { createApp } from '@/utils/app';
+import dotenv from "dotenv";
+import { createApp } from "@/utils/app";
 import {
   serverConfig,
   setupGracefulShutdown,
   startServer,
-} from '@/utils/server-lifecycle';
+} from "@/utils/server-lifecycle";
 
 // Load environment variables
 dotenv.config();

@@ -1,10 +1,10 @@
-import cookieParser from 'cookie-parser';
-import express, { type Express } from 'express';
-import helmet from 'helmet';
+import cookieParser from "cookie-parser";
+import express, { type Express } from "express";
+import helmet from "helmet";
 
-import { createTokenRefreshMiddleware } from '../middleware/token-refresh.middleware';
-import { configureCors } from '../utils/cors';
-import { requestLogger } from '../utils/server-lifecycle';
+import { createTokenRefreshMiddleware } from "../middleware/token-refresh.middleware";
+import { configureCors } from "../utils/cors";
+import { requestLogger } from "../utils/server-lifecycle";
 
 export const configureMiddleware = (app: Express): void => {
   // Security headers
@@ -17,8 +17,8 @@ export const configureMiddleware = (app: Express): void => {
   app.use(cookieParser());
 
   // Parse JSON and URL-encoded bodies
-  app.use(express.json({ limit: '100mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+  app.use(express.json({ limit: "100mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "100mb" }));
 
   // Request logging middleware
   app.use(requestLogger);

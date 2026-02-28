@@ -1,66 +1,61 @@
 import {
-  universes,
-  universesRelations,
-} from '@/entities/universe/universe.schema';
-import { users, usersRelations } from '@/entities/user/user.schema';
-import {
   galaxies,
   galaxiesRelations,
-  solarSystems,
-  solarSystemsRelations,
-  stars,
-  starsRelations,
+  galaxyTypeEnum,
   planets,
   planetsRelations,
-  galaxyTypeEnum,
+  solarSystems,
+  solarSystemsRelations,
   spectralTypeEnum,
-} from '@/entities/celestial/celestial.schema';
-import { characters, charactersRelations } from '@/entities/character/character.schema';
+  stars,
+  starsRelations,
+} from "@/entities/celestial/celestial.schema";
 import {
+  characters,
+  charactersRelations,
+} from "@/entities/character/character.schema";
+import {
+  constructCategoryEnum,
   constructs,
   constructsRelations,
-  constructCategoryEnum,
-} from '@/entities/construct/construct.schema';
+} from "@/entities/construct/construct.schema";
+import { maps, mapsRelations } from "@/entities/map/map.schema";
 import {
-  maps,
-  mapsRelations,
-  gridCells,
-  gridCellsRelations,
-  mapRegions,
-  mapRegionsRelations,
-  gridCellFeatures,
-  gridCellFeaturesRelations,
-  regionSvgMappings,
-  regionSvgMappingsRelations,
-} from '@/entities/map/map.schema';
-import {
-  rootsOfPower,
-  rootsOfPowerRelations,
-  powerSystems,
-  powerSystemsRelations,
-  powerSubSystems,
-  powerSubSystemsRelations,
-  powerCategories,
-  powerCategoriesRelations,
-  powerAbilities,
-  powerAbilitiesRelations,
   characterPowerAccess,
   characterPowerAccessRelations,
-} from '@/entities/power-system/power-system.schema';
+  powerAbilities,
+  powerAbilitiesRelations,
+  powerCategories,
+  powerCategoriesRelations,
+  powerSubSystems,
+  powerSubSystemsRelations,
+  powerSystems,
+  powerSystemsRelations,
+  rootsOfPower,
+  rootsOfPowerRelations,
+} from "@/entities/power-system/power-system.schema";
 import {
-  races,
-  racesRelations,
   ethnicGroups,
   ethnicGroupsRelations,
-} from '@/entities/race/race.schema';
+  races,
+  racesRelations,
+} from "@/entities/race/race.schema";
 import {
+  regionClimateEnum,
+  regionFeatureTypeEnum,
   regions,
   regionsRelations,
   regionTypeEnum,
-  regionClimateEnum,
-  regionFeatureTypeEnum,
-} from '@/entities/region/region.schema';
-import { religions, religionsRelations } from '@/entities/religion/religion.schema';
+} from "@/entities/region/region.schema";
+import {
+  religions,
+  religionsRelations,
+} from "@/entities/religion/religion.schema";
+import {
+  universes,
+  universesRelations,
+} from "@/entities/universe/universe.schema";
+import { users, usersRelations } from "@/entities/user/user.schema";
 
 const schema = {
   users,
@@ -81,14 +76,6 @@ const schema = {
   constructsRelations,
   maps,
   mapsRelations,
-  gridCells,
-  gridCellsRelations,
-  mapRegions,
-  mapRegionsRelations,
-  gridCellFeatures,
-  gridCellFeaturesRelations,
-  regionSvgMappings,
-  regionSvgMappingsRelations,
   rootsOfPower,
   rootsOfPowerRelations,
   powerSystems,

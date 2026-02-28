@@ -1,26 +1,39 @@
-import type { z } from 'zod/v4';
-import { ValidationError } from '@/common/error.types';
+import { ValidationError } from "@/common/error.types";
+import { z } from "zod";
 
-export function validateQuery<T>(data: unknown, schema: z.ZodType<T>): T {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw ValidationError.fromZodError(result.error);
-  }
-  return result.data;
+interface ValidationSchema<T> {
+  parse(data: unknown): T;
 }
 
-export function validateParams<T>(data: unknown, schema: z.ZodType<T>): T {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw ValidationError.fromZodError(result.error);
+export function validateQuery<T>(data: unknown, schema: ValidationSchema<T>): T {
+  try {
+    return schema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw ValidationError.fromZodError(error);
+    }
+    throw error;
   }
-  return result.data;
 }
 
-export function validateBody<T>(data: unknown, schema: z.ZodType<T>): T {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw ValidationError.fromZodError(result.error);
+export function validateParams<T>(data: unknown, schema: ValidationSchema<T>): T {
+  try {
+    return schema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw ValidationError.fromZodError(error);
+    }
+    throw error;
   }
-  return result.data;
+}
+
+export function validateBody<T>(data: unknown, schema: ValidationSchema<T>): T {
+  try {
+    return schema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw ValidationError.fromZodError(error);
+    }
+    throw error;
+  }
 }

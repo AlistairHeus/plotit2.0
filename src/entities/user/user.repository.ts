@@ -1,24 +1,24 @@
-import { eq, type SQL } from 'drizzle-orm';
-import { BaseRepository } from '@/common/base.repository';
-import type { Result } from '@/common/common.types';
-import { NotFoundError } from '@/common/error.types';
-import type { PaginationConfig } from '@/common/pagination/pagination.types';
-import db from '@/db/connection';
-import { users } from '@/entities/user/user.schema';
+import { BaseRepository } from "@/common/base.repository";
+import type { Result } from "@/common/common.types";
+import { NotFoundError } from "@/common/error.types";
+import type { PaginationConfig } from "@/common/pagination/pagination.types";
+import db from "@/db/connection";
+import { users } from "@/entities/user/user.schema";
 import type {
   CreateUser,
-  UpdateUser,
   User,
-  UserQueryParams,
-} from '@/entities/user/user.types';
+  UserQueryParams
+} from "@/entities/user/user.types";
+import { userSchema } from "@/entities/user/user.validation";
+import { eq, type SQL } from "drizzle-orm";
 
 export class UserRepository extends BaseRepository<
   User,
   CreateUser,
-  UpdateUser,
   UserQueryParams
 > {
   protected table = users;
+  protected selectSchema = userSchema;
 
   protected paginationConfig: PaginationConfig<typeof users> = {
     table: users,
@@ -32,11 +32,11 @@ export class UserRepository extends BaseRepository<
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     },
-    defaultSortBy: 'createdAt',
+    defaultSortBy: "createdAt",
   };
 
-  protected buildWhereConditions(): SQL<unknown>[] {
-    const whereConditions: SQL<unknown>[] = [];
+  protected buildWhereConditions(): SQL[] {
+    const whereConditions: SQL[] = [];
 
     return whereConditions;
   }
@@ -49,7 +49,7 @@ export class UserRepository extends BaseRepository<
     if (!result) {
       return {
         success: false,
-        error: new NotFoundError('User'),
+        error: new NotFoundError("User"),
       };
     }
 

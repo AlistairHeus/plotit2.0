@@ -1,21 +1,21 @@
-import { desc, eq, inArray, lt } from 'drizzle-orm';
-import type { Result } from '@/common/common.types';
-import { NotFoundError } from '@/common/error.types';
-import db from '@/db/connection';
-import type { CreateRefreshToken, RefreshToken } from './authentication.types';
-import { refreshTokens } from './refresh-token.schema';
+import { desc, eq, inArray, lt } from "drizzle-orm";
+import type { Result } from "@/common/common.types";
+import { NotFoundError } from "@/common/error.types";
+import db from "@/db/connection";
+import type { CreateRefreshToken, RefreshToken } from "./authentication.types";
+import { refreshTokens } from "./refresh-token.schema";
 
 export class RefreshTokenRepository {
   async create(data: CreateRefreshToken): Promise<RefreshToken> {
     const [result] = await db.insert(refreshTokens).values(data).returning();
     if (!result) {
-      throw new Error('Failed to create refresh token');
+      throw new Error("Failed to create refresh token");
     }
     return result;
   }
 
   async findByToken(
-    token: string
+    token: string,
   ): Promise<Result<RefreshToken, NotFoundError>> {
     const result = await db
       .select()
@@ -23,16 +23,17 @@ export class RefreshTokenRepository {
       .where(eq(refreshTokens.token, token))
       .limit(1);
 
-    if (!result || result.length === 0) {
+    const data = result[0];
+    if (!data) {
       return {
         success: false,
-        error: new NotFoundError('Refresh token'),
+        error: new NotFoundError("Refresh token"),
       };
     }
 
     return {
       success: true,
-      data: result[0] as RefreshToken,
+      data,
     };
   }
 
@@ -72,7 +73,7 @@ export class RefreshTokenRepository {
 
   async deleteOldestTokensForUser(
     userId: string,
-    keepCount: number
+    keepCount: number,
   ): Promise<void> {
     // Get all tokens for user, ordered by creation date (newest first)
     const userTokens = await db

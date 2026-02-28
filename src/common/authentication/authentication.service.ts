@@ -1,19 +1,17 @@
-import { randomBytes } from 'node:crypto';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import type { UserRepository } from '@/entities/user/user.repository';
-import type { User } from '@/entities/user/user.types';
-import { AUTH_CONSTANTS, AUTH_ERRORS } from './authentication.constants';
+import type { UserRepository } from "@/entities/user/user.repository";
+import type { User } from "@/entities/user/user.types";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { randomBytes } from "node:crypto";
+import { AUTH_CONSTANTS, AUTH_ERRORS } from "./authentication.constants";
 import type {
   JWTPayload,
   LoginRequest,
-  RefreshTokenRequest,
-  RefreshTokenResponse,
   SecureLoginResponse,
-  SecureRefreshTokenResponse,
-} from './authentication.types';
-import { parseExpiryTime } from './authentication.utils';
-import { RefreshTokenRepository } from './refresh-token.repository';
+  SecureRefreshTokenResponse
+} from "./authentication.types";
+import { parseExpiryTime } from "./authentication.utils";
+import { RefreshTokenRepository } from "./refresh-token.repository";
 
 export class AuthenticationService {
   private userRepository: UserRepository;
@@ -21,11 +19,11 @@ export class AuthenticationService {
 
   constructor(
     userRepository: UserRepository,
-    refreshTokenRepository?: RefreshTokenRepository
+    refreshTokenRepository?: RefreshTokenRepository,
   ) {
     this.userRepository = userRepository;
     this.refreshTokenRepository =
-      refreshTokenRepository || new RefreshTokenRepository();
+      refreshTokenRepository ?? new RefreshTokenRepository();
   }
 
   // Main public method - orchestrates the login flow
@@ -43,7 +41,7 @@ export class AuthenticationService {
     // Clean up old tokens for this user
     await this.refreshTokenRepository.deleteOldestTokensForUser(
       user.id,
-      AUTH_CONSTANTS.MAX_REFRESH_TOKENS_PER_USER
+      AUTH_CONSTANTS.MAX_REFRESH_TOKENS_PER_USER,
     );
 
     return {
@@ -53,17 +51,9 @@ export class AuthenticationService {
     };
   }
 
-  // Refresh access token using refresh token (legacy method for backward compatibility)
-  async refreshAccessToken(
-    refreshData: RefreshTokenRequest
-  ): Promise<RefreshTokenResponse> {
-    const { refreshToken } = refreshData;
-    return await this.refreshAccessTokenSecure(refreshToken);
-  }
-
   // Secure refresh method that works with HTTP-only cookies
   async refreshAccessTokenSecure(
-    refreshToken: string
+    refreshToken: string,
   ): Promise<SecureRefreshTokenResponse> {
     // Validate refresh token
     const isValid =
@@ -140,12 +130,17 @@ export class AuthenticationService {
     if (!result.success) {
       throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
     }
-    const {
-      password: _password,
-      lastLoginAt: _lastLoginAt,
-      ...safeUser
-    } = result.data;
-    return safeUser;
+    const user = result.data;
+
+    // Explicitly pick fields instead of destructuring with unused vars
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
   private async updateUserLoginActivity(userId: string) {
@@ -159,14 +154,11 @@ export class AuthenticationService {
     });
   }
 
-  private generateToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): string {
-    return jwt.sign(
-      payload,
-      AUTH_CONSTANTS.JWT_SECRET as string,
-      {
-        expiresIn: AUTH_CONSTANTS.JWT_EXPIRES_IN,
-      } as jwt.SignOptions
-    );
+  private generateToken(payload: Omit<JWTPayload, "iat" | "exp">): string {
+    const options: jwt.SignOptions = {
+      expiresIn: AUTH_CONSTANTS.JWT_EXPIRES_IN,
+    };
+    return jwt.sign(payload, AUTH_CONSTANTS.JWT_SECRET, options);
   }
 
   private async generateRefreshToken(userId: string) {
@@ -174,7 +166,7 @@ export class AuthenticationService {
     const expiresAt = new Date();
     expiresAt.setTime(
       expiresAt.getTime() +
-      parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN)
+      parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN),
     );
 
     return await this.refreshTokenRepository.create({
@@ -186,6 +178,6 @@ export class AuthenticationService {
   }
 
   private generateSecureToken(): string {
-    return randomBytes(32).toString('hex');
+    return randomBytes(32).toString("hex");
   }
 }

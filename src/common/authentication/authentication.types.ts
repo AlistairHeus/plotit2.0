@@ -1,50 +1,43 @@
-import type { z } from 'zod/v4';
 import type {
   jwtPayloadSchema,
-  loginSchema,
-  refreshTokenSchema,
-} from '@/common/authentication/authentication.validation';
-import type { refreshTokens } from '@/common/authentication/refresh-token.schema';
-import type { AuthenticatedUser, SafeUser } from '@/entities/user/user.types';
+  loginSchema
+} from "@/common/authentication/authentication.validation";
+import type { refreshTokens } from "@/common/authentication/refresh-token.schema";
+import type { AuthenticatedUser, SafeUser } from "@/entities/user/user.types";
+import type { z } from "zod";
 
 export type JWTPayload = z.infer<typeof jwtPayloadSchema>;
 
 export type LoginRequest = z.infer<typeof loginSchema>;
 
-export type RefreshTokenRequest = z.infer<typeof refreshTokenSchema>;
 
 export type RefreshToken = typeof refreshTokens.$inferSelect;
 
 export type CreateRefreshToken = typeof refreshTokens.$inferInsert;
 
-export type LoginResponse = {
+export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   user: SafeUser;
-};
+}
 
-export type SecureLoginResponse = {
+export interface SecureLoginResponse {
   accessToken: string;
   refreshToken: string; // This will be set as HTTP-only cookie
   user: SafeUser;
-};
+}
 
-export type RefreshTokenResponse = {
-  accessToken: string;
-  refreshToken: string;
-};
-
-export type SecureRefreshTokenResponse = {
+export interface SecureRefreshTokenResponse {
   accessToken: string;
   refreshToken: string; // This will be set as HTTP-only cookie
-};
+}
 
-export type LogoutResponse = {
+export interface LogoutResponse {
   success: boolean;
   message: string;
-};
+}
 
-declare module 'express-serve-static-core' {
+declare module "express-serve-static-core" {
   interface Request {
     user?: AuthenticatedUser;
   }

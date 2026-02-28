@@ -1,47 +1,47 @@
 export const RegionType = {
-  CONTINENT: 'CONTINENT',
-  OCEAN: 'OCEAN',
-  SEA: 'SEA',
-  LAKE: 'LAKE',
-  STATE: 'STATE',
-  CITY: 'CITY',
-  MOUNTAIN_RANGE: 'MOUNTAIN_RANGE',
-  FOREST: 'FOREST',
-  DESERT: 'DESERT',
-  ISLAND: 'ISLAND',
-  VALLEY: 'VALLEY',
-  RIVER: 'RIVER',
+  CONTINENT: "CONTINENT",
+  OCEAN: "OCEAN",
+  SEA: "SEA",
+  LAKE: "LAKE",
+  STATE: "STATE",
+  CITY: "CITY",
+  MOUNTAIN_RANGE: "MOUNTAIN_RANGE",
+  FOREST: "FOREST",
+  DESERT: "DESERT",
+  ISLAND: "ISLAND",
+  VALLEY: "VALLEY",
+  RIVER: "RIVER",
 } as const;
 
 export type RegionType = (typeof RegionType)[keyof typeof RegionType];
 
 export const RegionFeatureType = {
-  MOUNTAIN: 'MOUNTAIN',
-  HILL: 'HILL',
-  FOREST: 'FOREST',
-  DESERT: 'DESERT',
-  WATER: 'WATER',
-  GRASSLAND: 'GRASSLAND',
-  SETTLEMENT: 'SETTLEMENT',
-  LANDMARK: 'LANDMARK',
-  CUSTOM: 'CUSTOM',
+  MOUNTAIN: "MOUNTAIN",
+  HILL: "HILL",
+  FOREST: "FOREST",
+  DESERT: "DESERT",
+  WATER: "WATER",
+  GRASSLAND: "GRASSLAND",
+  SETTLEMENT: "SETTLEMENT",
+  LANDMARK: "LANDMARK",
+  CUSTOM: "CUSTOM",
 } as const;
 
 export type RegionFeatureType =
   (typeof RegionFeatureType)[keyof typeof RegionFeatureType];
 
 export const RegionClimate = {
-  TROPICAL: 'TROPICAL',
-  SUBTROPICAL: 'SUBTROPICAL',
-  TEMPERATE: 'TEMPERATE',
-  SUBARCTIC: 'SUBARCTIC',
-  ARCTIC: 'ARCTIC',
-  DESERT: 'DESERT',
-  MEDITERRANEAN: 'MEDITERRANEAN',
-  OCEANIC: 'OCEANIC',
-  CONTINENTAL: 'CONTINENTAL',
-  ALPINE: 'ALPINE',
-  CUSTOM: 'CUSTOM',
+  TROPICAL: "TROPICAL",
+  SUBTROPICAL: "SUBTROPICAL",
+  TEMPERATE: "TEMPERATE",
+  SUBARCTIC: "SUBARCTIC",
+  ARCTIC: "ARCTIC",
+  DESERT: "DESERT",
+  MEDITERRANEAN: "MEDITERRANEAN",
+  OCEANIC: "OCEANIC",
+  CONTINENTAL: "CONTINENTAL",
+  ALPINE: "ALPINE",
+  CUSTOM: "CUSTOM",
 } as const;
 
 export type RegionClimate = (typeof RegionClimate)[keyof typeof RegionClimate];
