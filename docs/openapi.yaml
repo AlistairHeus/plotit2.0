@@ -33,3 +33,17 @@ paths:
     $ref: './regions/paths.yaml#/~1'
   /regions/{id}:
     $ref: './regions/paths.yaml#/~1{id}'
+  /maps:
+    $ref: './maps/paths.yaml#/~1'
+  /maps/{id}:
+    $ref: './maps/paths.yaml#/~1{id}'
+  /maps/{id}/grid/initialize:
+    $ref: './maps/paths.yaml#/~1{id}~1grid~1initialize'
+  /maps/{id}/grid:
+    $ref: './maps/paths.yaml#/~1{id}~1grid'
+  /maps/{id}/cell:
+    $ref: './maps/paths.yaml#/~1{id}~1cell'
+  /maps/{id}/svg:
+    $ref: './maps/paths.yaml#/~1{id}~1svg'
+  /maps/{id}/svg/{mappingId}:
+    $ref: './maps/paths.yaml#/~1{id}~1svg~1{mappingId}'

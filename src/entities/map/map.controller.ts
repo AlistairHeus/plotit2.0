@@ -49,7 +49,7 @@ export class MapController {
     async getAll(req: Request, res: Response): Promise<void> {
         const queryParams = validateQuery(req.query, mapQuerySchema);
 
-        const result = await this.mapService.getMapsWithRelations(queryParams);
+        const result = await this.mapService.getMaps(queryParams);
 
         log.info("Maps retrieved successfully", {
             count: result.data.length,

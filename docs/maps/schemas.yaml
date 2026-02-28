@@ -1,0 +1,297 @@
+GridSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      default: true
+    size:
+      type: number
+      format: float
+    scale:
+      type: number
+      format: float
+      default: 1.0
+    width:
+      type: number
+      format: float
+      nullable: true
+    height:
+      type: number
+      format: float
+      nullable: true
+    hexWidth:
+      type: number
+      format: float
+      nullable: true
+    hexHeight:
+      type: number
+      format: float
+      nullable: true
+    horizontalSpacing:
+      type: number
+      format: float
+      nullable: true
+    verticalSpacing:
+      type: number
+      format: float
+      nullable: true
+
+MapOverlay:
+  type: object
+  required:
+    - regionId
+  properties:
+    regionId:
+      type: string
+      format: uuid
+    zIndex:
+      type: number
+      default: 0
+    opacity:
+      type: number
+      format: float
+      default: 1.0
+    visible:
+      type: boolean
+      default: true
+    bounds:
+      type: object
+      description: "Any valid JSON representing bounds"
+
+GridCellData:
+  type: object
+  additionalProperties: true
+  properties:
+    terrainType:
+      type: string
+    features:
+      type: array
+      items:
+        type: object
+        description: "Feature details"
+    elevation:
+      type: number
+    regionId:
+      type: string
+      format: uuid
+
+Map:
+  type: object
+  required:
+    - id
+    - name
+    - universeId
+    - regionId
+    - imageUrl
+    - gridSettings
+    - mapOverlays
+    - cellData
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    universeId:
+      type: string
+      format: uuid
+    regionId:
+      type: string
+      format: uuid
+    imageUrl:
+      type: string
+      format: uri
+    viewBox:
+      type: string
+      nullable: true
+    gridSettings:
+      $ref: '#/GridSettings'
+    mapOverlays:
+      type: array
+      items:
+        $ref: '#/MapOverlay'
+    cellData:
+      type: object
+      additionalProperties:
+        $ref: '#/GridCellData'
+      description: "A dictionary mapping 'row,col' to cell data."
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+MapCreate:
+  type: object
+  required:
+    - name
+    - universeId
+    - regionId
+  properties:
+    name:
+      type: string
+      minLength: 1
+    universeId:
+      type: string
+      format: uuid
+    regionId:
+      type: string
+      format: uuid
+    imageUrl:
+      type: string
+      format: uri
+      description: "Optional on client side, expected from server post-upload"
+    viewBox:
+      type: string
+      nullable: true
+    gridSettings:
+      $ref: '#/GridSettings'
+    mapOverlays:
+      type: array
+      items:
+        $ref: '#/MapOverlay'
+    cellData:
+      type: object
+      additionalProperties:
+        $ref: '#/GridCellData'
+
+MapUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    universeId:
+      type: string
+      format: uuid
+    regionId:
+      type: string
+      format: uuid
+    imageUrl:
+      type: string
+      format: uri
+    viewBox:
+      type: string
+      nullable: true
+    gridSettings:
+      $ref: '#/GridSettings'
+    mapOverlays:
+      type: array
+      items:
+        $ref: '#/MapOverlay'
+    cellData:
+      type: object
+      additionalProperties:
+        $ref: '#/GridCellData'
+
+MapResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/Map'
+    message:
+      type: string
+
+MapListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/Map'
+
+SvgMapping:
+  type: object
+  required:
+    - id
+    - mapId
+    - svgElementId
+    - featureType
+    - regionId
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    mapId:
+      type: string
+      format: uuid
+    svgElementId:
+      type: string
+    featureType:
+      type: string
+    regionId:
+      type: string
+      format: uuid
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+SvgMappingCreate:
+  type: object
+  required:
+    - mapId
+    - svgElementId
+    - featureType
+    - regionId
+  properties:
+    mapId:
+      type: string
+      format: uuid
+    svgElementId:
+      type: string
+      minLength: 1
+    featureType:
+      type: string
+      minLength: 1
+    regionId:
+      type: string
+      format: uuid
+
+SvgMappingResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/SvgMapping'
+    message:
+      type: string
+
+SvgMappingListResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: array
+      items:
+        $ref: '#/SvgMapping'
+    message:
+      type: string
+
+CellUpdatePayload:
+  type: object
+  required:
+    - key
+    - data
+  properties:
+    key:
+      type: string
+      description: "Row,Col string format"
+    data:
+      $ref: '#/GridCellData'

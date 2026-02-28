@@ -1,0 +1,414 @@
+/:
+  post:
+    tags:
+      - Maps
+    summary: Create a new map
+    description: Creates a new map instance. Required to upload an image along with the metadata.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - image
+              - name
+              - universeId
+              - regionId
+            properties:
+              image:
+                type: string
+                format: binary
+              name:
+                type: string
+              universeId:
+                type: string
+                format: uuid
+              regionId:
+                type: string
+                format: uuid
+              viewBox:
+                type: string
+              gridSettings:
+                type: string
+                description: 'JSON string of GridSettings'
+              mapOverlays:
+                type: string
+                description: 'JSON string of MapOverlay array'
+              cellData:
+                type: string
+                description: 'JSON string of dictionary mapping row,col to GridCellData'
+    responses:
+      '201':
+        description: Map created successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+
+  get:
+    tags:
+      - Maps
+    summary: Get all maps
+    description: Retrieves a paginated list of all maps based on query parameters.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          default: 10
+      - name: sortBy
+        in: query
+        schema:
+          type: string
+          enum: [id, name, universeId, regionId, createdAt, updatedAt]
+          default: createdAt
+      - name: sortOrder
+        in: query
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: universeId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: regionId
+        in: query
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: A paginated list of maps
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapListResponse'
+      '401':
+        description: Unauthorized
+
+/{id}:
+  get:
+    tags:
+      - Maps
+    summary: Get a map by ID
+    description: Retrieves a single map by its UUID.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Map retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  put:
+    tags:
+      - Maps
+    summary: Update a map
+    description: Updates an existing map by its ID. Can optionally include a new image.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              name:
+                type: string
+              universeId:
+                type: string
+                format: uuid
+              regionId:
+                type: string
+                format: uuid
+              viewBox:
+                type: string
+              gridSettings:
+                type: string
+                description: 'JSON string of GridSettings'
+              mapOverlays:
+                type: string
+                description: 'JSON string of MapOverlay array'
+              cellData:
+                type: string
+                description: 'JSON string of dictionary mapping row,col to GridCellData'
+    responses:
+      '200':
+        description: Map updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  delete:
+    tags:
+      - Maps
+    summary: Delete a map
+    description: Deletes a map by its ID.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Map deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+/{id}/grid/initialize:
+  post:
+    tags:
+      - Maps
+    summary: Initialize Map Grid Settings
+    description: Initializes or fully sets the Grid Settings for a specific map.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/GridSettings'
+    responses:
+      '200':
+        description: Grid settings initialized successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '401':
+        description: Unauthorized
+
+/{id}/grid:
+  put:
+    tags:
+      - Maps
+    summary: Update Map Grid Settings
+    description: Updates the Grid Settings for a specific map.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/GridSettings'
+    responses:
+      '200':
+        description: Grid settings updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '401':
+        description: Unauthorized
+
+/{id}/cell:
+  put:
+    tags:
+      - Maps
+    summary: Update a Grid Cell
+    description: Updates data for a specific cell in the grid.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/CellUpdatePayload'
+    responses:
+      '200':
+        description: Grid cell updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/MapResponse'
+      '401':
+        description: Unauthorized
+
+/{id}/svg:
+  post:
+    tags:
+      - Maps
+    summary: Add an SVG Mapping
+    description: Link a specific SVG element to a region within the map.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/SvgMappingCreate'
+    responses:
+      '201':
+        description: SVG mapping added successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/SvgMappingResponse'
+      '401':
+        description: Unauthorized
+
+  get:
+    tags:
+      - Maps
+    summary: Get SVG Mappings for Map
+    description: Retrieve all SVG mappings associated with a specific map.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: SVG mappings retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/SvgMappingListResponse'
+      '401':
+        description: Unauthorized
+
+/{id}/svg/{mappingId}:
+  delete:
+    tags:
+      - Maps
+    summary: Delete an SVG Mapping
+    description: Remvoes a specific SVG mapping by its ID from the map.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: mappingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: SVG mapping removed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
