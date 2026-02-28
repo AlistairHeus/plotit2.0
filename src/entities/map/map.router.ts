@@ -32,23 +32,10 @@ router.put(
 
 router.delete("/:id", asyncHandler(mapController.delete.bind(mapController)));
 
-// Grid Operations
-router.post(
-    "/:id/grid/initialize",
-    asyncHandler(mapController.initializeGrid.bind(mapController)),
-);
-
-router.put(
-    "/:id/grid",
-    asyncHandler(mapController.updateGrid.bind(mapController)),
-);
-
-router.put(
-    "/:id/cell",
-    asyncHandler(mapController.updateCell.bind(mapController)),
-);
-
 // SVG Mapping Operations
+// POST   /:id/svg          — upsert a mapping (svgElementId → regionId)
+// GET    /:id/svg          — get all mappings for a map
+// DELETE /:id/svg/:mappingId — remove a mapping by DB id
 router.post(
     "/:id/svg",
     asyncHandler(mapController.addSvgMapping.bind(mapController)),

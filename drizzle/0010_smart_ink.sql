@@ -1,0 +1,1 @@
+ALTER TABLE "maps" DROP COLUMN "view_box";

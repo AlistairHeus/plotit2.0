@@ -10,15 +10,11 @@ import { maps, mapSvgMappings } from "@/entities/map/map.schema";
 import type {
     CreateMap,
     CreateSvgMapping,
-    GridCellData,
-    GridSettings,
-    GridSetupData,
-    MapOverlay,
-    MapQueryParams,
     FantasyMap as MapType,
+    MapQueryParams,
     MapWithRelations,
     SvgMapping,
-    UpdateMap
+    UpdateMap,
 } from "@/entities/map/map.types";
 import { and, eq, type SQL } from "drizzle-orm";
 
@@ -59,7 +55,7 @@ export class MapRepository {
         try {
             const [result] = await db.insert(maps).values({
                 ...data,
-                imageUrl: data.imageUrl ?? "", // Safety fallback if service doesn't provide
+                imageUrl: data.imageUrl ?? "",
             }).returning();
             if (!result) {
                 return {
@@ -253,74 +249,36 @@ export class MapRepository {
         }
     }
 
-    // --- Specialized JSONB operations ---
+    // --- SVG Mapping Operations ---
 
-    async updateGridSettings(mapId: string, settings: GridSetupData): Promise<Result<MapType>> {
+    /**
+     * Upserts an SVG mapping.
+     * If a mapping for the same (mapId, svgElementId) already exists, it updates
+     * the regionId and featureType. Otherwise, it inserts a new record.
+     */
+    async upsertSvgMapping(data: CreateSvgMapping): Promise<Result<SvgMapping>> {
         try {
-            const mapRes = await this.findOne(mapId);
-            if (!mapRes.success) return mapRes;
+            const [result] = await db
+                .insert(mapSvgMappings)
+                .values(data)
+                .onConflictDoUpdate({
+                    target: [mapSvgMappings.mapId, mapSvgMappings.svgElementId],
+                    set: {
+                        regionId: data.regionId,
+                        featureType: data.featureType,
+                        updatedAt: new Date(),
+                    },
+                })
+                .returning();
 
-            const updatedSettings: GridSettings = { ...mapRes.data.gridSettings };
-
-            // Apply only defined settings to avoid exactOptionalPropertyTypes compilation errors
-            if (settings.enabled !== undefined) updatedSettings.enabled = settings.enabled;
-            if (settings.size !== undefined) updatedSettings.size = settings.size;
-            if (settings.scale !== undefined) updatedSettings.scale = settings.scale;
-            if (settings.width !== undefined) updatedSettings.width = settings.width;
-            if (settings.height !== undefined) updatedSettings.height = settings.height;
-            if (settings.hexWidth !== undefined) updatedSettings.hexWidth = settings.hexWidth;
-            if (settings.hexHeight !== undefined) updatedSettings.hexHeight = settings.hexHeight;
-            if (settings.horizontalSpacing !== undefined) updatedSettings.horizontalSpacing = settings.horizontalSpacing;
-            if (settings.verticalSpacing !== undefined) updatedSettings.verticalSpacing = settings.verticalSpacing;
-
-            return await this.update(mapId, { gridSettings: updatedSettings });
-        } catch (error) {
-            return {
-                success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to update grid settings", new Error(String(error))),
-            };
-        }
-    }
-
-    async updateCellData(mapId: string, rowColKey: string, cellData: GridCellData): Promise<Result<MapType>> {
-        try {
-            // First fetch existing cells to append to it
-            // Assuming this is fine to do in two steps given the scale, or we could use deeper raw JSONB SQL syntax
-            const mapRes = await this.findOne(mapId);
-            if (!mapRes.success) return mapRes;
-
-            const updatedCells = {
-                ...mapRes.data.cellData,
-                [rowColKey]: cellData,
-            };
-
-            return await this.update(mapId, { cellData: updatedCells });
-        } catch (error) {
-            return {
-                success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to update cell data", new Error(String(error))),
-            };
-        }
-    }
-
-    async updateMapOverlays(mapId: string, overlays: MapOverlay[]): Promise<Result<MapType>> {
-        return await this.update(mapId, { mapOverlays: overlays });
-    }
-
-    // --- Shared Relational Handlers ---
-
-    async createSvgMapping(data: CreateSvgMapping): Promise<Result<SvgMapping>> {
-        try {
-            // Upsert mapping or standard insert? Let's just insert standard. Or check existence if it shouldn't duplicate.
-            const [result] = await db.insert(mapSvgMappings).values(data).returning();
             if (!result) {
-                return { success: false, error: new DatabaseError("Failed to create map svg mapping") };
+                return { success: false, error: new DatabaseError("Failed to upsert svg mapping") };
             }
             return { success: true, data: result };
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to create svg mapping", new Error(String(error))),
+                error: error instanceof Error ? error : new DatabaseError("Failed to upsert svg mapping", new Error(String(error))),
             };
         }
     }
@@ -341,20 +299,6 @@ export class MapRepository {
         }
     }
 
-    async getSvgMappingsByMapId(mapId: string): Promise<Result<SvgMapping[]>> {
-        try {
-            const results = await db.query.mapSvgMappings.findMany({
-                where: eq(mapSvgMappings.mapId, mapId),
-            });
-            return { success: true, data: results };
-        } catch (error) {
-            return {
-                success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to fetch map svg mappings", new Error(String(error))),
-            };
-        }
-    }
-
     async removeSvgMappingByElementId(mapId: string, svgElementId: string): Promise<Result<boolean>> {
         try {
             const [result] = await db
@@ -366,7 +310,21 @@ export class MapRepository {
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to delete map svg mapping by element", new Error(String(error))),
+                error: error instanceof Error ? error : new DatabaseError("Failed to delete svg mapping by element", new Error(String(error))),
+            };
+        }
+    }
+
+    async getSvgMappingsByMapId(mapId: string): Promise<Result<SvgMapping[]>> {
+        try {
+            const results = await db.query.mapSvgMappings.findMany({
+                where: eq(mapSvgMappings.mapId, mapId),
+            });
+            return { success: true, data: results };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error : new DatabaseError("Failed to fetch svg mappings", new Error(String(error))),
             };
         }
     }

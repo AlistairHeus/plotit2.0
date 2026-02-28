@@ -5,18 +5,8 @@ import {
     createMapSchema,
     updateMapSchema,
     mapQuerySchema,
-    gridSettingsSchema,
-    mapOverlaySchema,
-    gridCellDataSchema,
     svgMappingSchema,
-    gridSetupSchema,
 } from "@/entities/map/map.validation";
-
-export type GridSettings = z.infer<typeof gridSettingsSchema>;
-export type GridSetupData = z.infer<typeof gridSetupSchema>;
-export type PartialGridSettings = Partial<GridSettings>;
-export type MapOverlay = z.infer<typeof mapOverlaySchema>;
-export type GridCellData = z.infer<typeof gridCellDataSchema>;
 
 export interface FantasyMap {
     id: string;
@@ -24,10 +14,6 @@ export interface FantasyMap {
     universeId: string;
     regionId: string;
     imageUrl: string;
-    viewBox: string | null;
-    gridSettings: GridSettings;
-    mapOverlays: MapOverlay[];
-    cellData: Record<string, GridCellData>;
     createdAt: Date;
     updatedAt: Date;
 }

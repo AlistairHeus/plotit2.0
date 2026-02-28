@@ -29,17 +29,6 @@
               regionId:
                 type: string
                 format: uuid
-              viewBox:
-                type: string
-              gridSettings:
-                type: string
-                description: 'JSON string of GridSettings'
-              mapOverlays:
-                type: string
-                description: 'JSON string of MapOverlay array'
-              cellData:
-                type: string
-                description: 'JSON string of dictionary mapping row,col to GridCellData'
     responses:
       '201':
         description: Map created successfully
@@ -165,17 +154,7 @@
               regionId:
                 type: string
                 format: uuid
-              viewBox:
-                type: string
-              gridSettings:
-                type: string
-                description: 'JSON string of GridSettings'
-              mapOverlays:
-                type: string
-                description: 'JSON string of MapOverlay array'
-              cellData:
-                type: string
-                description: 'JSON string of dictionary mapping row,col to GridCellData'
+
     responses:
       '200':
         description: Map updated successfully
@@ -225,99 +204,6 @@
       '404':
         description: Not found
 
-/{id}/grid/initialize:
-  post:
-    tags:
-      - Maps
-    summary: Initialize Map Grid Settings
-    description: Initializes or fully sets the Grid Settings for a specific map.
-    security:
-      - bearerAuth: []
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: './schemas.yaml#/GridSettings'
-    responses:
-      '200':
-        description: Grid settings initialized successfully
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/MapResponse'
-      '401':
-        description: Unauthorized
-
-/{id}/grid:
-  put:
-    tags:
-      - Maps
-    summary: Update Map Grid Settings
-    description: Updates the Grid Settings for a specific map.
-    security:
-      - bearerAuth: []
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: './schemas.yaml#/GridSettings'
-    responses:
-      '200':
-        description: Grid settings updated successfully
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/MapResponse'
-      '401':
-        description: Unauthorized
-
-/{id}/cell:
-  put:
-    tags:
-      - Maps
-    summary: Update a Grid Cell
-    description: Updates data for a specific cell in the grid.
-    security:
-      - bearerAuth: []
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: './schemas.yaml#/CellUpdatePayload'
-    responses:
-      '200':
-        description: Grid cell updated successfully
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/MapResponse'
-      '401':
-        description: Unauthorized
-
 /{id}/svg:
   post:
     tags:
@@ -340,8 +226,8 @@
           schema:
             $ref: './schemas.yaml#/SvgMappingCreate'
     responses:
-      '201':
-        description: SVG mapping added successfully
+      '200':
+        description: SVG mapping saved (created or updated)
         content:
           application/json:
             schema:
@@ -378,7 +264,7 @@
     tags:
       - Maps
     summary: Delete an SVG Mapping
-    description: Remvoes a specific SVG mapping by its ID from the map.
+    description: Removes a specific SVG mapping by its ID from the map.
     security:
       - bearerAuth: []
     parameters:

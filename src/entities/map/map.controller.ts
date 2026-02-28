@@ -4,11 +4,9 @@ import log from "@/utils/logger";
 import type { MapService } from "@/entities/map/map.service";
 import {
     createMapSchema,
-    gridSetupSchema,
     mapQuerySchema,
     svgMappingSchema,
     updateMapSchema,
-    cellUpdateWrapperSchema,
 } from "@/entities/map/map.validation";
 import {
     validateBody,
@@ -114,81 +112,25 @@ export class MapController {
         });
     }
 
-    // Grid operations
-
-    async initializeGrid(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
-        const settings = validateBody(req.body, gridSetupSchema);
-
-        const map = await this.mapService.updateGridSettings(mapId, settings);
-
-        log.info("Grid settings initialized", {
-            mapId,
-            operation: "initialize_grid"
-        });
-
-        res.status(200).json({
-            success: true,
-            data: map,
-            message: "Grid settings initialized successfully"
-        });
-    }
-
-    async updateGrid(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
-        const settings = validateBody(req.body, gridSetupSchema);
-
-        const map = await this.mapService.updateGridSettings(mapId, settings);
-
-        log.info("Grid settings updated", {
-            mapId,
-            operation: "update_grid"
-        });
-
-        res.status(200).json({
-            success: true,
-            data: map,
-            message: "Grid settings updated successfully"
-        });
-    }
-
-    async updateCell(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
-        const payload = validateBody(req.body, cellUpdateWrapperSchema);
-
-        const map = await this.mapService.updateCellData(mapId, payload.key, payload.data);
-
-        log.info("Grid cell updated", {
-            mapId,
-            cellKey: payload.key,
-            operation: "update_cell"
-        });
-
-        res.status(200).json({
-            success: true,
-            data: map,
-            message: "Grid cell updated successfully"
-        });
-    }
-
     // SVG Mapping operations
 
     async addSvgMapping(req: Request, res: Response): Promise<void> {
         const mapId = validateParams(req.params.id, paramsSchema);
         const mappingData = validateBody({ ...req.body, mapId }, svgMappingSchema);
 
-        const mapping = await this.mapService.createSvgMapping(mappingData);
+        const mapping = await this.mapService.upsertSvgMapping(mappingData);
 
-        log.info("SVG mapping added", {
+        log.info("SVG mapping upserted", {
             mapId,
             mappingId: mapping.id,
-            operation: "add_svg_mapping"
+            svgElementId: mapping.svgElementId,
+            operation: "upsert_svg_mapping"
         });
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             data: mapping,
-            message: "SVG mapping added successfully"
+            message: "SVG mapping saved successfully"
         });
     }
 
@@ -205,7 +147,6 @@ export class MapController {
     }
 
     async removeSvgMapping(req: Request, res: Response): Promise<void> {
-        // Assuming paramsSchema is the correct validation for a generic ID in the URL params
         const mappingId = validateParams(req.params.mappingId, paramsSchema);
 
         const success = await this.mapService.removeSvgMapping(mappingId);

@@ -64,6 +64,20 @@
       "when": 1772316923333,
       "tag": "0008_natural_ben_urich",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1772320608958,
+      "tag": "0009_true_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1772320634189,
+      "tag": "0010_smart_ink",
+      "breakpoints": true
     }
   ]
 }

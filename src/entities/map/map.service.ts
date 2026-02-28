@@ -5,8 +5,6 @@ import type {
     CreateMap,
     CreateSvgMapping,
     FantasyMap,
-    GridCellData,
-    GridSetupData,
     MapQueryParams,
     MapWithRelations,
     SvgMapping,
@@ -23,11 +21,9 @@ export class MapService {
     }
 
     async createMap(data: CreateMap, file: Express.Multer.File): Promise<FantasyMap> {
-        // 1. Save the file
         const relativePath = await this.fileService.save(file, "maps");
         const imageUrl = this.fileService.getUrl(relativePath);
 
-        // 2. Create the map record
         const result = await this.mapRepository.create({
             ...data,
             imageUrl,
@@ -71,11 +67,9 @@ export class MapService {
         let imageUrl = data.imageUrl;
 
         if (file) {
-            // 1. Get existing map to delete old image
             const existingMapResult = await this.mapRepository.findOne(id);
             if (existingMapResult.success && existingMapResult.data.imageUrl) {
                 try {
-                    // Extract relative path from URL
                     const oldUrl = existingMapResult.data.imageUrl;
                     const relativePath = oldUrl.split("/uploads/")[1];
                     if (relativePath) {
@@ -86,7 +80,6 @@ export class MapService {
                 }
             }
 
-            // 2. Save new file
             const newRelativePath = await this.fileService.save(file, "maps");
             imageUrl = this.fileService.getUrl(newRelativePath);
         }
@@ -101,7 +94,6 @@ export class MapService {
     }
 
     async deleteMap(id: string): Promise<boolean> {
-        // 1. Get existing map to delete image
         const existingMapResult = await this.mapRepository.findOne(id);
         if (existingMapResult.success && existingMapResult.data.imageUrl) {
             try {
@@ -115,32 +107,15 @@ export class MapService {
             }
         }
 
-        // 2. Delete record
         const result = await this.mapRepository.delete(id);
         if (!result.success) throw result.error;
         return result.data;
     }
 
-    // Specialized methods
+    // SVG Mapping operations
 
-    async updateGridSettings(id: string, settings: GridSetupData): Promise<FantasyMap> {
-        const result = await this.mapRepository.updateGridSettings(id, settings);
-        if (!result.success) throw result.error;
-        return result.data;
-    }
-
-    async updateCellData(
-        id: string,
-        rowColKey: string,
-        cellData: GridCellData,
-    ): Promise<FantasyMap> {
-        const result = await this.mapRepository.updateCellData(id, rowColKey, cellData);
-        if (!result.success) throw result.error;
-        return result.data;
-    }
-
-    async createSvgMapping(data: CreateSvgMapping): Promise<SvgMapping> {
-        const result = await this.mapRepository.createSvgMapping(data);
+    async upsertSvgMapping(data: CreateSvgMapping): Promise<SvgMapping> {
+        const result = await this.mapRepository.upsertSvgMapping(data);
         if (!result.success) throw result.error;
         return result.data;
     }
