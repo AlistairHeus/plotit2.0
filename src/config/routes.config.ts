@@ -4,6 +4,7 @@ import regionRouter from "@/entities/region/region.router";
 import universeRouter from "@/entities/universe/universe.router";
 import userRouter from "@/entities/user/user.router";
 import { mapRouter } from "@/entities/map/map.router";
+import raceRouter from "@/entities/race/race.router";
 
 export const configureRoutes = (app: Express): void => {
   app.get("/health", (_req, res) => {
@@ -28,4 +29,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Map routes
   app.use("/api/maps", mapRouter);
+
+  // Race routes
+  app.use("/api/races", raceRouter);
 };

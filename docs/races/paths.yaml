@@ -1,0 +1,170 @@
+/: 
+  post:
+    tags:
+      - Races
+    summary: Create a new race
+    description: Creates a new race within a universe.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/RaceCreate'
+    responses:
+      '201':
+        description: Race created successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RaceResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+
+  get:
+    tags:
+      - Races
+    summary: Get all races
+    description: Retrieves a paginated list of races. Filter by universe using query params.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          default: 10
+      - name: sortBy
+        in: query
+        schema:
+          type: string
+          enum: [id, name, createdAt, updatedAt]
+          default: createdAt
+      - name: sortOrder
+        in: query
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: universeId
+        in: query
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: A paginated list of races
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RaceListResponse'
+      '401':
+        description: Unauthorized
+
+/{id}:
+  get:
+    tags:
+      - Races
+    summary: Get a race by ID
+    description: Retrieves a single race by its UUID, including its universe and ethnic groups.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Race retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RaceResponse'
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  put:
+    tags:
+      - Races
+    summary: Update a race
+    description: Updates an existing race by its ID.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/RaceUpdate'
+    responses:
+      '200':
+        description: Race updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RaceResponse'
+      '400':
+        description: Validation error
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found
+
+  delete:
+    tags:
+      - Races
+    summary: Delete a race
+    description: Deletes a race by its ID.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Race deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+      '404':
+        description: Not found

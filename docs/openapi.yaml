@@ -41,3 +41,7 @@ paths:
     $ref: './maps/paths.yaml#/~1{id}~1svg'
   /maps/{id}/svg/{mappingId}:
     $ref: './maps/paths.yaml#/~1{id}~1svg~1{mappingId}'
+  /races:
+    $ref: './races/paths.yaml#/~1'
+  /races/{id}:
+    $ref: './races/paths.yaml#/~1{id}'
