@@ -5,50 +5,70 @@ import { UniverseRepository } from "@/entities/universe/universe.repository";
 const universeRepository = new UniverseRepository();
 
 /**
+ * Type Guard to safely narrow 'any' (like req.body) to a record.
+ * This prevents the "Unsafe member access" lint error.
+ */
+const isRecord = (val: unknown): val is Record<string, unknown> =>
+  typeof val === "object" && val !== null;
+
+/**
+ * Simple helper to ensure a value is a string without using 'as'.
+ */
+const asString = (val: unknown): string | undefined =>
+  typeof val === "string" ? val : undefined;
+
+/**
  * Middleware to validate that the authenticated user owns the specified universe.
- * Looks for universeId in params, body, or x-universe-id header.
  */
 export const validateUniverseOwnership = async (
   req: Request,
   _res: Response,
   next: NextFunction,
 ) => {
-  const user = req.user;
+  const { user } = req;
 
   if (!user) {
-    next(new ForbiddenError("User not authenticated"));
-    return;
+    next(new ForbiddenError("User not authenticated")); return;
   }
 
-  const universeId =
-    req.params.universeId ||
-    req.body.universeId ||
-    req.headers["x-universe-id"];
+  // 1. Resolve the header (handling potential string[])
+  const rawHeader = req.headers["x-universe-id"];
+  const headerValue = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
 
-  if (!universeId || typeof universeId !== "string") {
-    next(new ForbiddenError("Universe ID is required for this action"));
-    return;
+  // 2. Resolve the body safely. 
+  // By checking isRecord, req.body is narrowed from 'any' to 'Record<string, unknown>'
+  const body = isRecord(req.body) ? req.body : {};
+
+  // 3. Use Nullish Coalescing for the ID lookup chain.
+  // This satisfies 'prefer-nullish-coalescing' and 'no-unsafe-assignment'.
+  const universeId =
+    asString(req.params.universeId) ??
+    asString(body.universeId) ??
+    asString(headerValue);
+
+  if (!universeId) {
+    next(new ForbiddenError("Universe ID is required for this action")); return;
   }
 
   try {
-    const universeResult = await universeRepository.findOne(universeId);
-    const universe = universeResult.success ? universeResult.data : null;
-
-    if (!universe) {
-      next(new NotFoundError("Universe", universeId));
-      return;
-    }
+    const universe = await universeRepository.findOne(universeId);
 
     if (universe.userId !== user.id) {
-      next(new ForbiddenError("You do not have ownership of this universe"));
-      return;
+      next(new ForbiddenError("You do not have ownership of this universe")); return;
     }
 
-    // Attach universe to request for later use
-    (req as Request & { universe: unknown }).universe = universe;
+    // req.universe is already typed in your global d.ts, so this is safe.
+    req.universe = universe;
 
-    next();
+    next(); return;
   } catch (error) {
-    next(error);
+    // Safely check error message without 'any' access
+    const errorMessage = error instanceof Error ? error.message : "";
+
+    next(
+      errorMessage.includes("not found")
+        ? new NotFoundError("Universe", universeId)
+        : error,
+    ); return;
   }
 };

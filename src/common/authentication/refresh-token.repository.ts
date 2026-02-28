@@ -1,5 +1,4 @@
 import { desc, eq, inArray, lt } from "drizzle-orm";
-import type { Result } from "@/common/common.types";
 import { NotFoundError } from "@/common/error.types";
 import db from "@/db/connection";
 import type { CreateRefreshToken, RefreshToken } from "./authentication.types";
@@ -14,9 +13,7 @@ export class RefreshTokenRepository {
     return result;
   }
 
-  async findByToken(
-    token: string,
-  ): Promise<Result<RefreshToken, NotFoundError>> {
+  async findByToken(token: string): Promise<RefreshToken> {
     const result = await db
       .select()
       .from(refreshTokens)
@@ -25,16 +22,10 @@ export class RefreshTokenRepository {
 
     const data = result[0];
     if (!data) {
-      return {
-        success: false,
-        error: new NotFoundError("Refresh token"),
-      };
+      throw new NotFoundError("Refresh token");
     }
 
-    return {
-      success: true,
-      data,
-    };
+    return data;
   }
 
   async findByUserId(userId: string): Promise<RefreshToken[]> {
@@ -75,14 +66,12 @@ export class RefreshTokenRepository {
     userId: string,
     keepCount: number,
   ): Promise<void> {
-    // Get all tokens for user, ordered by creation date (newest first)
     const userTokens = await db
       .select()
       .from(refreshTokens)
       .where(eq(refreshTokens.userId, userId))
       .orderBy(desc(refreshTokens.createdAt));
 
-    // If user has more tokens than allowed, delete the oldest ones
     if (userTokens.length > keepCount) {
       const tokensToDelete = userTokens.slice(keepCount);
       const tokenIds = tokensToDelete.map((token: RefreshToken) => token.id);
@@ -95,20 +84,16 @@ export class RefreshTokenRepository {
     }
   }
 
+  /**
+   * Returns false if the token doesn't exist, is revoked, or is expired.
+   * Uses a try/catch instead of Result so findByToken can throw normally.
+   */
   async isTokenValid(token: string): Promise<boolean> {
-    const result = await this.findByToken(token);
-
-    if (!result.success) {
+    try {
+      const refreshToken = await this.findByToken(token);
+      return !refreshToken.isRevoked && refreshToken.expiresAt >= new Date();
+    } catch {
       return false;
     }
-
-    const refreshToken = result.data;
-
-    // Check if token is revoked or expired
-    if (refreshToken.isRevoked || refreshToken.expiresAt < new Date()) {
-      return false;
-    }
-
-    return true;
   }
 }

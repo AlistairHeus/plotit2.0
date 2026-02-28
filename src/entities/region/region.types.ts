@@ -58,10 +58,10 @@ export interface Region {
   features: RegionFeatureType[];
   planetId: string | null;
   area: number | null;
-  boundaries: unknown | null; // Json
+  boundaries: unknown; // Json (null is included in unknown)
   capital: string | null;
   coastlineLength: number | null;
-  coordinates: unknown | null; // Json
+  coordinates: unknown; // Json (null is included in unknown)
   culture: string | null;
   elevation: number | null;
   government: string | null;

@@ -30,9 +30,10 @@ router.post(
 );
 
 // GET /api/auth/verify
+const authMiddleware = authenticateToken();
 router.get(
   "/verify",
-  authenticateToken(),
+  authMiddleware,
   asyncHandler((req, res) => controller.verify(req, res)),
 );
 

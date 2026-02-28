@@ -15,55 +15,28 @@ export class UniverseService {
   }
 
   async createUniverse(data: CreateUniverse): Promise<Universe> {
-    const result = await this.universeRepository.create(data);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.universeRepository.create(data);
   }
 
   async getUniverses(
     queryParams: UniverseQueryParams,
   ): Promise<PaginatedResponse<Universe>> {
-    const result =
-      await this.universeRepository.findAllWithRelations(queryParams);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.universeRepository.findAllWithRelations(queryParams);
   }
 
   async getUniverseById(id: string): Promise<Universe | null> {
-    const result = await this.universeRepository.findOneWithRelations(id);
-
-    if (!result.success) {
+    try {
+      return await this.universeRepository.findOneWithRelations(id);
+    } catch {
       return null;
     }
-
-    return result.data;
   }
 
   async updateUniverse(id: string, data: UpdateUniverse): Promise<Universe> {
-    const result = await this.universeRepository.update(id, data);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.universeRepository.update(id, data);
   }
 
-  async deleteUniverse(id: string) {
-    const result = await this.universeRepository.delete(id);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+  async deleteUniverse(id: string): Promise<boolean> {
+    return await this.universeRepository.delete(id);
   }
 }

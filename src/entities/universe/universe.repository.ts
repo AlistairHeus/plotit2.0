@@ -1,6 +1,4 @@
-import { eq, type SQL } from "drizzle-orm";
 import { BaseRepository } from "@/common/base.repository";
-import type { Result } from "@/common/common.types";
 import { DatabaseError } from "@/common/error.types";
 import { paginate } from "@/common/pagination/pagination.service";
 import type {
@@ -9,14 +7,13 @@ import type {
 } from "@/common/pagination/pagination.types";
 import db from "@/db/connection";
 import { universes } from "@/entities/universe/universe.schema";
-import type { z } from "zod";
 import type {
   CreateUniverse,
   Universe,
   UniverseQueryParams,
-  UniverseWithRelations,
-  UpdateUniverse,
+  UniverseWithRelations
 } from "@/entities/universe/universe.types";
+import { eq, type SQL } from "drizzle-orm";
 import { selectUniverseSchema } from "./universe.validation";
 
 export class UniverseRepository extends BaseRepository<
@@ -25,11 +22,13 @@ export class UniverseRepository extends BaseRepository<
   UniverseQueryParams
 > {
   protected table = universes;
-  protected selectSchema = selectUniverseSchema as unknown as z.ZodType<Universe>;
+  // selectUniverseSchema is a ZodObject narrower than ZodType<Universe>;
+  // widen through unknown to satisfy the abstract base's { parse(data: unknown): TEntity } contract.
+  protected selectSchema = selectUniverseSchema as unknown as { parse(data: unknown): Universe };
 
   protected paginationConfig: PaginationConfig<typeof universes> = {
     table: universes,
-    searchColumns: [universes.name], // Add more searchable columns as needed
+    searchColumns: [universes.name],
     sortableColumns: {
       id: universes.id,
       name: universes.name,
@@ -42,23 +41,16 @@ export class UniverseRepository extends BaseRepository<
   protected buildWhereConditions(queryParams: UniverseQueryParams): SQL[] {
     const whereConditions: SQL[] = [];
 
-    const filters = queryParams;
-
-    if (filters.name) {
-      whereConditions.push(eq(universes.name, filters.name));
+    if (typeof queryParams.name === "string") {
+      whereConditions.push(eq(universes.name, queryParams.name));
     }
-
-    // Add more filters as needed
-    // if (filters.institutionId) {
-    //   whereConditions.push(eq(universes.institutionId, filters.institutionId));
-    // }
 
     return whereConditions;
   }
 
   async findAllWithRelations(
     queryParams: UniverseQueryParams,
-  ): Promise<Result<PaginatedResponse<UniverseWithRelations>, DatabaseError>> {
+  ): Promise<PaginatedResponse<UniverseWithRelations>> {
     const dynamicConditions = this.buildWhereConditions(queryParams);
 
     const configWithConditions = {
@@ -80,7 +72,7 @@ export class UniverseRepository extends BaseRepository<
       limit: number;
       offset: number;
     }) => {
-      const results = await db.query.universes.findMany({
+      return await db.query.universes.findMany({
         with: {
           characters: {
             with: {
@@ -97,20 +89,22 @@ export class UniverseRepository extends BaseRepository<
         limit,
         offset,
       });
-
-      return results;
     };
 
-    return await paginate<UniverseWithRelations>(
+    const result = await paginate<UniverseWithRelations>(
       configWithConditions,
       queryParams,
       queryBuilder,
     );
+
+    if (!result.success) {
+      throw result.error;
+    }
+
+    return result.data;
   }
 
-  async findOneWithRelations(
-    id: string,
-  ): Promise<Result<UniverseWithRelations, DatabaseError>> {
+  async findOneWithRelations(id: string): Promise<UniverseWithRelations> {
     const result = await db.query.universes.findFirst({
       where: eq(universes.id, id),
       with: {
@@ -127,15 +121,9 @@ export class UniverseRepository extends BaseRepository<
     });
 
     if (!result) {
-      return {
-        success: false,
-        error: new DatabaseError("Universe not found"),
-      };
+      throw new DatabaseError("Universe not found");
     }
 
-    return {
-      success: true,
-      data: result,
-    };
+    return result;
   }
 }

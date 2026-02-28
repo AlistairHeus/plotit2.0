@@ -34,11 +34,9 @@ export class AuthenticationService {
     const safeUser = await this.getUserSafe(user.id);
     await this.updateUserLoginActivity(user.id);
 
-    // Generate both access and refresh tokens
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user.id);
 
-    // Clean up old tokens for this user
     await this.refreshTokenRepository.deleteOldestTokensForUser(
       user.id,
       AUTH_CONSTANTS.MAX_REFRESH_TOKENS_PER_USER,
@@ -55,35 +53,17 @@ export class AuthenticationService {
   async refreshAccessTokenSecure(
     refreshToken: string,
   ): Promise<SecureRefreshTokenResponse> {
-    // Validate refresh token
-    const isValid =
-      await this.refreshTokenRepository.isTokenValid(refreshToken);
+    const isValid = await this.refreshTokenRepository.isTokenValid(refreshToken);
     if (!isValid) {
       throw new Error(AUTH_ERRORS.REFRESH_TOKEN_INVALID);
     }
 
-    // Get refresh token from database
-    const tokenResult =
-      await this.refreshTokenRepository.findByToken(refreshToken);
-    if (!tokenResult.success) {
-      throw new Error(AUTH_ERRORS.REFRESH_TOKEN_INVALID);
-    }
+    const tokenData = await this.refreshTokenRepository.findByToken(refreshToken);
+    const user = await this.userRepository.findOne(tokenData.userId);
 
-    const tokenData = tokenResult.data;
-
-    // Get user data by ID using the proper repository method
-    const userResult = await this.userRepository.findOne(tokenData.userId);
-    if (!userResult.success) {
-      throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
-    }
-
-    const user = userResult.data;
-
-    // Generate new tokens
     const newAccessToken = this.generateAccessToken(user);
     const newRefreshToken = await this.generateRefreshToken(user.id);
 
-    // Revoke old refresh token
     await this.refreshTokenRepository.revokeToken(refreshToken);
 
     return {
@@ -92,30 +72,20 @@ export class AuthenticationService {
     };
   }
 
-  // Logout - revoke refresh token
   async logout(refreshToken?: string): Promise<void> {
     if (refreshToken) {
       await this.refreshTokenRepository.revokeToken(refreshToken);
     }
   }
 
-  // Logout from all devices
   async logoutAll(userId: string): Promise<void> {
     await this.refreshTokenRepository.revokeAllUserTokens(userId);
   }
 
   private async validateUserCredentials(email: string, password: string) {
-    const user = await this.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
     await this.verifyPassword(password, user.password);
     return user;
-  }
-
-  private async findUserByEmail(email: string) {
-    const result = await this.userRepository.findByEmail(email);
-    if (!result.success) {
-      throw result.error;
-    }
-    return result.data;
   }
 
   private async verifyPassword(plainPassword: string, hashedPassword: string) {
@@ -126,13 +96,8 @@ export class AuthenticationService {
   }
 
   public async getUserSafe(userId: string) {
-    const result = await this.userRepository.findOne(userId);
-    if (!result.success) {
-      throw new Error(AUTH_ERRORS.USER_NOT_FOUND);
-    }
-    const user = result.data;
+    const user = await this.userRepository.findOne(userId);
 
-    // Explicitly pick fields instead of destructuring with unused vars
     return {
       id: user.id,
       email: user.email,

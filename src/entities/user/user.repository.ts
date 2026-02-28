@@ -1,5 +1,4 @@
 import { BaseRepository } from "@/common/base.repository";
-import type { Result } from "@/common/common.types";
 import { NotFoundError } from "@/common/error.types";
 import type { PaginationConfig } from "@/common/pagination/pagination.types";
 import db from "@/db/connection";
@@ -36,30 +35,22 @@ export class UserRepository extends BaseRepository<
   };
 
   protected buildWhereConditions(): SQL[] {
-    const whereConditions: SQL[] = [];
-
-    return whereConditions;
+    return [];
   }
 
-  async findByEmail(email: string): Promise<Result<User, NotFoundError>> {
+  async findByEmail(email: string): Promise<User> {
     const result = await db.query.users.findFirst({
       where: eq(users.email, email),
     });
 
     if (!result) {
-      return {
-        success: false,
-        error: new NotFoundError("User"),
-      };
+      throw new NotFoundError("User", email);
     }
 
-    return {
-      success: true,
-      data: result,
-    };
+    return result;
   }
 
-  async updateLastLogin(userId: string) {
+  async updateLastLogin(userId: string): Promise<void> {
     await db
       .update(users)
       .set({ lastLoginAt: new Date() })

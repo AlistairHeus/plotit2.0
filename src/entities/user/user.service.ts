@@ -20,14 +20,7 @@ export class UserService {
     if (userData.password) {
       userData.password = await bcrypt.hash(userData.password, 10);
     }
-
-    const result = await this.userRepository.create(userData);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.userRepository.create(userData);
   }
 
   async updateUser(id: string, data: UpdateUser): Promise<User> {
@@ -35,24 +28,11 @@ export class UserService {
     if (userData.password) {
       userData.password = await bcrypt.hash(userData.password, 10);
     }
-
-    const result = await this.userRepository.update(id, userData);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.userRepository.update(id, userData);
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    const result = await this.userRepository.delete(id);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.userRepository.delete(id);
   }
 
   async verifyPassword(
@@ -65,22 +45,14 @@ export class UserService {
   async getUsers(
     queryParams: UserQueryParams,
   ): Promise<PaginatedResponse<User>> {
-    const result = await this.userRepository.findAll(queryParams);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    return result.data;
+    return await this.userRepository.findAll(queryParams);
   }
 
   async getUserById(id: string): Promise<User | null> {
-    const result = await this.userRepository.findOne(id);
-
-    if (!result.success) {
+    try {
+      return await this.userRepository.findOne(id);
+    } catch {
       return null;
     }
-
-    return result.data;
   }
 }

@@ -13,7 +13,7 @@ export interface Construct {
   universeId: string;
   createdAt: Date;
   updatedAt: Date;
-  properties: any | null;
+  properties: Record<string, unknown> | null;
   rarity: string | null;
   tags: string[];
   avatarUrl: string | null;

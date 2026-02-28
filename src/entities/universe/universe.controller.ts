@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { paramsSchema } from "@/common/common.validation";
+import { NotFoundError, UnauthorizedError } from "@/common/error.types";
 import type { UniverseService } from "@/entities/universe/universe.service";
 import {
   createUniverseSchema,
@@ -25,10 +26,7 @@ export class UniverseController {
 
     // Safety check; ensuring token middleware ran
     if (!req.user?.id) {
-      res
-        .status(401)
-        .json({ success: false, message: "Unauthorized execution" });
-      return;
+      throw new UnauthorizedError("Authentication required to create a universe");
     }
 
     const payload = { ...universeData, userId: req.user.id };
@@ -72,11 +70,7 @@ export class UniverseController {
     const universe = await this.universeService.getUniverseById(universeId);
 
     if (!universe) {
-      res.status(404).json({
-        success: false,
-        message: "Universe not found",
-      });
-      return;
+      throw new NotFoundError("Universe", universeId);
     }
 
     res.status(200).json({

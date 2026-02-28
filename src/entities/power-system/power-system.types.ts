@@ -28,7 +28,7 @@ export interface PowerSubSystem {
   description: string | null;
   rank: number;
   isActive: boolean;
-  requirements: any | null;
+  requirements: Record<string, unknown> | null;
   icon: string | null;
   color: string | null;
   createdAt: Date;
@@ -42,7 +42,7 @@ export interface PowerCategory {
   description: string | null;
   rank: number;
   isActive: boolean;
-  requirements: any | null;
+  requirements: Record<string, unknown> | null;
   icon: string | null;
   color: string | null;
   createdAt: Date;
@@ -56,13 +56,13 @@ export interface PowerAbility {
   description: string | null;
   rank: number;
   isActive: boolean;
-  requirements: any | null;
+  requirements: Record<string, unknown> | null;
   icon: string | null;
   color: string | null;
   cooldown: number | null;
   manaCost: number | null;
-  damage: any | null;
-  effects: any | null;
+  damage: Record<string, unknown> | null;
+  effects: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 }

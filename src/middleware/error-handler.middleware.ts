@@ -11,6 +11,7 @@ import {
   ValidationError,
 } from "@/common/error.types";
 import { log } from "@/utils/logger";
+import { ZodError } from "zod";
 
 // Define PostgresError interface to properly type Postgres errors
 interface PostgresError extends Error {
@@ -89,6 +90,17 @@ export const globalErrorHandler = (
   }
 
   res.status(errorDetails.statusCode).json(errorResponse);
+
+  // Non-operational errors leave the process in an undefined state.
+  // Respond first, then exit so the process manager (PM2 / k8s) can restart cleanly.
+  if (error instanceof AppError && !error.isOperational) {
+    log.error("Non-operational error — initiating graceful shutdown", {
+      requestId,
+      message: error.message,
+      stack: error.stack,
+    });
+    setImmediate(() => process.exit(1));
+  }
 };
 
 /**
@@ -122,26 +134,15 @@ function processError(error: Error): {
     if (error instanceof ValidationError) {
       validationErrors = error.validationErrors;
     }
-  } else if (error.name === "ZodError") {
-    // Handle Zod validation errors that weren't caught by middleware
-    const zodError = error as {
-      errors: {
-        path: (string | number)[];
-        message: string;
-        code: string;
-        received: unknown;
-      }[];
-    };
-    statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
-    category = ERROR_CATEGORY.VALIDATION;
-    code = "VALIDATION_ERROR";
-    message = "Request validation failed";
-    validationErrors = zodError.errors.map((err) => ({
-      field: err.path.join(".") || "unknown",
-      message: err.message,
-      code: err.code,
-      value: err.received,
-    }));
+  } else if (error instanceof ZodError) {
+    // Handle Zod validation errors that weren't caught by middleware.
+    // Using instanceof gives TypeScript proper narrowing, no cast needed.
+    const zodValidationError = ValidationError.fromZodError(error);
+    statusCode = zodValidationError.statusCode;
+    category = zodValidationError.category;
+    code = zodValidationError.code ?? "VALIDATION_ERROR";
+    message = zodValidationError.message;
+    validationErrors = zodValidationError.validationErrors;
   } else if (isPostgresError(error)) {
     // Handle Postgres-specific errors using error codes
     const errorInfo = {
@@ -240,12 +241,12 @@ function handlePostgresError(
 
       // Extract table and constraint information for better error messages
       const referencedTable =
-        constraintDetails.table_name?.toString() || "unknown";
+        constraintDetails.table_name?.toString() ?? "unknown";
       const constraintName =
-        constraintDetails.constraint_name?.toString() || "unknown";
+        constraintDetails.constraint_name?.toString() ?? "unknown";
 
       // Create a more specific error message
-      const detailStr = String(constraintDetails.detail ?? "");
+      const detailStr = String(constraintDetails.detail);
       if (detailStr.includes("is not present")) {
         // Extract the key and value from the error detail
         const keyMatch = FK_ERROR_REGEX.exec(detailStr);
@@ -254,8 +255,8 @@ function handlePostgresError(
           // Use the new ForeignKeyConstraintError for consistent error messages
           const fkError = new ForeignKeyConstraintError(
             referencedTable,
-            key || "unknown",
-            value || "unknown",
+            key ?? "unknown",
+            value ?? "unknown",
             constraintDetails,
           );
           errorInfo.message = fkError.message;
@@ -303,52 +304,52 @@ function handlePostgresError(
 }
 
 /**
- * 404 handler for unmatched routes
+ * 404 handler for unmatched routes.
+ * Delegates to globalErrorHandler via next() so logging, requestId,
+ * and the response shape are all handled in one place.
  */
-export const notFoundHandler = (req: Request, res: Response): void => {
-  const requestId =
-    typeof req.headers["x-request-id"] === "string" ? req.headers["x-request-id"] : generateRequestId();
-
-  log.warn("Route not found", {
-    requestId,
-    method: req.method,
-    path: req.path,
-    ip: req.ip,
+export const notFoundHandler = (req: Request, _res: Response, next: NextFunction): void => {
+  const routeNotFound = new AppError({
+    category: ERROR_CATEGORY.NOT_FOUND,
+    code: "ROUTE_NOT_FOUND",
+    message: `Cannot ${req.method} ${req.path}`,
+    statusCode: HTTP_STATUS_CODE.NOT_FOUND,
+    isOperational: true,
   });
-
-  const errorResponse: ErrorResponse = {
-    success: false,
-    error: {
-      code: "ROUTE_NOT_FOUND",
-      message: `Route ${req.method} ${req.path} not found`,
-      category: ERROR_CATEGORY.NOT_FOUND,
-      timestamp: new Date().toISOString(),
-      requestId,
-    },
-  };
-
-  res.status(HTTP_STATUS_CODE.NOT_FOUND).json(errorResponse);
+  next(routeNotFound);
 };
 
 /**
  * Generate a simple request ID for tracking
  */
 function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+  return `req_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`;
 }
 
 /**
  * Check if an error is a Postgres error
  */
 function isPostgresError(error: unknown): error is PostgresError {
-  if (!error || typeof error !== "object") return false;
-  const pgError = error as Record<string, unknown>;
-  return (
-    pgError.name === "PostgresError" ||
-    (typeof pgError.code === "string" &&
-      (Object.values(PG_ERROR_CODES).includes(pgError.code as keyof typeof PG_ERROR_CODES) ||
-        pgError.code.startsWith("23")))
-  );
+  // 1. Basic type check to allow property access via 'in'
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+
+  // 2. Validate 'name' safely
+  const hasPostgresName =
+    "name" in error &&
+    typeof error.name === "string" &&
+    error.name === "PostgresError";
+
+  // 3. Validate 'code' safely
+  const hasPostgresCode =
+    "code" in error &&
+    typeof error.code === "string" &&
+    (Object.values(PG_ERROR_CODES).includes(error.code) || error.code.startsWith("23"));
+
+  // 4. Combine. Because we checked 'typeof error.code === "string"',
+  // TypeScript knows 'error.code' is a string during the .includes() and .startsWith() calls.
+  return hasPostgresName || hasPostgresCode;
 }
 
 /**
