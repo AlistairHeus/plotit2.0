@@ -303,9 +303,6 @@ RegionListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/Region'
+          type: array
+          items:
+            $ref: '#/Region'

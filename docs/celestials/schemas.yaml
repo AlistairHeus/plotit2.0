@@ -117,12 +117,9 @@ GalaxyListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/Galaxy'
+          type: array
+          items:
+            $ref: '#/Galaxy'
 
 # --- SOLAR SYSTEM ---
 SolarSystem:
@@ -224,12 +221,9 @@ SolarSystemListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/SolarSystem'
+          type: array
+          items:
+            $ref: '#/SolarSystem'
 
 # --- STAR ---
 Star:
@@ -341,12 +335,9 @@ StarListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/Star'
+          type: array
+          items:
+            $ref: '#/Star'
 
 # --- PLANET ---
 Planet:
@@ -476,9 +467,6 @@ PlanetListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/Planet'
+          type: array
+          items:
+            $ref: '#/Planet'

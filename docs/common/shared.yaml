@@ -26,27 +26,21 @@ components:
           example: true
         message:
           type: string
-        data:
+        pagination:
           type: object
           properties:
-            data:
-              type: array
-              items: {}
-            pagination:
-              type: object
-              properties:
-                currentPage:
-                  type: integer
-                totalPages:
-                  type: integer
-                totalItems:
-                  type: integer
-                itemsPerPage:
-                  type: integer
-                hasNextPage:
-                  type: boolean
-                hasPreviousPage:
-                  type: boolean
+            currentPage:
+              type: integer
+            totalPages:
+              type: integer
+            totalItems:
+              type: integer
+            itemsPerPage:
+              type: integer
+            hasNextPage:
+              type: boolean
+            hasPreviousPage:
+              type: boolean
 
   parameters:
     page:

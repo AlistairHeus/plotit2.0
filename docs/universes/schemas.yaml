@@ -68,9 +68,6 @@ UniverseListResponse:
     - type: object
       properties:
         data:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/Universe'
+          type: array
+          items:
+            $ref: '#/Universe'
