@@ -29,7 +29,7 @@ export class UniverseService {
   }
 
   async getUniverseById(id: string): Promise<Universe | null> {
-    const result = await this.universeRepository.findOne(id);
+    const result = await this.universeRepository.findOneWithRelations(id);
     if (!result.success) return null;
     return result.data;
   }

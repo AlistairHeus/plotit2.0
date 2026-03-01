@@ -184,14 +184,66 @@ export class UniverseRepository {
         return await db.query.universes.findMany({
           with: {
             characters: {
-              with: {
-                race: true,
-                ethnicGroup: true,
+              columns: {
+                id: true,
               },
             },
-            regions: true,
-            maps: true,
-            races: true,
+            regions: {
+              columns: {
+                id: true,
+              },
+            },
+            maps: {
+              columns: {
+                id: true,
+              },
+            },
+            races: {
+              columns: {
+                id: true,
+              },
+            },
+            constructs: {
+              columns: {
+                id: true,
+              },
+            },
+            galaxies: {
+              columns: {
+                id: true,
+              },
+            },
+            religions: {
+              columns: {
+                id: true,
+              },
+            },
+            rootOfPower: {
+              columns: {
+                id: true,
+              },
+              with: {
+                powerSystems: {
+                  columns: {
+                    id: true,
+                  },
+                  with: {
+                    subSystems: {
+                      columns: {
+                        id: true,
+                      },
+                      with: {
+                        categories: {
+                          columns: {
+                            id: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           where,
           orderBy: [orderBy],
@@ -247,14 +299,66 @@ export class UniverseRepository {
         where: eq(universes.id, id),
         with: {
           characters: {
-            with: {
-              race: true,
-              ethnicGroup: true,
+            columns: {
+              id: true,
             },
           },
-          regions: true,
-          maps: true,
-          races: true,
+          regions: {
+            columns: {
+              id: true,
+            },
+          },
+          maps: {
+            columns: {
+              id: true,
+            },
+          },
+          races: {
+            columns: {
+              id: true,
+            },
+          },
+          constructs: {
+            columns: {
+              id: true,
+            },
+          },
+          galaxies: {
+            columns: {
+              id: true,
+            },
+          },
+          religions: {
+            columns: {
+              id: true,
+            },
+          },
+          rootOfPower: {
+            columns: {
+              id: true,
+            },
+            with: {
+              powerSystems: {
+                columns: {
+                  id: true,
+                },
+                with: {
+                  subSystems: {
+                    columns: {
+                      id: true,
+                    },
+                    with: {
+                      categories: {
+                        columns: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
 

@@ -24,7 +24,7 @@ router.get("/", asyncHandler(mapController.getAll.bind(mapController)));
 
 router.get("/:id", asyncHandler(mapController.getById.bind(mapController)));
 
-router.put(
+router.patch(
     "/:id",
     upload.single("image"),
     asyncHandler(mapController.update.bind(mapController)),

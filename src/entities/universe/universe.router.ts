@@ -32,8 +32,8 @@ router.get(
   asyncHandler((req, res) => controller.getUniverseById(req, res)),
 );
 
-// PUT /api/universes/:id
-router.put(
+// PATCH /api/universes/:id
+router.patch(
   "/:id",
   authenticateToken,
   asyncHandler((req, res) => controller.updateUniverse(req, res)),

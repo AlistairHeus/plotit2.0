@@ -33,8 +33,8 @@ router.get(
     asyncHandler((req, res) => controller.getRegionById(req, res)),
 );
 
-// PUT /api/regions/:id
-router.put(
+// PATCH /api/regions/:id
+router.patch(
     "/:id",
     authenticateToken,
     asyncHandler((req, res) => controller.updateRegion(req, res)),

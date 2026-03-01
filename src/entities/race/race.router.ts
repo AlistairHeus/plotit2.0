@@ -21,8 +21,8 @@ router.get("/", authenticateToken, asyncHandler((req, res) => controller.getRace
 // GET    /api/races/:id
 router.get("/:id", authenticateToken, asyncHandler((req, res) => controller.getRaceById(req, res)));
 
-// PUT    /api/races/:id
-router.put("/:id", authenticateToken, asyncHandler((req, res) => controller.updateRace(req, res)));
+// PATCH    /api/races/:id
+router.patch("/:id", authenticateToken, asyncHandler((req, res) => controller.updateRace(req, res)));
 
 // DELETE /api/races/:id
 router.delete("/:id", authenticateToken, asyncHandler((req, res) => controller.deleteRace(req, res)));
@@ -37,8 +37,8 @@ router.get("/:id/ethnic-groups", authenticateToken, asyncHandler((req, res) => c
 // GET    /api/races/:id/ethnic-groups/:groupId
 router.get("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.getEthnicGroupById(req, res)));
 
-// PUT    /api/races/:id/ethnic-groups/:groupId
-router.put("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.updateEthnicGroup(req, res)));
+// PATCH    /api/races/:id/ethnic-groups/:groupId
+router.patch("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.updateEthnicGroup(req, res)));
 
 // DELETE /api/races/:id/ethnic-groups/:groupId
 router.delete("/:id/ethnic-groups/:groupId", authenticateToken, asyncHandler((req, res) => controller.deleteEthnicGroup(req, res)));

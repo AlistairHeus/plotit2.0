@@ -13,11 +13,11 @@
 [x] **SvgMapping**
 
 [x] **Race**
-[ ] **Ethnic Group**
 
+[x] **Ethnic Group**
 
+[ ] **Celestial**
 [ ] **Religion**
-
 [ ] **Construct**
 [ ] **Power System**
 [ ] **Power Subsystem**

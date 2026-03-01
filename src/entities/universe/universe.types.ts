@@ -5,8 +5,11 @@ import {
 import { z } from "zod";
 import type { Character } from "../character/character.types";
 import type { FantasyMap } from "../map/map.types";
-import type { EthnicGroup, Race } from "../race/race.types";
+import type { Race } from "../race/race.types";
 import type { Region } from "../region/region.types";
+import type { Construct } from "../construct/construct.types";
+import type { Galaxy } from "../celestial/celestial.types";
+import type { Religion } from "../religion/religion.types";
 
 export interface Universe {
   id: string;
@@ -18,10 +21,25 @@ export interface Universe {
 }
 
 export interface UniverseWithRelations extends Universe {
-  characters: (Character & { race: Race | null; ethnicGroup: EthnicGroup | null })[];
-  regions: Region[];
-  maps: FantasyMap[];
-  races: Race[];
+  characters: Pick<Character, 'id'>[];
+  regions: Pick<Region, 'id'>[];
+  maps: Pick<FantasyMap, 'id'>[];
+  races: Pick<Race, 'id'>[];
+  constructs: Pick<Construct, 'id'>[];
+  galaxies: Pick<Galaxy, 'id'>[];
+  religions: Pick<Religion, 'id'>[];
+  rootOfPower: {
+    id: string;
+    powerSystems: {
+      id: string;
+      subSystems: {
+        id: string;
+        categories: {
+          id: string;
+        }[];
+      }[];
+    }[];
+  }[];
 }
 
 export interface CreateUniverse {

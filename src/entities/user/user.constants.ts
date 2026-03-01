@@ -4,7 +4,6 @@ export const sortableUserFields = [
   "email",
   "firstName",
   "lastName",
-  "role",
   "createdAt",
   "updatedAt",
   "lastLoginAt",
