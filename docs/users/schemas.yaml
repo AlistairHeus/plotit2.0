@@ -83,6 +83,9 @@ UserListResponse:
     - type: object
       properties:
         data:
-          type: array
-          items:
-            $ref: '#/User'
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/User'

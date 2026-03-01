@@ -49,3 +49,19 @@ paths:
     $ref: './races/paths.yaml#/~1{id}~1ethnic-groups'
   /races/{id}/ethnic-groups/{groupId}:
     $ref: './races/paths.yaml#/~1{id}~1ethnic-groups~1{groupId}'
+  /celestials/galaxies:
+    $ref: './celestials/paths.yaml#/~1galaxies'
+  /celestials/galaxies/{id}:
+    $ref: './celestials/paths.yaml#/~1galaxies~1{id}'
+  /celestials/solar-systems:
+    $ref: './celestials/paths.yaml#/~1solar-systems'
+  /celestials/solar-systems/{id}:
+    $ref: './celestials/paths.yaml#/~1solar-systems~1{id}'
+  /celestials/stars:
+    $ref: './celestials/paths.yaml#/~1stars'
+  /celestials/stars/{id}:
+    $ref: './celestials/paths.yaml#/~1stars~1{id}'
+  /celestials/planets:
+    $ref: './celestials/paths.yaml#/~1planets'
+  /celestials/planets/{id}:
+    $ref: './celestials/paths.yaml#/~1planets~1{id}'

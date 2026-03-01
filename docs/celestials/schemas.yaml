@@ -1,0 +1,484 @@
+# --- GALAXY ---
+Galaxy:
+  type: object
+  required:
+    - id
+    - universeId
+    - name
+    - type
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    universeId:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [SPIRAL, BARRED_SPIRAL, ELLIPTICAL, IRREGULAR, LENTICULAR, RING, DWARF]
+    color:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+GalaxyCreate:
+  type: object
+  required:
+    - universeId
+    - name
+  properties:
+    universeId:
+      type: string
+      format: uuid
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [SPIRAL, BARRED_SPIRAL, ELLIPTICAL, IRREGULAR, LENTICULAR, RING, DWARF]
+    color:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+GalaxyUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [SPIRAL, BARRED_SPIRAL, ELLIPTICAL, IRREGULAR, LENTICULAR, RING, DWARF]
+    color:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+GalaxyResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    data:
+      $ref: '#/Galaxy'
+    message:
+      type: string
+
+GalaxyListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/Galaxy'
+
+# --- SOLAR SYSTEM ---
+SolarSystem:
+  type: object
+  required:
+    - id
+    - galaxyId
+    - name
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    galaxyId:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+SolarSystemCreate:
+  type: object
+  required:
+    - galaxyId
+    - name
+  properties:
+    galaxyId:
+      type: string
+      format: uuid
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+SolarSystemUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+SolarSystemResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    data:
+      $ref: '#/SolarSystem'
+    message:
+      type: string
+
+SolarSystemListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/SolarSystem'
+
+# --- STAR ---
+Star:
+  type: object
+  required:
+    - id
+    - systemId
+    - name
+    - type
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    systemId:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [HOT_BLUE_STAR, BLUE_WHITE_STAR, WHITE_STAR, YELLOW_WHITE_STAR, YELLOW_STAR, ORANGE_STAR, RED_STAR, LUMINOUS_RED_GIANT, SUPER_GIANT, WHITE_DWARF, NEUTRON_STAR, BLACK_HOLE, UNKNOWN]
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+StarCreate:
+  type: object
+  required:
+    - systemId
+    - name
+  properties:
+    systemId:
+      type: string
+      format: uuid
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [HOT_BLUE_STAR, BLUE_WHITE_STAR, WHITE_STAR, YELLOW_WHITE_STAR, YELLOW_STAR, ORANGE_STAR, RED_STAR, LUMINOUS_RED_GIANT, SUPER_GIANT, WHITE_DWARF, NEUTRON_STAR, BLACK_HOLE, UNKNOWN]
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+StarUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [HOT_BLUE_STAR, BLUE_WHITE_STAR, WHITE_STAR, YELLOW_WHITE_STAR, YELLOW_STAR, ORANGE_STAR, RED_STAR, LUMINOUS_RED_GIANT, SUPER_GIANT, WHITE_DWARF, NEUTRON_STAR, BLACK_HOLE, UNKNOWN]
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+StarResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    data:
+      $ref: '#/Star'
+    message:
+      type: string
+
+StarListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/Star'
+
+# --- PLANET ---
+Planet:
+  type: object
+  required:
+    - id
+    - systemId
+    - name
+    - isHabitable
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    systemId:
+      type: string
+      format: uuid
+    parentPlanetId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    color:
+      type: string
+      nullable: true
+    isHabitable:
+      type: boolean
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+PlanetCreate:
+  type: object
+  required:
+    - systemId
+    - name
+  properties:
+    systemId:
+      type: string
+      format: uuid
+    parentPlanetId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    color:
+      type: string
+      nullable: true
+    isHabitable:
+      type: boolean
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+PlanetUpdate:
+  type: object
+  properties:
+    parentPlanetId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+      minLength: 1
+    description:
+      type: string
+      nullable: true
+    color:
+      type: string
+      nullable: true
+    isHabitable:
+      type: boolean
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      nullable: true
+
+PlanetResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    data:
+      $ref: '#/Planet'
+    message:
+      type: string
+
+PlanetListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/Planet'

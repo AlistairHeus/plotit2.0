@@ -84,9 +84,12 @@ MapListResponse:
     - type: object
       properties:
         data:
-          type: array
-          items:
-            $ref: '#/Map'
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/Map'
 
 SvgMapping:
   type: object

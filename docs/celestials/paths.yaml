@@ -1,0 +1,383 @@
+/galaxies:
+  get:
+    summary: Get all galaxies
+    tags: [Galaxies]
+    security: [{bearerAuth: []}]
+    parameters:
+      - $ref: '../common/shared.yaml#/components/parameters/page'
+      - $ref: '../common/shared.yaml#/components/parameters/limit'
+      - $ref: '../common/shared.yaml#/components/parameters/sortBy'
+      - $ref: '../common/shared.yaml#/components/parameters/sortOrder'
+      - $ref: '../common/shared.yaml#/components/parameters/search'
+      - in: query
+        name: name
+        schema: {type: string}
+      - in: query
+        name: universeId
+        schema: {type: string, format: uuid}
+      - in: query
+        name: type
+        schema: {type: string, enum: [SPIRAL, BARRED_SPIRAL, ELLIPTICAL, IRREGULAR, LENTICULAR, RING, DWARF]}
+    responses:
+      '200':
+        description: A list of galaxies
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/GalaxyListResponse'}
+
+  post:
+    summary: Create a new galaxy
+    tags: [Galaxies]
+    security: [{bearerAuth: []}]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/GalaxyCreate'}
+    responses:
+      '201':
+        description: Galaxy created
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/GalaxyResponse'}
+
+/galaxies/{id}:
+  get:
+    summary: Get galaxy by ID
+    tags: [Galaxies]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200':
+        description: The galaxy
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/GalaxyResponse'}
+      '404': {description: Galaxy not found}
+
+  patch:
+    summary: Update a galaxy
+    tags: [Galaxies]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/GalaxyUpdate'}
+    responses:
+      '200':
+        description: Galaxy updated
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/GalaxyResponse'}
+      '404': {description: Galaxy not found}
+
+  delete:
+    summary: Delete a galaxy
+    tags: [Galaxies]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200': {description: Galaxy deleted}
+      '404': {description: Galaxy not found}
+
+/solar-systems:
+  get:
+    summary: Get all solar systems
+    tags: [Solar Systems]
+    security: [{bearerAuth: []}]
+    parameters:
+      - $ref: '../common/shared.yaml#/components/parameters/page'
+      - $ref: '../common/shared.yaml#/components/parameters/limit'
+      - $ref: '../common/shared.yaml#/components/parameters/sortBy'
+      - $ref: '../common/shared.yaml#/components/parameters/sortOrder'
+      - $ref: '../common/shared.yaml#/components/parameters/search'
+      - in: query
+        name: name
+        schema: {type: string}
+      - in: query
+        name: galaxyId
+        schema: {type: string, format: uuid}
+    responses:
+      '200':
+        description: A list of solar systems
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/SolarSystemListResponse'}
+
+  post:
+    summary: Create a new solar system
+    tags: [Solar Systems]
+    security: [{bearerAuth: []}]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/SolarSystemCreate'}
+    responses:
+      '201':
+        description: Solar system created
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
+
+/solar-systems/{id}:
+  get:
+    summary: Get solar system by ID
+    tags: [Solar Systems]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200':
+        description: The solar system
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
+      '404': {description: Solar system not found}
+
+  patch:
+    summary: Update a solar system
+    tags: [Solar Systems]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/SolarSystemUpdate'}
+    responses:
+      '200':
+        description: Solar system updated
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
+      '404': {description: Solar system not found}
+
+  delete:
+    summary: Delete a solar system
+    tags: [Solar Systems]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200': {description: Solar system deleted}
+      '404': {description: Solar system not found}
+
+/stars:
+  get:
+    summary: Get all stars
+    tags: [Stars]
+    security: [{bearerAuth: []}]
+    parameters:
+      - $ref: '../common/shared.yaml#/components/parameters/page'
+      - $ref: '../common/shared.yaml#/components/parameters/limit'
+      - $ref: '../common/shared.yaml#/components/parameters/sortBy'
+      - $ref: '../common/shared.yaml#/components/parameters/sortOrder'
+      - $ref: '../common/shared.yaml#/components/parameters/search'
+      - in: query
+        name: name
+        schema: {type: string}
+      - in: query
+        name: systemId
+        schema: {type: string, format: uuid}
+      - in: query
+        name: type
+        schema: {type: string, enum: [HOT_BLUE_STAR, BLUE_WHITE_STAR, WHITE_STAR, YELLOW_WHITE_STAR, YELLOW_STAR, ORANGE_STAR, RED_STAR, LUMINOUS_RED_GIANT, SUPER_GIANT, WHITE_DWARF, NEUTRON_STAR, BLACK_HOLE, UNKNOWN]}
+    responses:
+      '200':
+        description: A list of stars
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/StarListResponse'}
+
+  post:
+    summary: Create a new star
+    tags: [Stars]
+    security: [{bearerAuth: []}]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/StarCreate'}
+    responses:
+      '201':
+        description: Star created
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/StarResponse'}
+
+/stars/{id}:
+  get:
+    summary: Get star by ID
+    tags: [Stars]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200':
+        description: The star
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/StarResponse'}
+      '404': {description: Star not found}
+
+  patch:
+    summary: Update a star
+    tags: [Stars]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/StarUpdate'}
+    responses:
+      '200':
+        description: Star updated
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/StarResponse'}
+      '404': {description: Star not found}
+
+  delete:
+    summary: Delete a star
+    tags: [Stars]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200': {description: Star deleted}
+      '404': {description: Star not found}
+
+/planets:
+  get:
+    summary: Get all planets
+    tags: [Planets]
+    security: [{bearerAuth: []}]
+    parameters:
+      - $ref: '../common/shared.yaml#/components/parameters/page'
+      - $ref: '../common/shared.yaml#/components/parameters/limit'
+      - $ref: '../common/shared.yaml#/components/parameters/sortBy'
+      - $ref: '../common/shared.yaml#/components/parameters/sortOrder'
+      - $ref: '../common/shared.yaml#/components/parameters/search'
+      - in: query
+        name: name
+        schema: {type: string}
+      - in: query
+        name: systemId
+        schema: {type: string, format: uuid}
+      - in: query
+        name: parentPlanetId
+        schema: {type: string, format: uuid}
+      - in: query
+        name: isHabitable
+        schema: {type: boolean}
+    responses:
+      '200':
+        description: A list of planets
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/PlanetListResponse'}
+
+  post:
+    summary: Create a new planet
+    tags: [Planets]
+    security: [{bearerAuth: []}]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/PlanetCreate'}
+    responses:
+      '201':
+        description: Planet created
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/PlanetResponse'}
+
+/planets/{id}:
+  get:
+    summary: Get planet by ID
+    tags: [Planets]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200':
+        description: The planet
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/PlanetResponse'}
+      '404': {description: Planet not found}
+
+  patch:
+    summary: Update a planet
+    tags: [Planets]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: './schemas.yaml#/PlanetUpdate'}
+    responses:
+      '200':
+        description: Planet updated
+        content:
+          application/json:
+            schema: {$ref: './schemas.yaml#/PlanetResponse'}
+      '404': {description: Planet not found}
+
+  delete:
+    summary: Delete a planet
+    tags: [Planets]
+    security: [{bearerAuth: []}]
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: {type: string, format: uuid}
+    responses:
+      '200': {description: Planet deleted}
+      '404': {description: Planet not found}

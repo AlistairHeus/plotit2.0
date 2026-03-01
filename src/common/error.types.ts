@@ -128,6 +128,18 @@ export class BadRequestError extends AppError {
   }
 }
 
+export class InvalidArgumentError extends AppError {
+  constructor(message: string, details?: Record<string, unknown>) {
+    super({
+      category: ERROR_CATEGORY.VALIDATION,
+      code: "INVALID_ARGUMENT",
+      details,
+      message,
+      statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+    });
+  }
+}
+
 export class ConflictError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({

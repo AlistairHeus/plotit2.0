@@ -242,6 +242,9 @@ RaceListResponse:
     - type: object
       properties:
         data:
-          type: array
-          items:
-            $ref: '#/Race'
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/Race'

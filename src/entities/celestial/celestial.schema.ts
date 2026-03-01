@@ -1,3 +1,4 @@
+import { universes } from "@/entities/universe/universe.schema";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -7,7 +8,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { universes } from "@/entities/universe/universe.schema";
+import { regions } from "@/entities/region/region.schema";
 
 // Enums
 export const galaxyTypeEnum = pgEnum("galaxy_type", [
@@ -18,7 +19,6 @@ export const galaxyTypeEnum = pgEnum("galaxy_type", [
   "LENTICULAR",
   "RING",
   "DWARF",
-  "QUASAR",
 ]);
 
 export const spectralTypeEnum = pgEnum("spectral_type", [
@@ -47,6 +47,8 @@ export const galaxies = pgTable("galaxies", {
   description: text("description"),
   type: galaxyTypeEnum("type").default("SPIRAL").notNull(),
   color: text("color"),
+  avatarUrl: text("avatar_url"),
+  imageUrls: text("image_urls").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -59,6 +61,8 @@ export const solarSystems = pgTable("solar_systems", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
+  avatarUrl: text("avatar_url"),
+  imageUrls: text("image_urls").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -72,6 +76,8 @@ export const stars = pgTable("stars", {
   name: text("name").notNull(),
   description: text("description"),
   type: spectralTypeEnum("type").default("YELLOW_STAR").notNull(),
+  avatarUrl: text("avatar_url"),
+  imageUrls: text("image_urls").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -82,11 +88,13 @@ export const planets = pgTable("planets", {
   systemId: uuid("solar_system_id")
     .references(() => solarSystems.id, { onDelete: "cascade" })
     .notNull(),
-  parentId: uuid("parent_planet_id"), // Self-reference for moons
+  parentPlanetId: uuid("parent_planet_id"), // Self-reference for moons
   name: text("name").notNull(),
   description: text("description"),
   color: text("color"),
   isHabitable: boolean("is_habitable").default(false).notNull(),
+  avatarUrl: text("avatar_url"),
+  imageUrls: text("image_urls").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -119,7 +127,6 @@ export const starsRelations = relations(stars, ({ one }) => ({
   }),
 }));
 
-import { regions } from "@/entities/region/region.schema";
 
 export const planetsRelations = relations(planets, ({ one, many }) => ({
   solarSystem: one(solarSystems, {
@@ -127,7 +134,7 @@ export const planetsRelations = relations(planets, ({ one, many }) => ({
     references: [solarSystems.id],
   }),
   parentPlanet: one(planets, {
-    fields: [planets.parentId],
+    fields: [planets.parentPlanetId],
     references: [planets.id],
     relationName: "moon_of",
   }),
