@@ -14,7 +14,6 @@ export const createGalaxySchema = z.object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
     type: z.nativeEnum(GalaxyType).optional(),
-    color: z.string().nullable().optional(),
     avatarUrl: z.string().nullable().optional(),
     imageUrls: z.preprocess(
         (val) => {
@@ -46,7 +45,14 @@ export const createSolarSystemSchema = z.object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
     avatarUrl: z.string().nullable().optional(),
-    imageUrls: z.array(z.string()).nullable().optional(),
+    imageUrls: z.preprocess(
+        (val) => {
+            if (!val) return undefined;
+            if (typeof val === "string") return [val];
+            return val;
+        },
+        z.array(z.string()).nullable().optional()
+    ),
 });
 
 export const updateSolarSystemSchema = createSolarSystemSchema
@@ -69,7 +75,14 @@ export const createStarSchema = z.object({
     description: z.string().nullable().optional(),
     type: z.nativeEnum(SpectralType).optional(),
     avatarUrl: z.string().nullable().optional(),
-    imageUrls: z.array(z.string()).nullable().optional(),
+    imageUrls: z.preprocess(
+        (val) => {
+            if (!val) return undefined;
+            if (typeof val === "string") return [val];
+            return val;
+        },
+        z.array(z.string()).nullable().optional()
+    ),
 });
 
 export const updateStarSchema = createStarSchema
@@ -92,10 +105,22 @@ export const createPlanetSchema = z.object({
     parentPlanetId: z.string().uuid().nullable().optional(),
     name: z.string().min(1),
     description: z.string().nullable().optional(),
-    color: z.string().nullable().optional(),
-    isHabitable: z.boolean().optional(),
+    isHabitable: z.preprocess((val) => {
+        if (typeof val === 'string') {
+            if (val.toLowerCase() === 'true') return true;
+            if (val.toLowerCase() === 'false') return false;
+        }
+        return val;
+    }, z.boolean().optional()),
     avatarUrl: z.string().nullable().optional(),
-    imageUrls: z.array(z.string()).nullable().optional(),
+    imageUrls: z.preprocess(
+        (val) => {
+            if (!val) return undefined;
+            if (typeof val === "string") return [val];
+            return val;
+        },
+        z.array(z.string()).nullable().optional()
+    ),
 });
 
 export const updatePlanetSchema = createPlanetSchema

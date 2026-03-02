@@ -46,7 +46,6 @@ export const galaxies = pgTable("galaxies", {
   name: text("name").notNull(),
   description: text("description"),
   type: galaxyTypeEnum("type").default("SPIRAL").notNull(),
-  color: text("color"),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -91,7 +90,6 @@ export const planets = pgTable("planets", {
   parentPlanetId: uuid("parent_planet_id"), // Self-reference for moons
   name: text("name").notNull(),
   description: text("description"),
-  color: text("color"),
   isHabitable: boolean("is_habitable").default(false).notNull(),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array(),

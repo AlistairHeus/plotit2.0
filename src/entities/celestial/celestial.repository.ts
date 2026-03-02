@@ -8,31 +8,31 @@ import type {
 import db from "@/db/connection";
 import {
     galaxies,
+    planets,
     solarSystems,
     stars,
-    planets,
 } from "@/entities/celestial/celestial.schema";
 import type {
-    Galaxy,
     CreateGalaxy,
-    UpdateGalaxy,
+    CreatePlanet,
+    CreateSolarSystem,
+    CreateStar,
+    Galaxy,
     GalaxyQueryParams,
     GalaxyWithRelations,
+    Planet,
+    PlanetQueryParams,
+    PlanetWithRelations,
     SolarSystem,
-    CreateSolarSystem,
-    UpdateSolarSystem,
     SolarSystemQueryParams,
     SolarSystemWithRelations,
     Star,
-    CreateStar,
-    UpdateStar,
     StarQueryParams,
     StarWithRelations,
-    Planet,
-    CreatePlanet,
+    UpdateGalaxy,
     UpdatePlanet,
-    PlanetQueryParams,
-    PlanetWithRelations,
+    UpdateSolarSystem,
+    UpdateStar,
 } from "@/entities/celestial/celestial.types";
 import { eq, inArray, type SQL } from "drizzle-orm";
 
@@ -70,7 +70,7 @@ export class GalaxyRepository {
                     success: false,
                     error: new DatabaseError("Failed to create galaxy"),
                 };
-            return { success: true, data: result as Galaxy };
+            return { success: true, data: result };
         } catch (error) {
             return {
                 success: false,
@@ -90,7 +90,7 @@ export class GalaxyRepository {
                 .where(eq(galaxies.id, id))
                 .returning();
             if (!result) return { success: false, error: new NotFoundError("Galaxy", id) };
-            return { success: true, data: result as Galaxy };
+            return { success: true, data: result };
         } catch (error) {
             return {
                 success: false,
@@ -193,7 +193,7 @@ export class GalaxyRepository {
                 where: eq(galaxies.id, id),
             });
             if (!result) return { success: false, error: new NotFoundError("Galaxy", id) };
-            return { success: true, data: result as Galaxy };
+            return { success: true, data: result };
         } catch (error) {
             return {
                 success: false,

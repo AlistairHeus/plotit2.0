@@ -40,7 +40,6 @@ export interface Galaxy {
   name: string;
   description: string | null;
   type: GalaxyType;
-  color: string | null;
   avatarUrl: string | null;
   imageUrls: string[] | null;
   createdAt: Date;
@@ -52,7 +51,6 @@ export interface CreateGalaxy {
   name: string;
   description?: string | null | undefined;
   type?: GalaxyType | undefined;
-  color?: string | null | undefined;
   avatarUrl?: string | null | undefined;
   imageUrls?: string[] | null | undefined;
 }
@@ -61,7 +59,6 @@ export interface UpdateGalaxy {
   name?: string | undefined;
   description?: string | null | undefined;
   type?: GalaxyType | undefined;
-  color?: string | null | undefined;
   avatarUrl?: string | null | undefined;
   imageUrls?: string[] | null | undefined;
 }
@@ -165,7 +162,6 @@ export interface Planet {
   parentPlanetId: string | null;
   name: string;
   description: string | null;
-  color: string | null;
   isHabitable: boolean;
   avatarUrl: string | null;
   imageUrls: string[] | null;
@@ -178,7 +174,6 @@ export interface CreatePlanet {
   parentPlanetId?: string | null | undefined;
   name: string;
   description?: string | null | undefined;
-  color?: string | null | undefined;
   isHabitable?: boolean | undefined;
   avatarUrl?: string | null | undefined;
   imageUrls?: string[] | null | undefined;
@@ -188,7 +183,6 @@ export interface UpdatePlanet {
   parentPlanetId?: string | null | undefined;
   name?: string | undefined;
   description?: string | null | undefined;
-  color?: string | null | undefined;
   isHabitable?: boolean | undefined;
   avatarUrl?: string | null | undefined;
   imageUrls?: string[] | null | undefined;
