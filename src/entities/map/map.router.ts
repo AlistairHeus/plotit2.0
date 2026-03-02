@@ -33,21 +33,21 @@ router.patch(
 router.delete("/:id", asyncHandler(mapController.delete.bind(mapController)));
 
 // SVG Mapping Operations
-// POST   /:id/svg          — upsert a mapping (svgElementId → regionId)
-// GET    /:id/svg          — get all mappings for a map
-// DELETE /:id/svg/:mappingId — remove a mapping by DB id
+// POST   /:id/mappings          — upsert a mapping (svgElementId → regionId)
+// GET    /:id/mappings          — get all mappings for a map
+// DELETE /mappings/:mappingId   — remove a mapping by DB id
 router.post(
-    "/:id/svg",
+    "/:id/mappings",
     asyncHandler(mapController.addSvgMapping.bind(mapController)),
 );
 
 router.get(
-    "/:id/svg",
+    "/:id/mappings",
     asyncHandler(mapController.getSvgMappings.bind(mapController)),
 );
 
 router.delete(
-    "/:id/svg/:mappingId",
+    "/mappings/:mappingId",
     asyncHandler(mapController.removeSvgMapping.bind(mapController)),
 );
 
