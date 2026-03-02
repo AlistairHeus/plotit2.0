@@ -1,4 +1,8 @@
 import {
+  refreshTokens,
+  refreshTokensRelations,
+} from "@/common/authentication/refresh-token.schema";
+import {
   galaxies,
   galaxiesRelations,
   galaxyTypeEnum,
@@ -10,10 +14,6 @@ import {
   stars,
   starsRelations,
 } from "@/entities/celestial/celestial.schema";
-import {
-  refreshTokens,
-  refreshTokensRelations,
-} from "@/common/authentication/refresh-token.schema";
 import {
   characters,
   charactersRelations,
@@ -50,8 +50,6 @@ import {
   racesRelations,
 } from "@/entities/race/race.schema";
 import {
-  regionClimateEnum,
-  regionFeatureTypeEnum,
   regions,
   regionsRelations,
   regionTypeEnum,
@@ -104,8 +102,6 @@ const schema = {
   regions,
   regionsRelations,
   regionTypeEnum,
-  regionClimateEnum,
-  regionFeatureTypeEnum,
   religions,
   religionsRelations,
   refreshTokens,

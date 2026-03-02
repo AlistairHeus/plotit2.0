@@ -20,7 +20,7 @@ export async function paginate<TData>(
   }) => Promise<TData[]>,
 ): Promise<Result<PaginatedResponse<TData>, DatabaseError>> {
   const {
-    limit = 20,
+    limit = 50,
     page = 1,
     offset,
     sortBy = config.defaultSortBy,

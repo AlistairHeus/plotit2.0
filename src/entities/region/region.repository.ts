@@ -23,13 +23,10 @@ const paginationConfig: PaginationConfig<typeof regions> = {
         id: regions.id,
         name: regions.name,
         type: regions.type,
-        area: regions.area,
-        population: regions.population,
-        elevation: regions.elevation,
         createdAt: regions.createdAt,
         updatedAt: regions.updatedAt,
     },
-    defaultSortBy: "createdAt",
+    defaultSortBy: "updatedAt",
 };
 
 function buildWhereConditions(queryParams: RegionQueryParams): SQL[] {
@@ -51,12 +48,12 @@ function buildWhereConditions(queryParams: RegionQueryParams): SQL[] {
         whereConditions.push(eq(regions.parentId, queryParams.parentId));
     }
 
-    if ("type" in queryParams && queryParams.type) {
-        whereConditions.push(eq(regions.type, queryParams.type));
+    if ("religionId" in queryParams && typeof queryParams.religionId === "string") {
+        whereConditions.push(eq(regions.religionId, queryParams.religionId));
     }
 
-    if ("climate" in queryParams && queryParams.climate) {
-        whereConditions.push(eq(regions.climate, queryParams.climate));
+    if ("type" in queryParams && queryParams.type) {
+        whereConditions.push(eq(regions.type, queryParams.type));
     }
 
     return whereConditions;

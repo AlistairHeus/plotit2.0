@@ -1,17 +1,14 @@
+import { planets } from "@/entities/celestial/celestial.schema";
+import { religions } from "@/entities/religion/religion.schema";
+import { universes } from "@/entities/universe/universe.schema";
 import { relations } from "drizzle-orm";
 import {
-  doublePrecision,
-  integer,
-  jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
-  uuid,
+  uuid
 } from "drizzle-orm/pg-core";
-import { planets } from "@/entities/celestial/celestial.schema";
-import { religions } from "@/entities/religion/religion.schema";
-import { universes } from "@/entities/universe/universe.schema";
 
 export const regionTypeEnum = pgEnum("region_type", [
   "CONTINENT",
@@ -28,31 +25,6 @@ export const regionTypeEnum = pgEnum("region_type", [
   "RIVER",
 ]);
 
-export const regionClimateEnum = pgEnum("region_climate", [
-  "TROPICAL",
-  "SUBTROPICAL",
-  "TEMPERATE",
-  "SUBARCTIC",
-  "ARCTIC",
-  "DESERT",
-  "MEDITERRANEAN",
-  "OCEANIC",
-  "CONTINENTAL",
-  "ALPINE",
-  "CUSTOM",
-]);
-
-export const regionFeatureTypeEnum = pgEnum("region_feature_type", [
-  "MOUNTAIN",
-  "HILL",
-  "FOREST",
-  "DESERT",
-  "WATER",
-  "GRASSLAND",
-  "SETTLEMENT",
-  "LANDMARK",
-  "CUSTOM",
-]);
 
 export const regions = pgTable("regions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -65,28 +37,12 @@ export const regions = pgTable("regions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   type: regionTypeEnum("type").notNull(),
-  features: regionFeatureTypeEnum("features").array().default([]).notNull(), // Array of RegionFeatureType
   planetId: uuid("planet_id").references(() => planets.id, {
     onDelete: "set null",
   }),
-  area: doublePrecision("area"),
-  boundaries: jsonb("boundaries"),
-  capital: text("capital"),
-  coastlineLength: doublePrecision("coastline_length"),
-  coordinates: jsonb("coordinates"),
-  culture: text("culture"),
-  elevation: doublePrecision("elevation"),
-  government: text("government"),
-  language: text("language").array().default([]).notNull(),
-  population: integer("population"),
   religionId: uuid("religion_id").references(() => religions.id, {
     onDelete: "set null",
   }),
-  rainfall: doublePrecision("rainfall"),
-  temperature: doublePrecision("temperature"),
-  waterBodies: integer("water_bodies"),
-  climate: regionClimateEnum("climate"),
-  resources: text("resources").array().default([]).notNull(),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array().default([]).notNull(),
 });

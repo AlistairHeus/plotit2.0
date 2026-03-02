@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
 import { sortableRegionFields } from "@/entities/region/region.constants";
-import { RegionType, RegionFeatureType, RegionClimate } from "@/entities/region/region.types";
+import { RegionType, } from "@/entities/region/region.types";
 
 export const createRegionSchema = z.object({
     name: z.string().min(1),
@@ -10,25 +10,9 @@ export const createRegionSchema = z.object({
     description: z.string().nullable().optional(),
     parentId: z.string().uuid().nullable().optional(),
     planetId: z.string().uuid().nullable().optional(),
-    features: z.array(z.nativeEnum(RegionFeatureType)).optional(),
-    area: z.number().nullable().optional(),
-    boundaries: z.unknown().nullable().optional(), // Expected valid JSON
-    capital: z.string().nullable().optional(),
-    coastlineLength: z.number().nullable().optional(),
-    coordinates: z.unknown().nullable().optional(), // Expected valid JSON
-    culture: z.string().nullable().optional(),
-    elevation: z.number().nullable().optional(),
-    government: z.string().nullable().optional(),
-    language: z.array(z.string()).optional(),
-    population: z.number().int().nullable().optional(),
     religionId: z.string().uuid().nullable().optional(),
-    rainfall: z.number().nullable().optional(),
-    temperature: z.number().nullable().optional(),
-    waterBodies: z.number().int().nullable().optional(),
-    climate: z.nativeEnum(RegionClimate).nullable().optional(),
-    resources: z.array(z.string()).optional(),
     avatarUrl: z.string().url().nullable().optional(),
-    imageUrls: z.array(z.string().url()).optional(),
+    imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
 export const updateRegionSchema = createRegionSchema
@@ -45,6 +29,5 @@ export const regionQuerySchema = createPaginatedQuerySchema(
         planetId: z.string().uuid().optional(),
         parentId: z.string().uuid().optional(),
         type: z.nativeEnum(RegionType).optional(),
-        climate: z.nativeEnum(RegionClimate).optional(),
     },
 );

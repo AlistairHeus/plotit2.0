@@ -36,7 +36,8 @@ export class RaceService {
                         return this.fileService.getUrl(savedPath);
                     })
                 );
-                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
             }
         }
         const result = await this.raceRepository.create(data);
@@ -69,7 +70,8 @@ export class RaceService {
                         return this.fileService.getUrl(savedPath);
                     })
                 );
-                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
             }
         }
         const result = await this.raceRepository.update(id, data);

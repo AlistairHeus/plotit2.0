@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Extended pagination schema with coercion for query parameters
 export const paginationQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(50),
   page: z.coerce.number().int().min(1).optional().default(1),
   offset: z.coerce.number().int().min(0).optional(),
   search: z.string().optional(),

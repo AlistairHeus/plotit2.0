@@ -30,7 +30,8 @@ export class RegionService {
                         return this.fileService.getUrl(savedPath);
                     })
                 );
-                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
             }
         }
         const result = await this.regionRepository.create(data);
@@ -65,7 +66,8 @@ export class RegionService {
                         return this.fileService.getUrl(savedPath);
                     })
                 );
-                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
             }
         }
         const result = await this.regionRepository.update(id, data);
