@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { Planet } from "@/entities/celestial/celestial.types";
 import type { Religion } from "@/entities/religion/religion.types";
 import type { Universe } from "@/entities/universe/universe.types";
+import type { FantasyMap, SvgMapping } from "@/entities/map/map.types";
 import {
   createRegionSchema,
   regionQuerySchema,
@@ -45,6 +46,8 @@ export interface RegionWithRelations extends Region {
   religion: Religion | null;
   parent: Region | null;
   subRegions: Region[];
+  maps: FantasyMap[];
+  svgMappings: SvgMapping[];
 }
 
 export type CreateRegion = z.infer<typeof createRegionSchema>;

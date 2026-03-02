@@ -28,7 +28,16 @@ export interface SvgMapping {
     updatedAt: Date;
 }
 
+export interface SvgMappingWithRegion extends SvgMapping {
+    region: Pick<Region, "id" | "name">;
+}
+
 export interface MapWithRelations extends FantasyMap {
+    universe: Universe;
+    region: Region;
+    svgMappings: SvgMappingWithRegion[];
+}
+export interface MapsWithRelations extends FantasyMap {
     universe: Universe;
     region: Region;
     svgMappings: SvgMapping[];

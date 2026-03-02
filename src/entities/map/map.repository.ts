@@ -10,8 +10,9 @@ import { maps, mapSvgMappings } from "@/entities/map/map.schema";
 import type {
     CreateMap,
     CreateSvgMapping,
-    FantasyMap as MapType,
     MapQueryParams,
+    MapsWithRelations,
+    FantasyMap as MapType,
     MapWithRelations,
     SvgMapping,
     UpdateMap,
@@ -157,7 +158,7 @@ export class MapRepository {
 
     async findAllWithRelations(
         queryParams: MapQueryParams,
-    ): Promise<Result<PaginatedResponse<MapWithRelations>>> {
+    ): Promise<Result<PaginatedResponse<MapsWithRelations>>> {
         try {
             const dynamicConditions = buildWhereConditions(queryParams);
 
@@ -193,7 +194,7 @@ export class MapRepository {
                 });
             };
 
-            return await paginate<MapWithRelations>(
+            return await paginate<MapsWithRelations>(
                 configWithConditions,
                 queryParams,
                 queryBuilder,
@@ -232,7 +233,16 @@ export class MapRepository {
                 with: {
                     universe: true,
                     region: true,
-                    svgMappings: true,
+                    svgMappings: {
+                        with: {
+                            region: {
+                                columns: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
                 },
             });
 

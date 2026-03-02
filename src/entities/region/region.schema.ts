@@ -9,6 +9,7 @@ import {
   timestamp,
   uuid
 } from "drizzle-orm/pg-core";
+import { maps, mapSvgMappings } from "@/entities/map/map.schema";
 
 export const regionTypeEnum = pgEnum("region_type", [
   "CONTINENT",
@@ -68,4 +69,6 @@ export const regionsRelations = relations(regions, ({ one, many }) => ({
     fields: [regions.religionId],
     references: [religions.id],
   }),
+  svgMappings: many(mapSvgMappings),
+  maps: many(maps),
 }));

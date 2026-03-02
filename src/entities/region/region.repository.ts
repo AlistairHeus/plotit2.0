@@ -205,6 +205,12 @@ export class RegionRepository {
                         religion: true,
                         parent: true,
                         subRegions: true,
+                        maps: true,
+                        svgMappings: {
+                            with: {
+                                map: true
+                            }
+                        }
                     },
                     where,
                     orderBy: [orderBy],
@@ -264,6 +270,12 @@ export class RegionRepository {
                     religion: true,
                     parent: true,
                     subRegions: true,
+                    maps: true,
+                    svgMappings: {
+                        with: {
+                            map: true
+                        }
+                    }
                 },
             });
 
