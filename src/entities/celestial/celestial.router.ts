@@ -9,6 +9,8 @@ import {
 } from "@/entities/celestial/celestial.repository";
 import { CelestialService } from "@/entities/celestial/celestial.service";
 import { authenticateToken } from "@/middleware/auth.middleware";
+import { upload } from "@/middleware/upload.middleware";
+import { fileService } from "@/common/file/file.service";
 
 const router = Router();
 
@@ -22,7 +24,8 @@ const service = new CelestialService(
     galaxyRepository,
     solarSystemRepository,
     starRepository,
-    planetRepository
+    planetRepository,
+    fileService
 );
 
 const controller = new CelestialController(service);
@@ -32,6 +35,7 @@ const controller = new CelestialController(service);
 router.post(
     "/galaxies",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.createGalaxy(req, res)),
 );
 
@@ -50,6 +54,7 @@ router.get(
 router.patch(
     "/galaxies/:id",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.updateGalaxy(req, res)),
 );
 

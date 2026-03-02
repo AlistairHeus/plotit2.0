@@ -12,17 +12,35 @@ import type {
     CreatePlanet, Planet, PlanetQueryParams, UpdatePlanet
 } from "@/entities/celestial/celestial.types";
 import { InvalidArgumentError } from "@/common/error.types";
+import type { IFileService } from "@/common/file/file.service";
 
 export class CelestialService {
     constructor(
         private galaxyRepository: GalaxyRepository,
         private solarSystemRepository: SolarSystemRepository,
         private starRepository: StarRepository,
-        private planetRepository: PlanetRepository
+        private planetRepository: PlanetRepository,
+        private fileService: IFileService
     ) { }
 
     // --- GALAXY ---
-    async createGalaxy(data: CreateGalaxy): Promise<Galaxy> {
+    async createGalaxy(data: CreateGalaxy, files?: Record<string, Express.Multer.File[]>): Promise<Galaxy> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.galaxyRepository.create(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -40,7 +58,23 @@ export class CelestialService {
         return result.data;
     }
 
-    async updateGalaxy(id: string, data: UpdateGalaxy): Promise<Galaxy> {
+    async updateGalaxy(id: string, data: UpdateGalaxy, files?: Record<string, Express.Multer.File[]>): Promise<Galaxy> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.galaxyRepository.update(id, data);
         if (!result.success) throw result.error;
         return result.data;

@@ -18,7 +18,10 @@ export class CelestialController {
 
     async createGalaxy(req: Request, res: Response): Promise<void> {
         const data = validateBody(req.body, createGalaxySchema);
-        const result = await this.celestialService.createGalaxy(data);
+
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+
+        const result = await this.celestialService.createGalaxy(data, files);
         log.info("Galaxy created successfully", { id: result.id, operation: "create_galaxy" });
         res.status(201).json({ success: true, data: result, message: "Galaxy created successfully" });
     }
@@ -40,7 +43,10 @@ export class CelestialController {
     async updateGalaxy(req: Request, res: Response): Promise<void> {
         const id = validateParams(req.params.id, paramsSchema);
         const data = validateBody(req.body, updateGalaxySchema);
-        const result = await this.celestialService.updateGalaxy(id, data);
+
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+
+        const result = await this.celestialService.updateGalaxy(id, data, files);
         log.info("Galaxy updated successfully", { id: result.id, operation: "update_galaxy" });
         res.status(200).json({ success: true, data: result, message: "Galaxy updated successfully" });
     }

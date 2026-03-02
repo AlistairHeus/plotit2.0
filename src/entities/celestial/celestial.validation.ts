@@ -16,7 +16,14 @@ export const createGalaxySchema = z.object({
     type: z.nativeEnum(GalaxyType).optional(),
     color: z.string().nullable().optional(),
     avatarUrl: z.string().nullable().optional(),
-    imageUrls: z.array(z.string()).nullable().optional(),
+    imageUrls: z.preprocess(
+        (val) => {
+            if (!val) return undefined;
+            if (typeof val === "string") return [val];
+            return val;
+        },
+        z.array(z.string()).nullable().optional()
+    ),
 });
 
 export const updateGalaxySchema = createGalaxySchema
