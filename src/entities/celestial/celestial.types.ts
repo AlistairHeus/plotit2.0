@@ -195,6 +195,7 @@ export interface UpdatePlanet {
 }
 
 export interface PlanetQueryParams extends PaginationParams {
+  universeId?: string | undefined;
   systemId?: string | undefined;
   parentPlanetId?: string | undefined;
   name?: string | undefined;

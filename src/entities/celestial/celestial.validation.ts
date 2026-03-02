@@ -106,6 +106,7 @@ export const planetQuerySchema = createPaginatedQuerySchema(
     sortablePlanetFields,
     "createdAt",
     {
+        universeId: z.string().uuid().optional(),
         systemId: z.string().uuid().optional(),
         parentPlanetId: z.string().uuid().optional(),
         name: z.string().optional(),

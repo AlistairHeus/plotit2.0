@@ -17,12 +17,11 @@ export const createRegionSchema = z.object({
 
 export const updateRegionSchema = createRegionSchema
     .partial()
-    .omit({ universeId: true }); // typically shouldn't switch universes? If allowed, remove omit. Let's keep it omit for safety, or just partial.
-// Wait, looking at universe update, it's just partial. Let's make it partial.
+    .omit({ universeId: true });
 
 export const regionQuerySchema = createPaginatedQuerySchema(
     sortableRegionFields,
-    "createdAt",
+    "updatedAt",
     {
         name: z.string().optional(),
         universeId: z.string().uuid().optional(),

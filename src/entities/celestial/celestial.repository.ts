@@ -34,7 +34,7 @@ import type {
     PlanetQueryParams,
     PlanetWithRelations,
 } from "@/entities/celestial/celestial.types";
-import { eq, type SQL } from "drizzle-orm";
+import { eq, inArray, type SQL } from "drizzle-orm";
 
 // --- GALAXY REPOSITORY ---
 
@@ -662,6 +662,20 @@ function buildPlanetWhereConditions(queryParams: PlanetQueryParams): SQL[] {
         whereConditions.push(eq(planets.parentPlanetId, queryParams.parentPlanetId));
     if (queryParams.isHabitable !== undefined)
         whereConditions.push(eq(planets.isHabitable, queryParams.isHabitable));
+
+    if (queryParams.universeId) {
+        whereConditions.push(
+            inArray(
+                planets.systemId,
+                db
+                    .select({ id: solarSystems.id })
+                    .from(solarSystems)
+                    .innerJoin(galaxies, eq(solarSystems.galaxyId, galaxies.id))
+                    .where(eq(galaxies.universeId, queryParams.universeId)),
+            ),
+        );
+    }
+
     return whereConditions;
 }
 
