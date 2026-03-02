@@ -6,15 +6,33 @@ import type {
     RegionQueryParams,
     UpdateRegion,
 } from "@/entities/region/region.types";
+import type { IFileService } from "@/common/file/file.service";
 
 export class RegionService {
     private regionRepository: RegionRepository;
+    private fileService: IFileService;
 
-    constructor(regionRepository: RegionRepository) {
+    constructor(regionRepository: RegionRepository, fileService: IFileService) {
         this.regionRepository = regionRepository;
+        this.fileService = fileService;
     }
 
-    async createRegion(data: CreateRegion): Promise<Region> {
+    async createRegion(data: CreateRegion, files?: Record<string, Express.Multer.File[]>): Promise<Region> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "region");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "region");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
         const result = await this.regionRepository.create(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -34,7 +52,22 @@ export class RegionService {
         return result.data;
     }
 
-    async updateRegion(id: string, data: UpdateRegion): Promise<Region> {
+    async updateRegion(id: string, data: UpdateRegion, files?: Record<string, Express.Multer.File[]>): Promise<Region> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "region");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "region");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
         const result = await this.regionRepository.update(id, data);
         if (!result.success) throw result.error;
         return result.data;

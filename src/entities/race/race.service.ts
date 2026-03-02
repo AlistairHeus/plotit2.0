@@ -10,17 +10,35 @@ import type {
     UpdateEthnicGroup,
     UpdateRace,
 } from "@/entities/race/race.types";
+import type { IFileService } from "@/common/file/file.service";
 
 export class RaceService {
     private raceRepository: RaceRepository;
+    private fileService: IFileService;
 
-    constructor(raceRepository: RaceRepository) {
+    constructor(raceRepository: RaceRepository, fileService: IFileService) {
         this.raceRepository = raceRepository;
+        this.fileService = fileService;
     }
 
     // --- Race ---
 
-    async createRace(data: CreateRace): Promise<Race> {
+    async createRace(data: CreateRace, files?: Record<string, Express.Multer.File[]>): Promise<Race> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "race");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "race");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
         const result = await this.raceRepository.create(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -38,7 +56,22 @@ export class RaceService {
         return result.data;
     }
 
-    async updateRace(id: string, data: UpdateRace): Promise<Race> {
+    async updateRace(id: string, data: UpdateRace, files?: Record<string, Express.Multer.File[]>): Promise<Race> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "race");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "race");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
         const result = await this.raceRepository.update(id, data);
         if (!result.success) throw result.error;
         return result.data;

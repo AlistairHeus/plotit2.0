@@ -23,10 +23,11 @@ export class RegionController {
 
     async createRegion(req: Request, res: Response): Promise<void> {
         const regionData = validateBody(req.body, createRegionSchema);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
 
         // No direct explicit user authentication enforcement like universe since regions
         // are more likely global, but we pass data as validated.
-        const region = await this.regionService.createRegion(regionData);
+        const region = await this.regionService.createRegion(regionData, files);
 
         log.info("Region created successfully", {
             regionId: region.id,
@@ -79,8 +80,9 @@ export class RegionController {
     async updateRegion(req: Request, res: Response): Promise<void> {
         const regionId = validateParams(req.params.id, paramsSchema);
         const regionData = validateBody(req.body, updateRegionSchema);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
 
-        const region = await this.regionService.updateRegion(regionId, regionData);
+        const region = await this.regionService.updateRegion(regionId, regionData, files);
 
         log.info("Region updated successfully", {
             regionId: region.id,

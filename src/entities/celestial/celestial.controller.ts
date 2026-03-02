@@ -62,7 +62,8 @@ export class CelestialController {
 
     async createSolarSystem(req: Request, res: Response): Promise<void> {
         const data = validateBody(req.body, createSolarSystemSchema);
-        const result = await this.celestialService.createSolarSystem(data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.createSolarSystem(data, files);
         log.info("Solar System created successfully", { id: result.id, operation: "create_solar_system" });
         res.status(201).json({ success: true, data: result, message: "Solar System created successfully" });
     }
@@ -84,7 +85,8 @@ export class CelestialController {
     async updateSolarSystem(req: Request, res: Response): Promise<void> {
         const id = validateParams(req.params.id, paramsSchema);
         const data = validateBody(req.body, updateSolarSystemSchema);
-        const result = await this.celestialService.updateSolarSystem(id, data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.updateSolarSystem(id, data, files);
         log.info("Solar System updated successfully", { id: result.id, operation: "update_solar_system" });
         res.status(200).json({ success: true, data: result, message: "Solar System updated successfully" });
     }
@@ -100,7 +102,8 @@ export class CelestialController {
 
     async createStar(req: Request, res: Response): Promise<void> {
         const data = validateBody(req.body, createStarSchema);
-        const result = await this.celestialService.createStar(data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.createStar(data, files);
         log.info("Star created successfully", { id: result.id, operation: "create_star" });
         res.status(201).json({ success: true, data: result, message: "Star created successfully" });
     }
@@ -122,7 +125,8 @@ export class CelestialController {
     async updateStar(req: Request, res: Response): Promise<void> {
         const id = validateParams(req.params.id, paramsSchema);
         const data = validateBody(req.body, updateStarSchema);
-        const result = await this.celestialService.updateStar(id, data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.updateStar(id, data, files);
         log.info("Star updated successfully", { id: result.id, operation: "update_star" });
         res.status(200).json({ success: true, data: result, message: "Star updated successfully" });
     }
@@ -138,7 +142,8 @@ export class CelestialController {
 
     async createPlanet(req: Request, res: Response): Promise<void> {
         const data = validateBody(req.body, createPlanetSchema);
-        const result = await this.celestialService.createPlanet(data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.createPlanet(data, files);
         log.info("Planet created successfully", { id: result.id, operation: "create_planet" });
         res.status(201).json({ success: true, data: result, message: "Planet created successfully" });
     }
@@ -160,7 +165,8 @@ export class CelestialController {
     async updatePlanet(req: Request, res: Response): Promise<void> {
         const id = validateParams(req.params.id, paramsSchema);
         const data = validateBody(req.body, updatePlanetSchema);
-        const result = await this.celestialService.updatePlanet(id, data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const result = await this.celestialService.updatePlanet(id, data, files);
         log.info("Planet updated successfully", { id: result.id, operation: "update_planet" });
         res.status(200).json({ success: true, data: result, message: "Planet updated successfully" });
     }

@@ -4,18 +4,21 @@ import { RegionController } from "@/entities/region/region.controller";
 import { RegionRepository } from "@/entities/region/region.repository";
 import { RegionService } from "@/entities/region/region.service";
 import { authenticateToken } from "@/middleware/auth.middleware";
+import { upload } from "@/middleware/upload.middleware";
+import { fileService } from "@/common/file/file.service";
 
 const router = Router();
 
 // Ensure manual composition root definition
 const repository = new RegionRepository();
-const service = new RegionService(repository);
+const service = new RegionService(repository, fileService);
 const controller = new RegionController(service);
 
 // POST /api/regions
 router.post(
     "/",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.createRegion(req, res)),
 );
 
@@ -37,6 +40,7 @@ router.get(
 router.patch(
     "/:id",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.updateRegion(req, res)),
 );
 

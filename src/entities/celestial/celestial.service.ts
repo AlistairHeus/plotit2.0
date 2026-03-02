@@ -87,7 +87,23 @@ export class CelestialService {
     }
 
     // --- SOLAR SYSTEM ---
-    async createSolarSystem(data: CreateSolarSystem): Promise<SolarSystem> {
+    async createSolarSystem(data: CreateSolarSystem, files?: Record<string, Express.Multer.File[]>): Promise<SolarSystem> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.solarSystemRepository.create(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -105,7 +121,23 @@ export class CelestialService {
         return result.data;
     }
 
-    async updateSolarSystem(id: string, data: UpdateSolarSystem): Promise<SolarSystem> {
+    async updateSolarSystem(id: string, data: UpdateSolarSystem, files?: Record<string, Express.Multer.File[]>): Promise<SolarSystem> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.solarSystemRepository.update(id, data);
         if (!result.success) throw result.error;
         return result.data;
@@ -118,7 +150,23 @@ export class CelestialService {
     }
 
     // --- STAR ---
-    async createStar(data: CreateStar): Promise<Star> {
+    async createStar(data: CreateStar, files?: Record<string, Express.Multer.File[]>): Promise<Star> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.starRepository.create(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -136,7 +184,23 @@ export class CelestialService {
         return result.data;
     }
 
-    async updateStar(id: string, data: UpdateStar): Promise<Star> {
+    async updateStar(id: string, data: UpdateStar, files?: Record<string, Express.Multer.File[]>): Promise<Star> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         const result = await this.starRepository.update(id, data);
         if (!result.success) throw result.error;
         return result.data;
@@ -149,7 +213,23 @@ export class CelestialService {
     }
 
     // --- PLANET ---
-    async createPlanet(data: CreatePlanet): Promise<Planet> {
+    async createPlanet(data: CreatePlanet, files?: Record<string, Express.Multer.File[]>): Promise<Planet> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         if (data.parentPlanetId) {
             const parentResult = await this.planetRepository.findOne(data.parentPlanetId);
             if (parentResult.success) {
@@ -176,7 +256,23 @@ export class CelestialService {
         return result.data;
     }
 
-    async updatePlanet(id: string, data: UpdatePlanet): Promise<Planet> {
+    async updatePlanet(id: string, data: UpdatePlanet, files?: Record<string, Express.Multer.File[]>): Promise<Planet> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "celestial");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "celestial");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
+            }
+        }
+
         if (data.parentPlanetId) {
             const planetResult = await this.planetRepository.findOne(id);
             if (planetResult.success) {

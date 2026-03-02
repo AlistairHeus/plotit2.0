@@ -69,6 +69,7 @@ router.delete(
 router.post(
     "/solar-systems",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.createSolarSystem(req, res)),
 );
 
@@ -87,6 +88,7 @@ router.get(
 router.patch(
     "/solar-systems/:id",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.updateSolarSystem(req, res)),
 );
 
@@ -101,6 +103,7 @@ router.delete(
 router.post(
     "/stars",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.createStar(req, res)),
 );
 
@@ -119,6 +122,7 @@ router.get(
 router.patch(
     "/stars/:id",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.updateStar(req, res)),
 );
 
@@ -133,6 +137,7 @@ router.delete(
 router.post(
     "/planets",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.createPlanet(req, res)),
 );
 
@@ -151,6 +156,7 @@ router.get(
 router.patch(
     "/planets/:id",
     authenticateToken,
+    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
     asyncHandler((req, res) => controller.updatePlanet(req, res)),
 );
 

@@ -27,7 +27,8 @@ export class RaceController {
 
     async createRace(req: Request, res: Response): Promise<void> {
         const raceData = validateBody(req.body, createRaceSchema);
-        const race = await this.raceService.createRace(raceData);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const race = await this.raceService.createRace(raceData, files);
 
         log.info("Race created successfully", { raceId: race.id, operation: "create_race" });
 
@@ -60,7 +61,8 @@ export class RaceController {
     async updateRace(req: Request, res: Response): Promise<void> {
         const raceId = validateParams(req.params.id, paramsSchema);
         const raceData = validateBody(req.body, updateRaceSchema);
-        const race = await this.raceService.updateRace(raceId, raceData);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const race = await this.raceService.updateRace(raceId, raceData, files);
 
         log.info("Race updated successfully", { raceId: race.id, operation: "update_race" });
 
