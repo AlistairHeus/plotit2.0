@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber } from "@/common/validation.utils";
 import { sortableCharacterFields, CHARACTER_TYPES, CHARACTER_GENDERS } from "@/entities/character/character.constants";
 
 export const createCharacterSchema = z.object({
@@ -10,10 +10,10 @@ export const createCharacterSchema = z.object({
     background: z.string().nullable().optional(),
     type: z.enum(CHARACTER_TYPES).nullable().optional(),
     gender: z.enum(CHARACTER_GENDERS).default("Unspecified"),
-    age: z.number().int().nullable().optional(),
+    age: zodFormNumber(z.number().int().nullable().optional()),
     avatarUrl: z.string().url().nullable().optional(),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
-    benched: z.boolean().default(false).optional(),
+    benched: zodFormBoolean(z.boolean().default(false).optional()),
 });
 
 export const updateCharacterSchema = createCharacterSchema.partial().omit({ universeId: true });
@@ -26,6 +26,6 @@ export const characterQuerySchema = createPaginatedQuerySchema(
         universeId: z.string().uuid().optional(),
         raceId: z.string().uuid().optional(),
         type: z.enum(CHARACTER_TYPES).optional(),
-        benched: z.preprocess((val) => val === 'true' ? true : val === 'false' ? false : undefined, z.boolean()).optional(),
+        benched: zodFormBoolean(z.boolean().optional()),
     },
 );
