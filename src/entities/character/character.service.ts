@@ -79,4 +79,5 @@ export class CharacterService {
         if (!result.success) throw result.error;
         return result.data;
     }
+
 }

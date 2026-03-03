@@ -17,7 +17,6 @@ export interface Character {
   type: string | null;
   gender: string | null;
   age: number | null;
-  colorCode: string | null;
   avatarUrl: string | null;
   imageUrls: string[];
   benched: boolean;

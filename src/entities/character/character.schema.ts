@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -10,6 +11,20 @@ import {
 import { characterPowerAccess } from "@/entities/power-system/power-system.schema";
 import { ethnicGroups, races } from "@/entities/race/race.schema";
 import { universes } from "@/entities/universe/universe.schema";
+
+export const characterTypeEnum = pgEnum("character_type", [
+  "Protagonist",
+  "Antagonist",
+  "Supporting",
+  "Minor",
+  "Background",
+]);
+
+export const characterGenderEnum = pgEnum("character_gender", [
+  "Male",
+  "Female",
+  "Unspecified",
+]);
 
 export const characters = pgTable("characters", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -22,10 +37,9 @@ export const characters = pgTable("characters", {
   }),
   name: text("name").notNull(),
   background: text("background"),
-  type: text("type"), // e.g., 'protagonist', 'antagonist', 'npc'
-  gender: text("gender").default("unspecified"),
+  type: characterTypeEnum("type"), // e.g., 'protagonist', 'antagonist', 'npc'
+  gender: characterGenderEnum("gender").default("Unspecified"),
   age: integer("age"),
-  colorCode: text("color_code"),
   avatarUrl: text("avatar_url"),
   imageUrls: text("image_urls").array().default([]).notNull(),
   benched: boolean("benched").default(false).notNull(),

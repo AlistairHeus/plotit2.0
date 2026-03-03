@@ -73,4 +73,5 @@ export class CharacterController {
 
         res.status(200).json({ success: true, message: "Character deleted successfully" });
     }
+
 }

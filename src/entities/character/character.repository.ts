@@ -8,10 +8,10 @@ import type {
 import db from "@/db/connection";
 import { characters } from "@/entities/character/character.schema";
 import type {
-    CreateCharacter,
     Character,
     CharacterQueryParams,
     CharacterWithRelations,
+    CreateCharacter,
     UpdateCharacter,
 } from "@/entities/character/character.types";
 import { eq, type SQL } from "drizzle-orm";
@@ -45,6 +45,10 @@ function buildWhereConditions(queryParams: CharacterQueryParams): SQL[] {
 
     if ("type" in queryParams && typeof queryParams.type === "string") {
         whereConditions.push(eq(characters.type, queryParams.type));
+    }
+
+    if ("benched" in queryParams && typeof queryParams.benched === "boolean") {
+        whereConditions.push(eq(characters.benched, queryParams.benched));
     }
 
     return whereConditions;
@@ -173,4 +177,5 @@ export class CharacterRepository {
             };
         }
     }
+
 }
