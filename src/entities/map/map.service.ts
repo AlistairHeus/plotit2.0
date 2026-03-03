@@ -41,7 +41,7 @@ export class MapService {
 
     async getMapsWithRelations(
         queryParams: MapQueryParams,
-    ): Promise<PaginatedResponse<MapWithRelations>> {
+    ): Promise<PaginatedResponse<Omit<MapWithRelations, "svgMappings">>> {
         const result = await this.mapRepository.findAllWithRelations(queryParams);
         if (!result.success) throw result.error;
         return result.data;

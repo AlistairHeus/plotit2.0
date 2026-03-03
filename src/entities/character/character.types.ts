@@ -1,3 +1,12 @@
+import { z } from "zod";
+import type { Universe } from "@/entities/universe/universe.types";
+import {
+  createCharacterSchema,
+  updateCharacterSchema,
+  characterQuerySchema,
+} from "@/entities/character/character.validation";
+import type { Race, EthnicGroup } from "@/entities/race/race.types";
+
 export interface Character {
   id: string;
   universeId: string;
@@ -17,16 +26,12 @@ export interface Character {
   deletedAt: Date | null;
 }
 
-export interface CreateCharacterRequest {
-  name: string;
-  universeId: string;
-  raceId?: string;
-  ethnicGroupId?: string;
-  background?: string;
-  type?: string;
-  gender?: string;
-  age?: number;
-  colorCode?: string;
-  avatarUrl?: string;
-  imageUrls?: string[];
+export interface CharacterWithRelations extends Character {
+  universe: Universe;
+  race?: Race | null;
+  ethnicGroup?: EthnicGroup | null;
 }
+
+export type CreateCharacter = z.infer<typeof createCharacterSchema>;
+export type UpdateCharacter = z.infer<typeof updateCharacterSchema>;
+export type CharacterQueryParams = z.infer<typeof characterQuerySchema>;

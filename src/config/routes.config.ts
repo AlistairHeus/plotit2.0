@@ -6,6 +6,7 @@ import userRouter from "@/entities/user/user.router";
 import { mapRouter } from "@/entities/map/map.router";
 import raceRouter from "@/entities/race/race.router";
 import celestialRouter from "@/entities/celestial/celestial.router";
+import characterRouter from "@/entities/character/character.router";
 
 export const configureRoutes = (app: Express): void => {
   app.get("/health", (_req, res) => {
@@ -36,4 +37,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Celestial routes
   app.use("/api/celestials", celestialRouter);
+
+  // Character routes
+  app.use("/api/characters", characterRouter);
 };
