@@ -24,6 +24,8 @@ export interface SvgMapping {
     svgElementId: string;
     featureType: string;
     regionId: string;
+    x?: number | null;
+    y?: number | null;
     createdAt: Date;
     updatedAt: Date;
 }

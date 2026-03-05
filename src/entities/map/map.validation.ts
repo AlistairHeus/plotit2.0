@@ -31,4 +31,6 @@ export const svgMappingSchema = z.object({
     svgElementId: z.string().min(1),
     featureType: z.string().min(1),
     regionId: z.string().uuid(),
+    x: z.number().optional(),
+    y: z.number().optional()
 });

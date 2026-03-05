@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, unique, uuid, real } from "drizzle-orm/pg-core";
 import { regions } from "@/entities/region/region.schema";
 import { universes } from "@/entities/universe/universe.schema";
 
@@ -34,6 +34,8 @@ export const mapSvgMappings = pgTable(
     regionId: uuid("region_id")
       .references(() => regions.id, { onDelete: "cascade" })
       .notNull(),
+    x: real("x"),
+    y: real("y"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },

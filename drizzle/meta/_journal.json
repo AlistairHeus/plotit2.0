@@ -127,6 +127,13 @@
       "when": 1772533664752,
       "tag": "0017_dry_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1772556409237,
+      "tag": "0018_low_mastermind",
+      "breakpoints": true
     }
   ]
 }
