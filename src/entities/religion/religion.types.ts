@@ -4,8 +4,6 @@ export interface Religion {
   name: string;
   description: string | null;
   deities: string[];
-  tenets: string[];
-  practices: string[];
   holySites: string[];
   avatarUrl: string | null;
   imageUrls: string[];

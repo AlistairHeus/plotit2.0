@@ -13,8 +13,6 @@ export const religions = pgTable(
     name: text("name").notNull(),
     description: text("description"),
     deities: text("deities").array().default([]).notNull(),
-    tenets: text("tenets").array().default([]).notNull(),
-    practices: text("practices").array().default([]).notNull(),
     holySites: text("holy_sites").array().default([]).notNull(),
     avatarUrl: text("avatar_url"),
     imageUrls: text("image_urls").array().default([]).notNull(),
