@@ -6,13 +6,31 @@ import type {
     PaginationConfig,
 } from "@/common/pagination/pagination.types";
 import db from "@/db/connection";
-import { rootsOfPower, powerSystems } from "@/entities/power-system/power-system.schema";
+import {
+    rootsOfPower,
+    powerSystems,
+    powerSubSystems,
+    powerCategories,
+    powerAbilities
+} from "@/entities/power-system/power-system.schema";
 import type {
+    CreateRootOfPower,
+    UpdateRootOfPower,
+    RootOfPower,
     CreatePowerSystem,
+    UpdatePowerSystem,
     PowerSystem,
+    CreatePowerSubSystem,
+    UpdatePowerSubSystem,
+    PowerSubSystem,
+    CreatePowerCategory,
+    UpdatePowerCategory,
+    PowerCategory,
+    CreatePowerAbility,
+    UpdatePowerAbility,
+    PowerAbility,
     PowerSystemQueryParams,
     PowerSystemWithRelations,
-    UpdatePowerSystem,
 } from "@/entities/power-system/power-system.types";
 import { eq, type SQL } from "drizzle-orm";
 
@@ -43,7 +61,36 @@ function buildWhereConditions(queryParams: PowerSystemQueryParams): SQL[] {
 }
 
 export class PowerSystemRepository {
-    async create(data: CreatePowerSystem): Promise<Result<PowerSystem>> {
+
+    // --- rootsOfPower ---
+    async createRoot(data: CreateRootOfPower): Promise<Result<RootOfPower>> {
+        try {
+            const [result] = await db.insert(rootsOfPower).values(data).returning();
+            if (!result) return { success: false, error: new DatabaseError("Failed to create rootOfPower") };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create rootOfPower", new Error(String(error))) };
+        }
+    }
+    async updateRoot(id: string, data: UpdateRootOfPower): Promise<Result<RootOfPower>> {
+        try {
+            const [result] = await db.update(rootsOfPower).set({ ...data, updatedAt: new Date() }).where(eq(rootsOfPower.id, id)).returning();
+            if (!result) return { success: false, error: new NotFoundError("RootOfPower", id) };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update rootOfPower", new Error(String(error))) };
+        }
+    }
+    async deleteRoot(id: string): Promise<Result<boolean>> {
+        try {
+            const [result] = await db.delete(rootsOfPower).where(eq(rootsOfPower.id, id)).returning({ id: rootsOfPower.id });
+            return { success: true, data: result !== undefined };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete rootOfPower", new Error(String(error))) };
+        }
+    }
+
+    async createPowerSystem(data: CreatePowerSystem): Promise<Result<PowerSystem>> {
         try {
             const [result] = await db.insert(powerSystems).values(data).returning();
             if (!result) {
@@ -64,7 +111,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async update(id: string, data: UpdatePowerSystem): Promise<Result<PowerSystem>> {
+    async updatePowerSystem(id: string, data: UpdatePowerSystem): Promise<Result<PowerSystem>> {
         try {
             const [result] = await db
                 .update(powerSystems)
@@ -88,7 +135,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async delete(id: string): Promise<Result<boolean>> {
+    async deletePowerSystem(id: string): Promise<Result<boolean>> {
         try {
             const [result] = await db
                 .delete(powerSystems)
@@ -107,7 +154,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async findAll(
+    async findAllPowerSystems(
         queryParams: PowerSystemQueryParams,
     ): Promise<Result<PaginatedResponse<PowerSystem>>> {
         try {
@@ -156,7 +203,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async findAllWithRelations(
+    async findAllPowerSystemsWithRelations(
         queryParams: PowerSystemQueryParams,
     ): Promise<Result<PaginatedResponse<PowerSystemWithRelations>>> {
         try {
@@ -219,7 +266,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async findOne(id: string): Promise<Result<PowerSystem>> {
+    async findOnePowerSystem(id: string): Promise<Result<PowerSystem>> {
         try {
             const result = await db.query.powerSystems.findFirst({
                 where: eq(powerSystems.id, id),
@@ -241,7 +288,7 @@ export class PowerSystemRepository {
         }
     }
 
-    async findOneWithRelations(id: string): Promise<Result<PowerSystemWithRelations>> {
+    async findOnePowerSystemWithRelations(id: string): Promise<Result<PowerSystemWithRelations>> {
         try {
             const result = await db.query.powerSystems.findFirst({
                 where: eq(powerSystems.id, id),
@@ -276,6 +323,92 @@ export class PowerSystemRepository {
             };
         }
     }
+
+    // --- powerSubSystems ---
+    async createSubSystem(data: CreatePowerSubSystem): Promise<Result<PowerSubSystem>> {
+        try {
+            const [result] = await db.insert(powerSubSystems).values(data).returning();
+            if (!result) return { success: false, error: new DatabaseError("Failed to create powerSubSystem") };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create powerSubSystem", new Error(String(error))) };
+        }
+    }
+    async updateSubSystem(id: string, data: UpdatePowerSubSystem): Promise<Result<PowerSubSystem>> {
+        try {
+            const [result] = await db.update(powerSubSystems).set({ ...data, updatedAt: new Date() }).where(eq(powerSubSystems.id, id)).returning();
+            if (!result) return { success: false, error: new NotFoundError("PowerSubSystem", id) };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update powerSubSystem", new Error(String(error))) };
+        }
+    }
+    async deleteSubSystem(id: string): Promise<Result<boolean>> {
+        try {
+            const [result] = await db.delete(powerSubSystems).where(eq(powerSubSystems.id, id)).returning({ id: powerSubSystems.id });
+            return { success: true, data: result !== undefined };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete powerSubSystem", new Error(String(error))) };
+        }
+    }
+
+    // --- powerCategories ---
+    async createCategory(data: CreatePowerCategory): Promise<Result<PowerCategory>> {
+        try {
+            const [result] = await db.insert(powerCategories).values(data).returning();
+            if (!result) return { success: false, error: new DatabaseError("Failed to create powerCategory") };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create powerCategory", new Error(String(error))) };
+        }
+    }
+    async updateCategory(id: string, data: UpdatePowerCategory): Promise<Result<PowerCategory>> {
+        try {
+            const [result] = await db.update(powerCategories).set({ ...data, updatedAt: new Date() }).where(eq(powerCategories.id, id)).returning();
+            if (!result) return { success: false, error: new NotFoundError("PowerCategory", id) };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update powerCategory", new Error(String(error))) };
+        }
+    }
+    async deleteCategory(id: string): Promise<Result<boolean>> {
+        try {
+            const [result] = await db.delete(powerCategories).where(eq(powerCategories.id, id)).returning({ id: powerCategories.id });
+            return { success: true, data: result !== undefined };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete powerCategory", new Error(String(error))) };
+        }
+    }
+
+    // --- powerAbilities ---
+    async createAbility(data: CreatePowerAbility): Promise<Result<PowerAbility>> {
+        try {
+            const [result] = await db.insert(powerAbilities).values(data).returning();
+            if (!result) return { success: false, error: new DatabaseError("Failed to create powerAbility") };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create powerAbility", new Error(String(error))) };
+        }
+    }
+    async updateAbility(id: string, data: UpdatePowerAbility): Promise<Result<PowerAbility>> {
+        try {
+            const [result] = await db.update(powerAbilities).set({ ...data, updatedAt: new Date() }).where(eq(powerAbilities.id, id)).returning();
+            if (!result) return { success: false, error: new NotFoundError("PowerAbility", id) };
+            return { success: true, data: result };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update powerAbility", new Error(String(error))) };
+        }
+    }
+    async deleteAbility(id: string): Promise<Result<boolean>> {
+        try {
+            const [result] = await db.delete(powerAbilities).where(eq(powerAbilities.id, id)).returning({ id: powerAbilities.id });
+            return { success: true, data: result !== undefined };
+        } catch (error) {
+            return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete powerAbility", new Error(String(error))) };
+        }
+    }
+
+
     async getGraphData(universeId: string) {
         try {
             const data = await db.query.rootsOfPower.findMany({

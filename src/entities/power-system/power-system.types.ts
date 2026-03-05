@@ -1,5 +1,13 @@
-import type { PaginationParams } from "@/common/pagination/pagination.types";
 import type { Universe } from "@/entities/universe/universe.types";
+import {
+  updatePowerSystemSchema,
+  updateRootOfPowerSchema,
+  updatePowerSubSystemSchema,
+  updatePowerCategorySchema,
+  updatePowerAbilitySchema,
+  powerSystemQuerySchema,
+} from "./power-system.validation";
+import { z } from "zod";
 
 export interface RootOfPower {
   id: string;
@@ -69,11 +77,20 @@ export type PowerSystemWithRelations = PowerSystem & {
   characterAccess: CharacterPowerAccess[];
 };
 
+// --- Generic Types ---
+export type CreateRootOfPower = Omit<RootOfPower, "id" | "createdAt" | "updatedAt">;
+export type UpdateRootOfPower = z.infer<typeof updateRootOfPowerSchema>;
+
 export type CreatePowerSystem = Omit<PowerSystem, "id" | "createdAt" | "updatedAt">;
-export type UpdatePowerSystem = {
-  [K in keyof CreatePowerSystem]?: CreatePowerSystem[K] | undefined;
-};
-export type PowerSystemQueryParams = PaginationParams & {
-  name?: string | undefined;
-  rootOfPowerId?: string | undefined;
-};
+export type UpdatePowerSystem = z.infer<typeof updatePowerSystemSchema>;
+
+export type CreatePowerSubSystem = Omit<PowerSubSystem, "id" | "createdAt" | "updatedAt">;
+export type UpdatePowerSubSystem = z.infer<typeof updatePowerSubSystemSchema>;
+
+export type CreatePowerCategory = Omit<PowerCategory, "id" | "createdAt" | "updatedAt">;
+export type UpdatePowerCategory = z.infer<typeof updatePowerCategorySchema>;
+
+export type CreatePowerAbility = Omit<PowerAbility, "id" | "createdAt" | "updatedAt">;
+export type UpdatePowerAbility = z.infer<typeof updatePowerAbilitySchema>;
+
+export type PowerSystemQueryParams = z.infer<typeof powerSystemQuerySchema>;
