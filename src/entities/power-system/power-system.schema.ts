@@ -48,9 +48,12 @@ export const powerSubSystems = pgTable("power_subsystems", {
 // 4. Power Categories
 export const powerCategories = pgTable("power_categories", {
   id: uuid("id").primaryKey().defaultRandom(),
-  subSystemId: uuid("subsystem_id")
-    .references(() => powerSubSystems.id, { onDelete: "cascade" })
-    .notNull(),
+  powerSystemId: uuid("power_system_id").references(() => powerSystems.id, {
+    onDelete: "cascade",
+  }),
+  subSystemId: uuid("subsystem_id").references(() => powerSubSystems.id, {
+    onDelete: "cascade",
+  }),
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -60,9 +63,15 @@ export const powerCategories = pgTable("power_categories", {
 // 5. Power Abilities
 export const powerAbilities = pgTable("power_abilities", {
   id: uuid("id").primaryKey().defaultRandom(),
-  categoryId: uuid("category_id")
-    .references(() => powerCategories.id, { onDelete: "cascade" })
-    .notNull(),
+  powerSystemId: uuid("power_system_id").references(() => powerSystems.id, {
+    onDelete: "cascade",
+  }),
+  subSystemId: uuid("subsystem_id").references(() => powerSubSystems.id, {
+    onDelete: "cascade",
+  }),
+  categoryId: uuid("category_id").references(() => powerCategories.id, {
+    onDelete: "cascade",
+  }),
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -124,6 +133,8 @@ export const powerSystemsRelations = relations(
       references: [rootsOfPower.id],
     }),
     subSystems: many(powerSubSystems),
+    categories: many(powerCategories),
+    abilities: many(powerAbilities),
     characterAccess: many(characterPowerAccess),
   }),
 );
@@ -136,6 +147,7 @@ export const powerSubSystemsRelations = relations(
       references: [powerSystems.id],
     }),
     categories: many(powerCategories),
+    abilities: many(powerAbilities),
     characterAccess: many(characterPowerAccess),
   }),
 );
@@ -143,6 +155,10 @@ export const powerSubSystemsRelations = relations(
 export const powerCategoriesRelations = relations(
   powerCategories,
   ({ one, many }) => ({
+    powerSystem: one(powerSystems, {
+      fields: [powerCategories.powerSystemId],
+      references: [powerSystems.id],
+    }),
     subSystem: one(powerSubSystems, {
       fields: [powerCategories.subSystemId],
       references: [powerSubSystems.id],
@@ -155,6 +171,14 @@ export const powerCategoriesRelations = relations(
 export const powerAbilitiesRelations = relations(
   powerAbilities,
   ({ one, many }) => ({
+    powerSystem: one(powerSystems, {
+      fields: [powerAbilities.powerSystemId],
+      references: [powerSystems.id],
+    }),
+    subSystem: one(powerSubSystems, {
+      fields: [powerAbilities.subSystemId],
+      references: [powerSubSystems.id],
+    }),
     category: one(powerCategories, {
       fields: [powerAbilities.categoryId],
       references: [powerCategories.id],
