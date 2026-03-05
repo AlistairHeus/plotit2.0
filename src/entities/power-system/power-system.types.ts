@@ -12,11 +12,6 @@ export interface PowerSystem {
   rootOfPowerId: string;
   name: string;
   description: string | null;
-  rank: number;
-  rules: string | null;
-  isActive: boolean;
-  icon: string | null;
-  color: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,11 +21,6 @@ export interface PowerSubSystem {
   powerSystemId: string;
   name: string;
   description: string | null;
-  rank: number;
-  isActive: boolean;
-  requirements: Record<string, unknown> | null;
-  icon: string | null;
-  color: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,11 +30,6 @@ export interface PowerCategory {
   subSystemId: string;
   name: string;
   description: string | null;
-  rank: number;
-  isActive: boolean;
-  requirements: Record<string, unknown> | null;
-  icon: string | null;
-  color: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,15 +39,6 @@ export interface PowerAbility {
   categoryId: string;
   name: string;
   description: string | null;
-  rank: number;
-  isActive: boolean;
-  requirements: Record<string, unknown> | null;
-  icon: string | null;
-  color: string | null;
-  cooldown: number | null;
-  manaCost: number | null;
-  damage: Record<string, unknown> | null;
-  effects: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,13 +50,7 @@ export interface CharacterPowerAccess {
   subSystemId: string | null;
   categoryId: string | null;
   abilityId: string | null;
-  accessLevel: number;
-  masteryPoints: number;
-  isActive: boolean;
-  unlockedAt: Date;
   lastUsedAt: Date | null;
-  usageCount: number;
-  notes: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

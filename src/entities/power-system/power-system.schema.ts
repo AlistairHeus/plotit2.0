@@ -1,16 +1,13 @@
+import { characters } from "@/entities/character/character.schema";
+import { universes } from "@/entities/universe/universe.schema";
 import { relations } from "drizzle-orm";
 import {
-  boolean,
-  integer,
-  jsonb,
   pgTable,
   text,
   timestamp,
   unique,
-  uuid,
+  uuid
 } from "drizzle-orm/pg-core";
-import { characters } from "@/entities/character/character.schema";
-import { universes } from "@/entities/universe/universe.schema";
 
 // 1. Root of Power
 export const rootsOfPower = pgTable("roots_of_power", {
@@ -32,11 +29,6 @@ export const powerSystems = pgTable("power_systems", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  rank: integer("rank").default(1).notNull(),
-  rules: text("rules"),
-  isActive: boolean("is_active").default(true).notNull(),
-  icon: text("icon"),
-  color: text("color"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -49,11 +41,6 @@ export const powerSubSystems = pgTable("power_subsystems", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  rank: integer("rank").default(1).notNull(),
-  isActive: boolean("is_active").default(true).notNull(),
-  requirements: jsonb("requirements"),
-  icon: text("icon"),
-  color: text("color"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -66,11 +53,6 @@ export const powerCategories = pgTable("power_categories", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  rank: integer("rank").default(1).notNull(),
-  isActive: boolean("is_active").default(true).notNull(),
-  requirements: jsonb("requirements"),
-  icon: text("icon"),
-  color: text("color"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -83,15 +65,6 @@ export const powerAbilities = pgTable("power_abilities", {
     .notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  rank: integer("rank").default(1).notNull(),
-  isActive: boolean("is_active").default(true).notNull(),
-  requirements: jsonb("requirements"),
-  icon: text("icon"),
-  color: text("color"),
-  cooldown: integer("cooldown"),
-  manaCost: integer("mana_cost"),
-  damage: jsonb("damage"),
-  effects: jsonb("effects"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -116,13 +89,7 @@ export const characterPowerAccess = pgTable(
     abilityId: uuid("ability_id").references(() => powerAbilities.id, {
       onDelete: "cascade",
     }),
-    accessLevel: integer("access_level").default(1).notNull(),
-    masteryPoints: integer("mastery_points").default(0).notNull(),
-    isActive: boolean("is_active").default(true).notNull(),
-    unlockedAt: timestamp("unlocked_at").defaultNow().notNull(),
     lastUsedAt: timestamp("last_used_at"),
-    usageCount: integer("usage_count").default(0).notNull(),
-    notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
