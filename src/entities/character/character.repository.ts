@@ -62,8 +62,8 @@ export class CharacterRepository {
         try {
             const [result] = await db.insert(characters).values({
                 ...data,
-                raceId: data.raceId ?? null,
-                ethnicGroupId: data.ethnicGroupId ?? null,
+                raceId: data.raceId,
+                ethnicGroupId: data.ethnicGroupId,
             }).returning();
             if (!result) {
                 return { success: false, error: new DatabaseError("Failed to create character") };

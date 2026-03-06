@@ -1,11 +1,11 @@
-import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber, zodFormUUID } from "@/common/validation.utils";
 import { CHARACTER_GENDERS, CHARACTER_TYPES, sortableCharacterFields } from "@/entities/character/character.constants";
 import { z } from "zod";
 
 export const createCharacterSchema = z.object({
     universeId: z.string().uuid(),
-    raceId: z.string().uuid().nullable().optional(),
-    ethnicGroupId: z.string().uuid().nullable().optional(),
+    raceId: zodFormUUID(z.string().uuid().nullable().optional()),
+    ethnicGroupId: zodFormUUID(z.string().uuid().nullable().optional()),
     name: z.string().min(1).max(255),
     background: z.string().nullable().optional(),
     type: z.enum(CHARACTER_TYPES).nullable().optional(),
@@ -24,17 +24,17 @@ export const characterQuerySchema = createPaginatedQuerySchema(
     {
         name: z.string().optional(),
         universeId: z.string().uuid().optional(),
-        raceId: z.string().uuid().optional(),
+        raceId: zodFormUUID(z.string().uuid().optional()),
         type: z.enum(CHARACTER_TYPES).optional(),
         benched: zodFormBoolean(z.boolean().optional()),
     },
 );
 
 export const characterPowerAccessSchema = z.object({
-    powerSystemId: z.string().uuid().nullable().optional(),
-    subSystemId: z.string().uuid().nullable().optional(),
-    categoryId: z.string().uuid().nullable().optional(),
-    abilityId: z.string().uuid().nullable().optional(),
+    powerSystemId: zodFormUUID(z.string().uuid().nullable().optional()),
+    subSystemId: zodFormUUID(z.string().uuid().nullable().optional()),
+    categoryId: zodFormUUID(z.string().uuid().nullable().optional()),
+    abilityId: zodFormUUID(z.string().uuid().nullable().optional()),
 })
 
 export const syncCharacterPowerAccessSchema = z.object({

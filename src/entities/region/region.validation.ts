@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormUUID } from "@/common/validation.utils";
 import { sortableRegionFields } from "@/entities/region/region.constants";
 import { RegionType, } from "@/entities/region/region.types";
 
@@ -8,9 +8,9 @@ export const createRegionSchema = z.object({
     universeId: z.string().uuid(),
     type: z.nativeEnum(RegionType),
     description: z.string().nullable().optional(),
-    parentId: z.string().uuid().nullable().optional(),
-    planetId: z.string().uuid().nullable().optional(),
-    religionId: z.string().uuid().nullable().optional(),
+    parentId: zodFormUUID(z.string().uuid().nullable().optional()),
+    planetId: zodFormUUID(z.string().uuid().nullable().optional()),
+    religionId: zodFormUUID(z.string().uuid().nullable().optional()),
     avatarUrl: z.string().url().nullable().optional(),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
