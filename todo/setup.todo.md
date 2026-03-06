@@ -3,62 +3,55 @@
 ### Entities 
 
 [x] **Users**
-
 [x] **Universe**
-
 [x] **Region**
-
-[x] **Map**
-
-[x] **SvgMapping**
-
+[x] **Map** (Image/SVG)
+[x] **SvgMapping** (Regions/Points on SVG)
 [x] **Race**
-
 [x] **Ethnic Group**
+[x] **Celestial** (Galaxies, Solar Systems, Stars, Planets)
+[x] **Religion**
+[x] **Construct**
+[x] **Power System** (Root, System, Subsystem, Category, Ability)
+[x] **Power Subsystem**
+[x] **Power Category**
+[x] **Power Ability**
+[x] **Character Power Access**
+[x] **Character**
 
-[ ] **Celestial**
-[ ] **Religion**
-[ ] **Construct**
-[ ] **Power System**
-[ ] **Power Subsystem**
-[ ] **Power Category**
-[ ] **Power Ability**
-[ ] **Character Power Access**
-[ ] **Character**
+---
 
-
-
-### Phase 0: Base Infrastructure (Already Completed)
+### Phase 0: Base Infrastructure
 * [x] **Registration:** Sign-up flow with email/password.
-* [x] **Profile:** CRUD for `User` (bio, social links, username).
+* [x] **Profile:** CRUD for `User`.
 * [x] **Auth Guard:** Validates session/token.
-* [x] **Authentication:** JWT or Session token issuance.
-* [x] **Validation:** Schema-based input validation (e.g., Zod, Joi, or Pydantic).
+* [x] **Authentication:** JWT issuance.
+* [x] **Validation:** Zod-based validation.
 * [x] **Error Handler:** Global wrapper for consistent HTTP status codes.
 
 ---
 
-### Step 1: The Foundational Utilities
+### Step 1: Foundational Utilities
 **Goal:** Establish systems that all future entities rely on.
 
 * **Global Middleware**
-* [ ] **Ownership Guard:** Validates resource ownership via `UniverseID`.
+* [x] **Ownership Guard:** Validates resource ownership via `UniverseID` (`validateUniverseOwnership`).
 
 * **File Services**
-* [ ] **Upload Service:** Handle `multipart/form-data`.
-* [ ] **Image Processor:** Avatar/Map resizing and validation.
-* [ ] **Storage Integration:** Local storage or S3/CDN provider.
+* [x] **Upload Service:** Handle `multipart/form-data` via Multer.
+* [ ] **Image Processor:** Advanced Avatar/Map resizing and optimization.
+* [x] **Storage Integration:** Local storage implemented. (S3/CDN integration pending).
 
 ---
 
-### Step 2: The Lore Primitives (Zero-Dependency Entities)
+### Step 2: The Lore Primitives
 **Goal:** Core lore entities that only depend on the Universe.
 
 * **World Elements (Primitives)**
-* [ ] **Religions:** Tracking Deities, Tenets, and Holy Sites.
-* [ ] **Races:** Define lifespans, origins, and languages.
-* [ ] **Ethnic Groups:** Regional adaptations and cultural traits.
-* [ ] **Constructs:** Data models for Afflictions, Manifestations, and Vestiges.
+* [x] **Religions:** Tracking Deities, Tenets, and Holy Sites.
+* [x] **Races:** Lifespans, origins, and languages.
+* [x] **Ethnic Groups:** Regional adaptations (Integrated with Races).
+* [x] **Constructs:** Afflictions, Manifestations, and Vestiges.
 
 ---
 
@@ -66,7 +59,7 @@
 **Goal:** Build entities that rely on primitives.
 
 * **Demographics API (CRUD)**
-* [ ] **Characters:** Core entity (backgrounds/traits) with image gallery support. Requires File Services (avatars), Races, and Ethnic Groups.
+* [x] **Characters:** Core entity with image gallery, Race, and Ethnic group associations.
 
 ---
 
@@ -74,13 +67,13 @@
 **Goal:** Strictly hierarchical physical world building.
 
 * **The Celestial Stack**
-* [ ] **Cosmology Entities:** Hierarchy: `Galaxy` → `Solar System` → `Star/Planet` → `Moon`.
+* [x] **Cosmology Entities:** ✅ `Galaxy` → `Solar System` → `Star/Planet` → `Moon`.
 
 * **Geographical Mapping**
-* [ ] **Regions:** Recursive hierarchy (Continent → Ocean → City). Links to Planets and Religions.
-* [ ] **Fantasy Maps:** Image/SVG upload and management.
+* [x] **Regions:** Recursive hierarchy (Continent → City).
+* [x] **Fantasy Maps:** Image/SVG upload and point/region mapping.
 * [ ] **Grid System:** Logic for hex/square coordinate data (terrain, elevation).
-* [ ] **Map Regions:** Overlaying sub-regions onto map canvases.
+* [x] **Map Regions:** Overlaying sub-regions onto map canvases.
 
 ---
 
@@ -88,33 +81,21 @@
 **Goal:** Highly relational power trees.
 
 * **Magic & Power Systems**
-* [ ] **Root of Power:** Base structure.
-* [ ] **Power Systems:** Main systems inside the Root.
-* [ ] **Power Subsystems & Categories:** Subdivisions of Power Systems.
-* [ ] **Ability Catalog (Power Abilities):** Spells/techniques with mana cost, damage, and cooldowns.
-* [ ] **Character Power Access:** Bridge table linking Characters to Abilities (Mastery, Usage).
-
----
-
-### Step 6: The Interconnective Tissue (Notes)
-**Goal:** Enable cross-referencing and rich-text associations across all modules.
-
-* **The Mentions System**
-* [ ] **Notes API:** Rich text storage attachable to any entity ID.
-* [ ] **Entity Linking:** Automatic/Manual tracking of mentions (e.g., "Character A" mentioned in "Region B's" lore).
-* [ ] **Relationship Graph:** API to list all entities linked to a specific note or record.
+* [x] **Power Architecture:** 5-level hierarchy (Root → System → Subsystem → Category → Ability).
+* [x] **Character Power Access:** Linkages between characters and their mastery.
+* [x] **Power Canvas:** (Frontend) Tree visualization for power hierarchies.
 
 ---
 
 ### 📊 Data Hierarchy Overview
 
-| Module | Primary Complexity | Dependencies |
-| --- | --- | --- |
-| **Auth** | Security/Encryption | None |
-| **Foundation Utilities** | File processing | Universe ID |
-| **Primitives** | Self-contained CRUD | Universe ID |
-| **Characters** | Image Gallaries | Races, Ethnic Groups, File Services |
-| **Cosmology** | Nested Relationships | Universe ID |
-| **Maps & Regions** | Coordinate Logic | Regions, Religions, Planets, Assets |
-| **Power Systems** | Relational Overlap | Characters |
-| **Notes** | Polymorphic Links | All Entities |
+| Module | Primary Complexity | Dependencies | Status |
+| --- | --- | --- | --- |
+| **Auth** | Security/Encryption | None | ✅ Done |
+| **Foundation Utilities** | Ownership / Uploads | Universe ID | 🟡 In Progress (Optimization) |
+| **Primitives** | Self-contained CRUD | Universe ID | ✅ Done |
+| **Characters** | Image Galleries | Races, Ethnic Groups | ✅ Done |
+| **Cosmology** | Nested Relationships | Universe ID | ✅ Done |
+| **Maps & Regions** | Coordinate / SVG Logic | Regions, Religions | ✅ Done |
+| **Power Systems** | Relational Overlap | Characters | ✅ Done |
+| **Mentions** | Polymorphic Links | All Entities | ❌ Pending |

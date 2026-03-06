@@ -99,6 +99,12 @@ export class RaceService {
         return result.data;
     }
 
+    async getAllEthnicGroups(universeId: string): Promise<EthnicGroup[]> {
+        const result = await this.raceRepository.findAllEthnicGroups(universeId);
+        if (!result.success) throw result.error;
+        return result.data;
+    }
+
     async getEthnicGroupById(id: string): Promise<EthnicGroup | null> {
         const result = await this.raceRepository.findOneEthnicGroup(id);
         if (!result.success) return null;

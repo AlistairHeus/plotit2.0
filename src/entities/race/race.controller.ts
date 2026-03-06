@@ -97,6 +97,16 @@ export class RaceController {
         res.status(200).json({ success: true, data: groups, message: "Ethnic groups retrieved successfully" });
     }
 
+    async getAllEthnicGroups(req: Request, res: Response): Promise<void> {
+        const rawUniverseId = req.query.universeId;
+        const universeIdStr = typeof rawUniverseId === "string" ? rawUniverseId : undefined;
+
+        const universeId = validateParams(universeIdStr, paramsSchema);
+        const groups = await this.raceService.getAllEthnicGroups(universeId);
+
+        res.status(200).json({ success: true, data: groups, message: "All ethnic groups retrieved successfully" });
+    }
+
     async getEthnicGroupById(req: Request, res: Response): Promise<void> {
         const groupId = validateParams(req.params.groupId, paramsSchema);
         const group = await this.raceService.getEthnicGroupById(groupId);
