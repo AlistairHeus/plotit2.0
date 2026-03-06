@@ -225,32 +225,6 @@ export class RaceRepository {
         }
     }
 
-    async findAllEthnicGroups(universeId: string): Promise<Result<EthnicGroup[]>> {
-        try {
-            const results = await db
-                .select({
-                    id: ethnicGroups.id,
-                    raceId: ethnicGroups.raceId,
-                    name: ethnicGroups.name,
-                    description: ethnicGroups.description,
-                    avatarUrl: ethnicGroups.avatarUrl,
-                    imageUrls: ethnicGroups.imageUrls,
-                    createdAt: ethnicGroups.createdAt,
-                    updatedAt: ethnicGroups.updatedAt,
-                })
-                .from(ethnicGroups)
-                .innerJoin(races, eq(ethnicGroups.raceId, races.id))
-                .where(eq(races.universeId, universeId));
-
-            return { success: true, data: results };
-        } catch (error) {
-            return {
-                success: false,
-                error: error instanceof Error ? error : new DatabaseError("Failed to find ethnic groups for universe", new Error(String(error))),
-            };
-        }
-    }
-
     async findOneEthnicGroup(id: string): Promise<Result<EthnicGroup>> {
         try {
             const result = await db.query.ethnicGroups.findFirst({ where: eq(ethnicGroups.id, id) });

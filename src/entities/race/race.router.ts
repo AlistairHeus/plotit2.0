@@ -13,10 +13,6 @@ const repository = new RaceRepository();
 const service = new RaceService(repository, fileService);
 const controller = new RaceController(service);
 
-// --- Global Ethnic Groups (Across all races) ---
-// GET    /api/races/ethnic-groups?universeId=...
-router.get("/ethnic-groups", authenticateToken, asyncHandler((req, res) => controller.getAllEthnicGroups(req, res)));
-
 // --- Race CRUD ---
 // POST   /api/races
 router.post(
