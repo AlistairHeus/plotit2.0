@@ -4,8 +4,10 @@ import {
   createCharacterSchema,
   updateCharacterSchema,
   characterQuerySchema,
+  syncCharacterPowerAccessSchema,
 } from "@/entities/character/character.validation";
 import type { Race, EthnicGroup } from "@/entities/race/race.types";
+import type { CharacterPowerAccess } from "@/entities/power-system/power-system.types";
 
 export interface Character {
   id: string;
@@ -29,8 +31,10 @@ export interface CharacterWithRelations extends Character {
   universe: Universe;
   race?: Race | null;
   ethnicGroup?: EthnicGroup | null;
+  powerAccess?: CharacterPowerAccess[];
 }
 
 export type CreateCharacter = z.infer<typeof createCharacterSchema>;
 export type UpdateCharacter = z.infer<typeof updateCharacterSchema>;
 export type CharacterQueryParams = z.infer<typeof characterQuerySchema>;
+export type SyncCharacterPowerAccess = z.infer<typeof syncCharacterPowerAccessSchema>;

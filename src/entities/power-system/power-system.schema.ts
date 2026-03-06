@@ -5,7 +5,6 @@ import {
   pgTable,
   text,
   timestamp,
-  unique,
   uuid
 } from "drizzle-orm/pg-core";
 
@@ -98,19 +97,9 @@ export const characterPowerAccess = pgTable(
     abilityId: uuid("ability_id").references(() => powerAbilities.id, {
       onDelete: "cascade",
     }),
-    lastUsedAt: timestamp("last_used_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (t) => [
-    unique().on(
-      t.characterId,
-      t.powerSystemId,
-      t.subSystemId,
-      t.categoryId,
-      t.abilityId,
-    ),
-  ],
+  }
 );
 
 // Relations

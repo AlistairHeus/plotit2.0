@@ -1,6 +1,6 @@
-import { z } from "zod";
 import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber } from "@/common/validation.utils";
-import { sortableCharacterFields, CHARACTER_TYPES, CHARACTER_GENDERS } from "@/entities/character/character.constants";
+import { CHARACTER_GENDERS, CHARACTER_TYPES, sortableCharacterFields } from "@/entities/character/character.constants";
+import { z } from "zod";
 
 export const createCharacterSchema = z.object({
     universeId: z.string().uuid(),
@@ -29,3 +29,14 @@ export const characterQuerySchema = createPaginatedQuerySchema(
         benched: zodFormBoolean(z.boolean().optional()),
     },
 );
+
+export const characterPowerAccessSchema = z.object({
+    powerSystemId: z.string().uuid().nullable().optional(),
+    subSystemId: z.string().uuid().nullable().optional(),
+    categoryId: z.string().uuid().nullable().optional(),
+    abilityId: z.string().uuid().nullable().optional(),
+})
+
+export const syncCharacterPowerAccessSchema = z.object({
+    powers: z.array(characterPowerAccessSchema)
+});

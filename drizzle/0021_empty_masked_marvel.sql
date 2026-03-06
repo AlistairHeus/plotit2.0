@@ -1,0 +1,1 @@
+ALTER TABLE "character_power_access" DROP COLUMN "last_used_at";

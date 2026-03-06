@@ -6,6 +6,7 @@ import {
     createCharacterSchema,
     characterQuerySchema,
     updateCharacterSchema,
+    syncCharacterPowerAccessSchema,
 } from "@/entities/character/character.validation";
 import {
     validateBody,
@@ -72,6 +73,24 @@ export class CharacterController {
         log.info("Character deleted successfully", { characterId, operation: "delete_character" });
 
         res.status(200).json({ success: true, message: "Character deleted successfully" });
+    }
+
+    async getPowerAccess(req: Request, res: Response): Promise<void> {
+        const characterId = validateParams(req.params.id, paramsSchema);
+        const powers = await this.characterService.getPowerAccess(characterId);
+
+        log.info("Character power access retrieved", { characterId, operation: "get_power_access" });
+        res.status(200).json({ success: true, data: powers, message: "Power access retrieved successfully" });
+    }
+
+    async syncPowerAccess(req: Request, res: Response): Promise<void> {
+        const characterId = validateParams(req.params.id, paramsSchema);
+        const data = validateBody(req.body, syncCharacterPowerAccessSchema);
+
+        const powers = await this.characterService.syncPowerAccess(characterId, data);
+
+        log.info("Character power access synced", { characterId, operation: "sync_power_access" });
+        res.status(200).json({ success: true, data: powers, message: "Power access synced successfully" });
     }
 
 }

@@ -12,8 +12,11 @@ import type {
     CharacterQueryParams,
     CharacterWithRelations,
     CreateCharacter,
+    SyncCharacterPowerAccess,
     UpdateCharacter,
 } from "@/entities/character/character.types";
+import { characterPowerAccess } from "@/entities/power-system/power-system.schema";
+import type { CharacterPowerAccess } from "@/entities/power-system/power-system.types";
 import { eq, type SQL } from "drizzle-orm";
 
 const paginationConfig: PaginationConfig<typeof characters> = {
@@ -166,7 +169,7 @@ export class CharacterRepository {
         try {
             const result = await db.query.characters.findFirst({
                 where: eq(characters.id, id),
-                with: { universe: true, race: true, ethnicGroup: true },
+                with: { universe: true, race: true, ethnicGroup: true, powerAccess: true },
             });
             if (!result) return { success: false, error: new NotFoundError("Character", id) };
             return { success: true, data: result };
@@ -174,6 +177,62 @@ export class CharacterRepository {
             return {
                 success: false,
                 error: error instanceof Error ? error : new DatabaseError("Failed to find character with relations", new Error(String(error))),
+            };
+        }
+    }
+
+    async getPowerAccess(characterId: string): Promise<Result<CharacterPowerAccess[]>> {
+        try {
+            const result = await db.query.characterPowerAccess.findMany({
+                where: eq(characterPowerAccess.characterId, characterId),
+                with: {
+                    powerSystem: true,
+                    subSystem: true,
+                    category: true,
+                    ability: true,
+                }
+            });
+            return { success: true, data: result };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error : new DatabaseError("Failed to fetch character power access", new Error(String(error))),
+            };
+        }
+    }
+
+    async syncPowerAccess(characterId: string, data: SyncCharacterPowerAccess): Promise<Result<CharacterPowerAccess[]>> {
+        try {
+            await db.transaction(async (tx) => {
+                await tx.delete(characterPowerAccess).where(eq(characterPowerAccess.characterId, characterId));
+
+                if (data.powers.length > 0) {
+                    const values = data.powers.map(p => ({
+                        characterId,
+                        powerSystemId: p.powerSystemId ?? null,
+                        subSystemId: p.subSystemId ?? null,
+                        categoryId: p.categoryId ?? null,
+                        abilityId: p.abilityId ?? null,
+                    }));
+
+                    const uniqueValues = values.filter((val, index, self) =>
+                        index === self.findIndex((t) => (
+                            t.powerSystemId === val.powerSystemId &&
+                            t.subSystemId === val.subSystemId &&
+                            t.categoryId === val.categoryId &&
+                            t.abilityId === val.abilityId
+                        ))
+                    );
+
+                    await tx.insert(characterPowerAccess).values(uniqueValues);
+                }
+            });
+
+            return await this.getPowerAccess(characterId);
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error : new DatabaseError("Failed to sync character power access", new Error(String(error))),
             };
         }
     }

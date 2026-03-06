@@ -36,7 +36,10 @@ router.patch(
     asyncHandler((req, res) => controller.updateCharacter(req, res))
 );
 
-// DELETE /api/characters/:id
-router.delete("/:id", authenticateToken, asyncHandler((req, res) => controller.deleteCharacter(req, res)));
+// GET    /api/characters/:id/power-access
+router.get("/:id/power-access", authenticateToken, asyncHandler((req, res) => controller.getPowerAccess(req, res)));
+
+// PUT    /api/characters/:id/power-access
+router.put("/:id/power-access", authenticateToken, asyncHandler((req, res) => controller.syncPowerAccess(req, res)));
 
 export default router;

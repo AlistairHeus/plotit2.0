@@ -6,7 +6,9 @@ import type {
     CharacterQueryParams,
     CharacterWithRelations,
     UpdateCharacter,
+    SyncCharacterPowerAccess,
 } from "@/entities/character/character.types";
+import type { CharacterPowerAccess } from "@/entities/power-system/power-system.types";
 import type { IFileService } from "@/common/file/file.service";
 
 export class CharacterService {
@@ -76,6 +78,18 @@ export class CharacterService {
 
     async deleteCharacter(id: string): Promise<boolean> {
         const result = await this.characterRepository.delete(id);
+        if (!result.success) throw result.error;
+        return result.data;
+    }
+
+    async getPowerAccess(characterId: string): Promise<CharacterPowerAccess[]> {
+        const result = await this.characterRepository.getPowerAccess(characterId);
+        if (!result.success) throw result.error;
+        return result.data;
+    }
+
+    async syncPowerAccess(characterId: string, data: SyncCharacterPowerAccess): Promise<CharacterPowerAccess[]> {
+        const result = await this.characterRepository.syncPowerAccess(characterId, data);
         if (!result.success) throw result.error;
         return result.data;
     }

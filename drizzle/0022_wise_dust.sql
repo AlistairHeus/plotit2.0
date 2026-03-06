@@ -1,0 +1,2 @@
+CREATE TYPE "public"."power_access_level" AS ENUM('SYSTEM', 'SUBSYSTEM', 'CATEGORY', 'ABILITY');--> statement-breakpoint
+ALTER TABLE "character_power_access" ADD COLUMN "access_level" "power_access_level" DEFAULT 'SYSTEM' NOT NULL;
