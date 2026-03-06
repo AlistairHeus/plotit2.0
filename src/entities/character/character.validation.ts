@@ -1,4 +1,4 @@
-import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber, zodFormUUID } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormNumber, zodFormUUID, zodFormString } from "@/common/validation.utils";
 import { CHARACTER_GENDERS, CHARACTER_TYPES, sortableCharacterFields } from "@/entities/character/character.constants";
 import { z } from "zod";
 
@@ -11,7 +11,7 @@ export const createCharacterSchema = z.object({
     type: z.enum(CHARACTER_TYPES).nullable().optional(),
     gender: z.enum(CHARACTER_GENDERS).default("Unspecified"),
     age: zodFormNumber(z.number().int().nullable().optional()),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
     benched: zodFormBoolean(z.boolean().default(false).optional()),
 });

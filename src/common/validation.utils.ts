@@ -63,7 +63,7 @@ export const zodFormUUID = <T extends z.ZodTypeAny>(schema: T) => z.preprocess((
  * Helper for generic strings that might be "null" or empty.
  */
 export const zodFormString = <T extends z.ZodTypeAny>(schema: T) => z.preprocess((val) => {
-  if (val === 'null' || val === 'undefined') return null;
+  if (val === 'null' || val === 'undefined' || val === '') return null;
   return val;
 }, schema);
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormUUID } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormBoolean, zodFormUUID, zodFormString } from "@/common/validation.utils";
 import {
     sortableGalaxyFields,
     sortableSolarSystemFields,
@@ -14,8 +14,8 @@ export const createGalaxySchema = z.object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
     type: z.nativeEnum(GalaxyType).optional(),
-    avatarUrl: z.string().nullable().optional(),
-    imageUrls: zodFormArray(z.array(z.string())).optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
+    imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
 export const updateGalaxySchema = createGalaxySchema
@@ -37,8 +37,8 @@ export const createSolarSystemSchema = z.object({
     galaxyId: z.string().uuid(),
     name: z.string().min(1),
     description: z.string().nullable().optional(),
-    avatarUrl: z.string().nullable().optional(),
-    imageUrls: zodFormArray(z.array(z.string())).optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
+    imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
 export const updateSolarSystemSchema = createSolarSystemSchema
@@ -60,8 +60,8 @@ export const createStarSchema = z.object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
     type: z.nativeEnum(SpectralType).optional(),
-    avatarUrl: z.string().nullable().optional(),
-    imageUrls: zodFormArray(z.array(z.string())).optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
+    imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
 export const updateStarSchema = createStarSchema
@@ -85,8 +85,8 @@ export const createPlanetSchema = z.object({
     name: z.string().min(1),
     description: z.string().nullable().optional(),
     isHabitable: zodFormBoolean(z.boolean().optional()),
-    avatarUrl: z.string().nullable().optional(),
-    imageUrls: zodFormArray(z.array(z.string())).optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
+    imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
 export const updatePlanetSchema = createPlanetSchema

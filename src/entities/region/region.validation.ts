@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray, zodFormUUID } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormUUID, zodFormString } from "@/common/validation.utils";
 import { sortableRegionFields } from "@/entities/region/region.constants";
 import { RegionType, } from "@/entities/region/region.types";
 
@@ -11,7 +11,7 @@ export const createRegionSchema = z.object({
     parentId: zodFormUUID(z.string().uuid().nullable().optional()),
     planetId: zodFormUUID(z.string().uuid().nullable().optional()),
     religionId: zodFormUUID(z.string().uuid().nullable().optional()),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 

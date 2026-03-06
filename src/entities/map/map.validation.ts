@@ -1,19 +1,19 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormString } from "@/common/validation.utils";
 import { sortableMapFields } from "@/entities/map/map.constants";
 
 export const createMapSchema = z.object({
     name: z.string().min(1),
     universeId: z.string().uuid(),
     regionId: z.string().uuid(),
-    imageUrl: z.string().url().optional(), // Provided by the server after image upload
+    imageUrl: zodFormString(z.string().url().nullable().optional()), // Provided by the server after image upload
 });
 
 export const updateMapSchema = z.object({
     name: z.string().min(1).optional(),
     universeId: z.string().uuid().optional(),
     regionId: z.string().uuid().optional(),
-    imageUrl: z.string().url().optional(),
+    imageUrl: zodFormString(z.string().url().nullable().optional()),
 });
 
 export const mapQuerySchema = createPaginatedQuerySchema(

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormString } from "@/common/validation.utils";
 import { sortableConstructFields } from "@/entities/construct/construct.constants";
 import { ConstructCategory } from "@/entities/construct/construct.types";
 
@@ -11,7 +11,7 @@ export const createConstructSchema = z.object({
     rarity: z.string().nullable().optional(),
     tags: z.array(z.string()).optional().default([]),
     properties: z.record(z.any()).nullable().optional(),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 

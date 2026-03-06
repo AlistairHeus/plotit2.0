@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormString } from "@/common/validation.utils";
 import { sortableReligionFields } from "@/entities/religion/religion.constants";
 export const createReligionSchema = z.object({
     name: z.string().min(1),
@@ -7,7 +7,7 @@ export const createReligionSchema = z.object({
     description: z.string().nullable().optional(),
     deities: zodFormArray(z.array(z.string())).optional(),
     holySites: zodFormArray(z.array(z.string())).optional(),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 

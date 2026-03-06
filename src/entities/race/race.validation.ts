@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createPaginatedQuerySchema, zodFormArray } from "@/common/validation.utils";
+import { createPaginatedQuerySchema, zodFormArray, zodFormString } from "@/common/validation.utils";
 import { sortableRaceFields } from "@/entities/race/race.constants";
 
 export const createRaceSchema = z.object({
@@ -8,7 +8,7 @@ export const createRaceSchema = z.object({
     description: z.string().nullable().optional(),
     lifespan: z.string().nullable().optional(),
     languages: zodFormArray(z.array(z.string())).nullable().optional(),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
@@ -28,7 +28,7 @@ export const createEthnicGroupSchema = z.object({
     raceId: z.string().uuid(),
     name: z.string().min(1),
     description: z.string().nullable().optional(),
-    avatarUrl: z.string().url().nullable().optional(),
+    avatarUrl: zodFormString(z.string().url().nullable().optional()),
     imageUrls: zodFormArray(z.array(z.string().url())).optional(),
 });
 
