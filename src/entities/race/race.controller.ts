@@ -83,7 +83,8 @@ export class RaceController {
     async createEthnicGroup(req: Request, res: Response): Promise<void> {
         const raceId = validateParams(req.params.id, paramsSchema);
         const data = validateBody({ ...req.body, raceId }, createEthnicGroupSchema);
-        const group = await this.raceService.createEthnicGroup(data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const group = await this.raceService.createEthnicGroup(data, files);
 
         log.info("Ethnic group created", { groupId: group.id, raceId, operation: "create_ethnic_group" });
 
@@ -109,7 +110,8 @@ export class RaceController {
     async updateEthnicGroup(req: Request, res: Response): Promise<void> {
         const groupId = validateParams(req.params.groupId, paramsSchema);
         const data = validateBody(req.body, updateEthnicGroupSchema);
-        const group = await this.raceService.updateEthnicGroup(groupId, data);
+        const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+        const group = await this.raceService.updateEthnicGroup(groupId, data, files);
 
         log.info("Ethnic group updated", { groupId: group.id, operation: "update_ethnic_group" });
 

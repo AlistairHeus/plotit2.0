@@ -87,7 +87,23 @@ export class RaceService {
 
     // --- Ethnic Groups ---
 
-    async createEthnicGroup(data: CreateEthnicGroup): Promise<EthnicGroup> {
+    async createEthnicGroup(data: CreateEthnicGroup, files?: Record<string, Express.Multer.File[]>): Promise<EthnicGroup> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "ethnic-group");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "ethnic-group");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
+            }
+        }
         const result = await this.raceRepository.createEthnicGroup(data);
         if (!result.success) throw result.error;
         return result.data;
@@ -105,7 +121,23 @@ export class RaceService {
         return result.data;
     }
 
-    async updateEthnicGroup(id: string, data: UpdateEthnicGroup): Promise<EthnicGroup> {
+    async updateEthnicGroup(id: string, data: UpdateEthnicGroup, files?: Record<string, Express.Multer.File[]>): Promise<EthnicGroup> {
+        if (files) {
+            if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
+                const avatarPath = await this.fileService.save(files.avatar[0], "ethnic-group");
+                data.avatarUrl = this.fileService.getUrl(avatarPath);
+            }
+            if (files.images && files.images.length > 0) {
+                const imageUrls = await Promise.all(
+                    files.images.map(async (file) => {
+                        const savedPath = await this.fileService.save(file, "ethnic-group");
+                        return this.fileService.getUrl(savedPath);
+                    })
+                );
+                const currentImageUrls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+                data.imageUrls = [...currentImageUrls, ...imageUrls];
+            }
+        }
         const result = await this.raceRepository.updateEthnicGroup(id, data);
         if (!result.success) throw result.error;
         return result.data;
