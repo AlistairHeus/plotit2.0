@@ -37,4 +37,6 @@ export interface CharacterWithRelations extends Character {
 export type CreateCharacter = z.infer<typeof createCharacterSchema>;
 export type UpdateCharacter = z.infer<typeof updateCharacterSchema>;
 export type CharacterQueryParams = z.infer<typeof characterQuerySchema>;
-export type SyncCharacterPowerAccess = z.infer<typeof syncCharacterPowerAccessSchema>;
+export type SyncCharacterPowerAccess = z.infer<
+  typeof syncCharacterPowerAccessSchema
+>;

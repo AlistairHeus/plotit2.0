@@ -26,7 +26,9 @@ export class UniverseController {
 
     // Safety check; ensuring token middleware ran
     if (!req.user?.id) {
-      throw new UnauthorizedError("Authentication required to create a universe");
+      throw new UnauthorizedError(
+        "Authentication required to create a universe",
+      );
     }
 
     const payload = { ...universeData, userId: req.user.id };

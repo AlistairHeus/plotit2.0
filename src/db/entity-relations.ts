@@ -63,7 +63,13 @@ import {
   universesRelations,
 } from "@/entities/universe/universe.schema";
 import { users, usersRelations } from "@/entities/user/user.schema";
-
+import {
+  factions,
+  factionsRelations,
+  factionMembers,
+  factionMembersRelations,
+  factionTypeEnum,
+} from "@/entities/faction/faction.schema";
 const schema = {
   users,
   usersRelations,
@@ -111,6 +117,11 @@ const schema = {
   constructCategoryEnum,
   mapSvgMappings,
   mapSvgMappingsRelations,
+  factions,
+  factionsRelations,
+  factionMembers,
+  factionMembersRelations,
+  factionTypeEnum,
 };
 
 export default schema;

@@ -16,30 +16,52 @@ const controller = new CharacterController(service);
 // --- Character CRUD ---
 // POST   /api/characters
 router.post(
-    "/",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.createCharacter(req, res))
+  "/",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.createCharacter(req, res)),
 );
 
 // GET    /api/characters
-router.get("/", authenticateToken, asyncHandler((req, res) => controller.getCharacters(req, res)));
+router.get(
+  "/",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getCharacters(req, res)),
+);
 
 // GET    /api/characters/:id
-router.get("/:id", authenticateToken, asyncHandler((req, res) => controller.getCharacterById(req, res)));
+router.get(
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getCharacterById(req, res)),
+);
 
 // PATCH    /api/characters/:id
 router.patch(
-    "/:id",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.updateCharacter(req, res))
+  "/:id",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.updateCharacter(req, res)),
 );
 
 // GET    /api/characters/:id/power-access
-router.get("/:id/power-access", authenticateToken, asyncHandler((req, res) => controller.getPowerAccess(req, res)));
+router.get(
+  "/:id/power-access",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getPowerAccess(req, res)),
+);
 
 // PUT    /api/characters/:id/power-access
-router.put("/:id/power-access", authenticateToken, asyncHandler((req, res) => controller.syncPowerAccess(req, res)));
+router.put(
+  "/:id/power-access",
+  authenticateToken,
+  asyncHandler((req, res) => controller.syncPowerAccess(req, res)),
+);
 
 export default router;

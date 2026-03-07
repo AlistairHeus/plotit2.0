@@ -22,7 +22,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to create refresh token", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to create refresh token",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -44,7 +47,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find refresh token", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find refresh token",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -62,7 +68,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find user refresh tokens", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find user refresh tokens",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -83,7 +92,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to revoke refresh token", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to revoke refresh token",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -104,7 +116,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to revoke all user tokens", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to revoke all user tokens",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -121,7 +136,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to delete expired tokens", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to delete expired tokens",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -152,7 +170,10 @@ export class RefreshTokenRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to delete oldest tokens", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to delete oldest tokens",
+                new Error(String(error)),
+              ),
       };
     }
   }

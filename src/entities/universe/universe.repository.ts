@@ -59,7 +59,10 @@ export class UniverseRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to create universe", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to create universe",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -83,7 +86,10 @@ export class UniverseRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to update universe", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to update universe",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -102,7 +108,10 @@ export class UniverseRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to delete universe", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to delete universe",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -151,7 +160,10 @@ export class UniverseRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find universes", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find universes",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -264,9 +276,9 @@ export class UniverseRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-              "Failed to find universes with relations",
-              new Error(String(error)),
-            ),
+                "Failed to find universes with relations",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -288,12 +300,17 @@ export class UniverseRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find universe", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find universe",
+                new Error(String(error)),
+              ),
       };
     }
   }
 
-  async findOneWithRelations(id: string): Promise<Result<UniverseWithRelations>> {
+  async findOneWithRelations(
+    id: string,
+  ): Promise<Result<UniverseWithRelations>> {
     try {
       const result = await db.query.universes.findFirst({
         where: eq(universes.id, id),
@@ -374,9 +391,9 @@ export class UniverseRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-              "Failed to find universe with relations",
-              new Error(String(error)),
-            ),
+                "Failed to find universe with relations",
+                new Error(String(error)),
+              ),
       };
     }
   }

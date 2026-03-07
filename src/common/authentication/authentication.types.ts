@@ -1,6 +1,6 @@
 import type {
   jwtPayloadSchema,
-  loginSchema
+  loginSchema,
 } from "@/common/authentication/authentication.validation";
 import type { AuthenticatedUser, SafeUser } from "@/entities/user/user.types";
 import type { z } from "zod";

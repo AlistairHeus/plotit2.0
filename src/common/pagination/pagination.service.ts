@@ -65,12 +65,11 @@ export async function paginate<TData>(
 
   const orderBy = sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn);
 
-
   const data = await queryBuilder({
     where: whereClause,
     orderBy,
     limit,
-    offset: skip
+    offset: skip,
   });
 
   const totalPages = Math.ceil(count / limit);

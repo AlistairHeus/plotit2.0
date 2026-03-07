@@ -3,7 +3,7 @@ import type { religions } from "./religion.schema";
 import type {
   createReligionSchema,
   updateReligionSchema,
-  religionQuerySchema
+  religionQuerySchema,
 } from "./religion.validation";
 import type { Universe } from "@/entities/universe/universe.types";
 import type { Region } from "@/entities/region/region.types";

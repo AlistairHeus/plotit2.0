@@ -125,7 +125,6 @@ export const starsRelations = relations(stars, ({ one }) => ({
   }),
 }));
 
-
 export const planetsRelations = relations(planets, ({ one, many }) => ({
   solarSystem: one(solarSystems, {
     fields: [planets.systemId],

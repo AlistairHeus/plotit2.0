@@ -2,13 +2,7 @@ import { planets } from "@/entities/celestial/celestial.schema";
 import { religions } from "@/entities/religion/religion.schema";
 import { universes } from "@/entities/universe/universe.schema";
 import { relations } from "drizzle-orm";
-import {
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uuid
-} from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { maps, mapSvgMappings } from "@/entities/map/map.schema";
 
 export const regionTypeEnum = pgEnum("region_type", [
@@ -25,7 +19,6 @@ export const regionTypeEnum = pgEnum("region_type", [
   "VALLEY",
   "RIVER",
 ]);
-
 
 export const regions = pgTable("regions", {
   id: uuid("id").primaryKey().defaultRandom(),

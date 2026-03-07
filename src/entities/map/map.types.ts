@@ -2,47 +2,47 @@ import { z } from "zod";
 import type { Universe } from "@/entities/universe/universe.types";
 import type { Region } from "@/entities/region/region.types";
 import {
-    createMapSchema,
-    updateMapSchema,
-    mapQuerySchema,
-    svgMappingSchema,
+  createMapSchema,
+  updateMapSchema,
+  mapQuerySchema,
+  svgMappingSchema,
 } from "@/entities/map/map.validation";
 
 export interface FantasyMap {
-    id: string;
-    name: string;
-    universeId: string;
-    regionId: string;
-    imageUrl: string;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  name: string;
+  universeId: string;
+  regionId: string;
+  imageUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SvgMapping {
-    id: string;
-    mapId: string;
-    svgElementId: string;
-    featureType: string;
-    regionId: string;
-    x?: number | null;
-    y?: number | null;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  mapId: string;
+  svgElementId: string;
+  featureType: string;
+  regionId: string;
+  x?: number | null;
+  y?: number | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SvgMappingWithRegion extends SvgMapping {
-    region: Pick<Region, "id" | "name">;
+  region: Pick<Region, "id" | "name">;
 }
 
 export interface MapWithRelations extends FantasyMap {
-    universe: Universe;
-    region: Region;
-    svgMappings: SvgMappingWithRegion[];
+  universe: Universe;
+  region: Region;
+  svgMappings: SvgMappingWithRegion[];
 }
 export interface MapsWithRelations extends FantasyMap {
-    universe: Universe;
-    region: Region;
-    svgMappings: SvgMapping[];
+  universe: Universe;
+  region: Region;
+  svgMappings: SvgMapping[];
 }
 
 export type CreateMap = z.infer<typeof createMapSchema>;

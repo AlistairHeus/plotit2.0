@@ -16,39 +16,45 @@ const controller = new RegionController(service);
 
 // POST /api/regions
 router.post(
-    "/",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.createRegion(req, res)),
+  "/",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.createRegion(req, res)),
 );
 
 // GET /api/regions
 router.get(
-    "/",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getRegions(req, res)),
+  "/",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getRegions(req, res)),
 );
 
 // GET /api/regions/:id
 router.get(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getRegionById(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getRegionById(req, res)),
 );
 
 // PATCH /api/regions/:id
 router.patch(
-    "/:id",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.updateRegion(req, res)),
+  "/:id",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.updateRegion(req, res)),
 );
 
 // DELETE /api/regions/:id
 router.delete(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.deleteRegion(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.deleteRegion(req, res)),
 );
 
 export default router;

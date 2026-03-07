@@ -28,14 +28,15 @@ export const validateUniverseOwnership = async (
   const { user } = req;
 
   if (!user) {
-    next(new ForbiddenError("User not authenticated")); return;
+    next(new ForbiddenError("User not authenticated"));
+    return;
   }
 
   // 1. Resolve the header (handling potential string[])
   const rawHeader = req.headers["x-universe-id"];
   const headerValue = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
 
-  // 2. Resolve the body safely. 
+  // 2. Resolve the body safely.
   // By checking isRecord, req.body is narrowed from 'any' to 'Record<string, unknown>'
   const body = isRecord(req.body) ? req.body : {};
 
@@ -47,27 +48,32 @@ export const validateUniverseOwnership = async (
     asString(headerValue);
 
   if (!universeId) {
-    next(new ForbiddenError("Universe ID is required for this action")); return;
+    next(new ForbiddenError("Universe ID is required for this action"));
+    return;
   }
 
   try {
     const result = await universeRepository.findOne(universeId);
 
     if (!result.success) {
-      next(result.error); return;
+      next(result.error);
+      return;
     }
 
     const universe = result.data;
 
     if (universe.userId !== user.id) {
-      next(new ForbiddenError("You do not have ownership of this universe")); return;
+      next(new ForbiddenError("You do not have ownership of this universe"));
+      return;
     }
 
     // req.universe is already typed in your global d.ts, so this is safe.
     req.universe = universe;
 
-    next(); return;
+    next();
+    return;
   } catch (error) {
-    next(error); return;
+    next(error);
+    return;
   }
 };

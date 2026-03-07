@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, unique, uuid, real } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+  real,
+} from "drizzle-orm/pg-core";
 import { regions } from "@/entities/region/region.schema";
 import { universes } from "@/entities/universe/universe.schema";
 
@@ -55,16 +62,13 @@ export const mapsRelations = relations(maps, ({ one, many }) => ({
   svgMappings: many(mapSvgMappings),
 }));
 
-export const mapSvgMappingsRelations = relations(
-  mapSvgMappings,
-  ({ one }) => ({
-    map: one(maps, {
-      fields: [mapSvgMappings.mapId],
-      references: [maps.id],
-    }),
-    region: one(regions, {
-      fields: [mapSvgMappings.regionId],
-      references: [regions.id],
-    }),
+export const mapSvgMappingsRelations = relations(mapSvgMappings, ({ one }) => ({
+  map: one(maps, {
+    fields: [mapSvgMappings.mapId],
+    references: [maps.id],
   }),
-);
+  region: one(regions, {
+    fields: [mapSvgMappings.regionId],
+    references: [regions.id],
+  }),
+}));

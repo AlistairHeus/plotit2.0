@@ -3,163 +3,165 @@ import { paramsSchema } from "@/common/common.validation";
 import log from "@/utils/logger";
 import type { MapService } from "@/entities/map/map.service";
 import {
-    createMapSchema,
-    mapQuerySchema,
-    svgMappingSchema,
-    updateMapSchema,
+  createMapSchema,
+  mapQuerySchema,
+  svgMappingSchema,
+  updateMapSchema,
 } from "@/entities/map/map.validation";
 import {
-    validateBody,
-    validateParams,
-    validateQuery,
+  validateBody,
+  validateParams,
+  validateQuery,
 } from "@/middleware/validation.middleware";
 
 export class MapController {
-    private mapService: MapService;
+  private mapService: MapService;
 
-    constructor(mapService: MapService) {
-        this.mapService = mapService;
+  constructor(mapService: MapService) {
+    this.mapService = mapService;
+  }
+
+  async create(req: Request, res: Response): Promise<void> {
+    const data = validateBody(req.body, createMapSchema);
+    const file = req.file;
+
+    if (!file) {
+      res
+        .status(400)
+        .json({ success: false, message: "Image file is required" });
+      return;
     }
 
-    async create(req: Request, res: Response): Promise<void> {
-        const data = validateBody(req.body, createMapSchema);
-        const file = req.file;
+    const map = await this.mapService.createMap(data, file);
 
-        if (!file) {
-            res.status(400).json({ success: false, message: "Image file is required" });
-            return;
-        }
+    log.info("Map created successfully", {
+      mapId: map.id,
+      operation: "create_map",
+    });
 
-        const map = await this.mapService.createMap(data, file);
+    res.status(201).json({
+      success: true,
+      data: map,
+      message: "Map created successfully",
+    });
+  }
 
-        log.info("Map created successfully", {
-            mapId: map.id,
-            operation: "create_map"
-        });
+  async getAll(req: Request, res: Response): Promise<void> {
+    const queryParams = validateQuery(req.query, mapQuerySchema);
 
-        res.status(201).json({
-            success: true,
-            data: map,
-            message: "Map created successfully"
-        });
-    }
+    const result = await this.mapService.getMaps(queryParams);
 
-    async getAll(req: Request, res: Response): Promise<void> {
-        const queryParams = validateQuery(req.query, mapQuerySchema);
+    log.info("Maps retrieved successfully", {
+      count: result.data.length,
+      totalItems: result.pagination.totalItems,
+      currentPage: result.pagination.currentPage,
+      operation: "get_maps",
+    });
 
-        const result = await this.mapService.getMaps(queryParams);
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: result.pagination,
+      message: "Maps retrieved successfully",
+    });
+  }
 
-        log.info("Maps retrieved successfully", {
-            count: result.data.length,
-            totalItems: result.pagination.totalItems,
-            currentPage: result.pagination.currentPage,
-            operation: "get_maps",
-        });
+  async getById(req: Request, res: Response): Promise<void> {
+    const mapId = validateParams(req.params.id, paramsSchema);
 
-        res.status(200).json({
-            success: true,
-            data: result.data,
-            pagination: result.pagination,
-            message: "Maps retrieved successfully",
-        });
-    }
+    const map = await this.mapService.getMapByIdWithRelations(mapId);
 
-    async getById(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
+    res.status(200).json({
+      success: true,
+      data: map,
+      message: "Map retrieved successfully",
+    });
+  }
 
-        const map = await this.mapService.getMapByIdWithRelations(mapId);
+  async update(req: Request, res: Response): Promise<void> {
+    const mapId = validateParams(req.params.id, paramsSchema);
+    const data = validateBody(req.body, updateMapSchema);
+    const file = req.file;
 
-        res.status(200).json({
-            success: true,
-            data: map,
-            message: "Map retrieved successfully"
-        });
-    }
+    const map = await this.mapService.updateMap(mapId, data, file);
 
-    async update(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
-        const data = validateBody(req.body, updateMapSchema);
-        const file = req.file;
+    log.info("Map updated successfully", {
+      mapId: map.id,
+      operation: "update_map",
+    });
 
-        const map = await this.mapService.updateMap(mapId, data, file);
+    res.status(200).json({
+      success: true,
+      data: map,
+      message: "Map updated successfully",
+    });
+  }
 
-        log.info("Map updated successfully", {
-            mapId: map.id,
-            operation: "update_map"
-        });
+  async delete(req: Request, res: Response): Promise<void> {
+    const mapId = validateParams(req.params.id, paramsSchema);
 
-        res.status(200).json({
-            success: true,
-            data: map,
-            message: "Map updated successfully"
-        });
-    }
+    const success = await this.mapService.deleteMap(mapId);
 
-    async delete(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
+    log.info("Map deleted successfully", {
+      mapId,
+      operation: "delete_map",
+    });
 
-        const success = await this.mapService.deleteMap(mapId);
+    res.status(200).json({
+      success: true,
+      data: success,
+      message: "Map deleted successfully",
+    });
+  }
 
-        log.info("Map deleted successfully", {
-            mapId,
-            operation: "delete_map"
-        });
+  // SVG Mapping operations
 
-        res.status(200).json({
-            success: true,
-            data: success,
-            message: "Map deleted successfully"
-        });
-    }
+  async addSvgMapping(req: Request, res: Response): Promise<void> {
+    const mapId = validateParams(req.params.id, paramsSchema);
+    const mappingData = validateBody({ ...req.body, mapId }, svgMappingSchema);
 
-    // SVG Mapping operations
+    const mapping = await this.mapService.upsertSvgMapping(mappingData);
 
-    async addSvgMapping(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
-        const mappingData = validateBody({ ...req.body, mapId }, svgMappingSchema);
+    log.info("SVG mapping upserted", {
+      mapId,
+      mappingId: mapping.id,
+      svgElementId: mapping.svgElementId,
+      operation: "upsert_svg_mapping",
+    });
 
-        const mapping = await this.mapService.upsertSvgMapping(mappingData);
+    res.status(200).json({
+      success: true,
+      data: mapping,
+      message: "SVG mapping saved successfully",
+    });
+  }
 
-        log.info("SVG mapping upserted", {
-            mapId,
-            mappingId: mapping.id,
-            svgElementId: mapping.svgElementId,
-            operation: "upsert_svg_mapping"
-        });
+  async getSvgMappings(req: Request, res: Response): Promise<void> {
+    const mapId = validateParams(req.params.id, paramsSchema);
 
-        res.status(200).json({
-            success: true,
-            data: mapping,
-            message: "SVG mapping saved successfully"
-        });
-    }
+    const mappings = await this.mapService.getSvgMappings(mapId);
 
-    async getSvgMappings(req: Request, res: Response): Promise<void> {
-        const mapId = validateParams(req.params.id, paramsSchema);
+    res.status(200).json({
+      success: true,
+      data: mappings,
+      message: "SVG mappings retrieved successfully",
+    });
+  }
 
-        const mappings = await this.mapService.getSvgMappings(mapId);
+  async removeSvgMapping(req: Request, res: Response): Promise<void> {
+    const mappingId = validateParams(req.params.mappingId, paramsSchema);
 
-        res.status(200).json({
-            success: true,
-            data: mappings,
-            message: "SVG mappings retrieved successfully"
-        });
-    }
+    const success = await this.mapService.removeSvgMapping(mappingId);
 
-    async removeSvgMapping(req: Request, res: Response): Promise<void> {
-        const mappingId = validateParams(req.params.mappingId, paramsSchema);
+    log.info("SVG mapping removed", {
+      mappingId,
+      operation: "remove_svg_mapping",
+    });
 
-        const success = await this.mapService.removeSvgMapping(mappingId);
-
-        log.info("SVG mapping removed", {
-            mappingId,
-            operation: "remove_svg_mapping"
-        });
-
-        res.status(200).json({
-            success: true,
-            data: success,
-            message: "SVG mapping removed successfully"
-        });
-    }
+    res.status(200).json({
+      success: true,
+      data: success,
+      message: "SVG mapping removed successfully",
+    });
+  }
 }

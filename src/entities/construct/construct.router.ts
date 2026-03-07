@@ -16,39 +16,45 @@ const controller = new ConstructController(service);
 
 // POST /api/constructs
 router.post(
-    "/",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.createConstruct(req, res)),
+  "/",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.createConstruct(req, res)),
 );
 
 // GET /api/constructs
 router.get(
-    "/",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getConstructs(req, res)),
+  "/",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getConstructs(req, res)),
 );
 
 // GET /api/constructs/:id
 router.get(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getConstructById(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getConstructById(req, res)),
 );
 
 // PATCH /api/constructs/:id
 router.patch(
-    "/:id",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.updateConstruct(req, res)),
+  "/:id",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.updateConstruct(req, res)),
 );
 
 // DELETE /api/constructs/:id
 router.delete(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.deleteConstruct(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.deleteConstruct(req, res)),
 );
 
 export default router;

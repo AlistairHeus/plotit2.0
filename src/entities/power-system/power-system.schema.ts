@@ -1,12 +1,7 @@
 import { characters } from "@/entities/character/character.schema";
 import { universes } from "@/entities/universe/universe.schema";
 import { relations } from "drizzle-orm";
-import {
-  pgTable,
-  text,
-  timestamp,
-  uuid
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // 1. Root of Power
 export const rootsOfPower = pgTable("roots_of_power", {
@@ -78,29 +73,26 @@ export const powerAbilities = pgTable("power_abilities", {
 });
 
 // 6. Character Power Access
-export const characterPowerAccess = pgTable(
-  "character_power_access",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    characterId: uuid("character_id")
-      .references(() => characters.id, { onDelete: "cascade" })
-      .notNull(),
-    powerSystemId: uuid("power_system_id").references(() => powerSystems.id, {
-      onDelete: "cascade",
-    }),
-    subSystemId: uuid("subsystem_id").references(() => powerSubSystems.id, {
-      onDelete: "cascade",
-    }),
-    categoryId: uuid("category_id").references(() => powerCategories.id, {
-      onDelete: "cascade",
-    }),
-    abilityId: uuid("ability_id").references(() => powerAbilities.id, {
-      onDelete: "cascade",
-    }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  }
-);
+export const characterPowerAccess = pgTable("character_power_access", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  characterId: uuid("character_id")
+    .references(() => characters.id, { onDelete: "cascade" })
+    .notNull(),
+  powerSystemId: uuid("power_system_id").references(() => powerSystems.id, {
+    onDelete: "cascade",
+  }),
+  subSystemId: uuid("subsystem_id").references(() => powerSubSystems.id, {
+    onDelete: "cascade",
+  }),
+  categoryId: uuid("category_id").references(() => powerCategories.id, {
+    onDelete: "cascade",
+  }),
+  abilityId: uuid("ability_id").references(() => powerAbilities.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 // Relations
 export const rootsOfPowerRelations = relations(

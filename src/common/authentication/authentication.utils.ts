@@ -7,7 +7,7 @@ const EXPIRY_REGEX = /^(\d+)([dhms])?$/;
  * @returns Expiry time in milliseconds
  */
 export function parseExpiryTime(expiry: string | number): number {
-  if (typeof expiry === 'number') {
+  if (typeof expiry === "number") {
     return expiry * 1000;
   }
 

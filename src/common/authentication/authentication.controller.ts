@@ -6,9 +6,7 @@ import type { LogoutResponse } from "./authentication.types";
 import { parseExpiryTime } from "./authentication.utils";
 import { loginSchema } from "./authentication.validation";
 
-import {
-  validateBody,
-} from "@/middleware/validation.middleware";
+import { validateBody } from "@/middleware/validation.middleware";
 import log from "@/utils/logger";
 
 export class AuthenticationController {
@@ -89,7 +87,8 @@ export class AuthenticationController {
   }
 
   async logout(req: Request, res: Response): Promise<void> {
-    const refreshToken = (req.cookies as Record<string, unknown> | undefined)?.refreshToken;
+    const refreshToken = (req.cookies as Record<string, unknown> | undefined)
+      ?.refreshToken;
 
     if (typeof refreshToken === "string") {
       await this.authenticationService.logout(refreshToken);

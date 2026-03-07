@@ -57,7 +57,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to create user", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to create user",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -81,7 +84,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to update user", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to update user",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -100,12 +106,17 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to delete user", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to delete user",
+                new Error(String(error)),
+              ),
       };
     }
   }
 
-  async findAll(queryParams: UserQueryParams): Promise<Result<PaginatedResponse<User>>> {
+  async findAll(
+    queryParams: UserQueryParams,
+  ): Promise<Result<PaginatedResponse<User>>> {
     try {
       const dynamicConditions = buildWhereConditions(queryParams);
 
@@ -127,7 +138,7 @@ export class UserRepository {
             limit,
             offset,
           });
-        }
+        },
       );
     } catch (error) {
       return {
@@ -135,7 +146,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find users", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find users",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -157,7 +171,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find user", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find user",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -179,7 +196,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to find user by email", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to find user by email",
+                new Error(String(error)),
+              ),
       };
     }
   }
@@ -197,7 +217,10 @@ export class UserRepository {
         error:
           error instanceof Error
             ? error
-            : new DatabaseError("Failed to update last login", new Error(String(error))),
+            : new DatabaseError(
+                "Failed to update last login",
+                new Error(String(error)),
+              ),
       };
     }
   }

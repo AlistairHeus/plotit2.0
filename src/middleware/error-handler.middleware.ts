@@ -43,7 +43,9 @@ export const globalErrorHandler = (
 ): void => {
   // Generate request ID for tracking
   const requestId =
-    typeof req.headers["x-request-id"] === "string" ? req.headers["x-request-id"] : generateRequestId();
+    typeof req.headers["x-request-id"] === "string"
+      ? req.headers["x-request-id"]
+      : generateRequestId();
 
   // Process the error and get error details
   const errorDetails = processError(error);
@@ -308,7 +310,11 @@ function handlePostgresError(
  * Delegates to globalErrorHandler via next() so logging, requestId,
  * and the response shape are all handled in one place.
  */
-export const notFoundHandler = (req: Request, _res: Response, next: NextFunction): void => {
+export const notFoundHandler = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
   const routeNotFound = new AppError({
     category: ERROR_CATEGORY.NOT_FOUND,
     code: "ROUTE_NOT_FOUND",
@@ -345,7 +351,8 @@ function isPostgresError(error: unknown): error is PostgresError {
   const hasPostgresCode =
     "code" in error &&
     typeof error.code === "string" &&
-    (Object.values(PG_ERROR_CODES).includes(error.code) || error.code.startsWith("23"));
+    (Object.values(PG_ERROR_CODES).includes(error.code) ||
+      error.code.startsWith("23"));
 
   // 4. Combine. Because we checked 'typeof error.code === "string"',
   // TypeScript knows 'error.code' is a string during the .includes() and .startsWith() calls.

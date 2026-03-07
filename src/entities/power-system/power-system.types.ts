@@ -78,19 +78,34 @@ export type PowerSystemWithRelations = PowerSystem & {
 };
 
 // --- Generic Types ---
-export type CreateRootOfPower = Omit<RootOfPower, "id" | "createdAt" | "updatedAt">;
+export type CreateRootOfPower = Omit<
+  RootOfPower,
+  "id" | "createdAt" | "updatedAt"
+>;
 export type UpdateRootOfPower = z.infer<typeof updateRootOfPowerSchema>;
 
-export type CreatePowerSystem = Omit<PowerSystem, "id" | "createdAt" | "updatedAt">;
+export type CreatePowerSystem = Omit<
+  PowerSystem,
+  "id" | "createdAt" | "updatedAt"
+>;
 export type UpdatePowerSystem = z.infer<typeof updatePowerSystemSchema>;
 
-export type CreatePowerSubSystem = Omit<PowerSubSystem, "id" | "createdAt" | "updatedAt">;
+export type CreatePowerSubSystem = Omit<
+  PowerSubSystem,
+  "id" | "createdAt" | "updatedAt"
+>;
 export type UpdatePowerSubSystem = z.infer<typeof updatePowerSubSystemSchema>;
 
-export type CreatePowerCategory = Omit<PowerCategory, "id" | "createdAt" | "updatedAt">;
+export type CreatePowerCategory = Omit<
+  PowerCategory,
+  "id" | "createdAt" | "updatedAt"
+>;
 export type UpdatePowerCategory = z.infer<typeof updatePowerCategorySchema>;
 
-export type CreatePowerAbility = Omit<PowerAbility, "id" | "createdAt" | "updatedAt">;
+export type CreatePowerAbility = Omit<
+  PowerAbility,
+  "id" | "createdAt" | "updatedAt"
+>;
 export type UpdatePowerAbility = z.infer<typeof updatePowerAbilitySchema>;
 
 export type PowerSystemQueryParams = z.infer<typeof powerSystemQuerySchema>;

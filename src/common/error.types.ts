@@ -364,14 +364,14 @@ export class ValidationError extends AppError {
     // Convert field names to human-readable format
     const humanField = field
       ? field
-        .split(".")
-        .map((part) =>
-          part
-            .replace(/([A-Z])/g, " $1")
-            .toLowerCase()
-            .trim(),
-        )
-        .join(" → ")
+          .split(".")
+          .map((part) =>
+            part
+              .replace(/([A-Z])/g, " $1")
+              .toLowerCase()
+              .trim(),
+          )
+          .join(" → ")
       : "input";
 
     // Improve common error messages

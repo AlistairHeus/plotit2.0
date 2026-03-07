@@ -16,11 +16,17 @@ function validate<T>(data: unknown, schema: ValidationSchema<T>): T {
   }
 }
 
-export const validateQuery = <T>(data: unknown, schema: ValidationSchema<T>): T =>
-  validate(data, schema);
+export const validateQuery = <T>(
+  data: unknown,
+  schema: ValidationSchema<T>,
+): T => validate(data, schema);
 
-export const validateParams = <T>(data: unknown, schema: ValidationSchema<T>): T =>
-  validate(data, schema);
+export const validateParams = <T>(
+  data: unknown,
+  schema: ValidationSchema<T>,
+): T => validate(data, schema);
 
-export const validateBody = <T>(data: unknown, schema: ValidationSchema<T>): T =>
-  validate(data, schema);
+export const validateBody = <T>(
+  data: unknown,
+  schema: ValidationSchema<T>,
+): T => validate(data, schema);

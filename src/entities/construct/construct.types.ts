@@ -6,7 +6,11 @@ import {
   updateConstructSchema,
 } from "@/entities/construct/construct.validation";
 
-export type ConstructCategory = "AFFLICTIONS" | "MANIFESTATIONS" | "ENTITIES" | "VESTIGES";
+export type ConstructCategory =
+  | "AFFLICTIONS"
+  | "MANIFESTATIONS"
+  | "ENTITIES"
+  | "VESTIGES";
 export const ConstructCategory = {
   AFFLICTIONS: "AFFLICTIONS",
   MANIFESTATIONS: "MANIFESTATIONS",

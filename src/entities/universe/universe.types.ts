@@ -1,6 +1,6 @@
 import {
   universeQuerySchema,
-  updateUniverseSchema
+  updateUniverseSchema,
 } from "@/entities/universe/universe.validation";
 import { z } from "zod";
 import type { Character } from "../character/character.types";
@@ -21,13 +21,13 @@ export interface Universe {
 }
 
 export interface UniverseWithRelations extends Universe {
-  characters: Pick<Character, 'id'>[];
-  regions: Pick<Region, 'id'>[];
-  maps: Pick<FantasyMap, 'id'>[];
-  races: Pick<Race, 'id'>[];
-  constructs: Pick<Construct, 'id'>[];
-  galaxies: Pick<Galaxy, 'id'>[];
-  religions: Pick<Religion, 'id'>[];
+  characters: Pick<Character, "id">[];
+  regions: Pick<Region, "id">[];
+  maps: Pick<FantasyMap, "id">[];
+  races: Pick<Race, "id">[];
+  constructs: Pick<Construct, "id">[];
+  galaxies: Pick<Galaxy, "id">[];
+  religions: Pick<Religion, "id">[];
   rootOfPower: {
     id: string;
     powerSystems: {

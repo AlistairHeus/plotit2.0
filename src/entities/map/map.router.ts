@@ -15,9 +15,9 @@ const mapController = new MapController(mapService);
 
 // Standard CRUD
 router.post(
-    "/",
-    upload.single("image"),
-    asyncHandler(mapController.create.bind(mapController)),
+  "/",
+  upload.single("image"),
+  asyncHandler(mapController.create.bind(mapController)),
 );
 
 router.get("/", asyncHandler(mapController.getAll.bind(mapController)));
@@ -25,9 +25,9 @@ router.get("/", asyncHandler(mapController.getAll.bind(mapController)));
 router.get("/:id", asyncHandler(mapController.getById.bind(mapController)));
 
 router.patch(
-    "/:id",
-    upload.single("image"),
-    asyncHandler(mapController.update.bind(mapController)),
+  "/:id",
+  upload.single("image"),
+  asyncHandler(mapController.update.bind(mapController)),
 );
 
 router.delete("/:id", asyncHandler(mapController.delete.bind(mapController)));
@@ -37,18 +37,18 @@ router.delete("/:id", asyncHandler(mapController.delete.bind(mapController)));
 // GET    /:id/mappings          — get all mappings for a map
 // DELETE /mappings/:mappingId   — remove a mapping by DB id
 router.post(
-    "/:id/mappings",
-    asyncHandler(mapController.addSvgMapping.bind(mapController)),
+  "/:id/mappings",
+  asyncHandler(mapController.addSvgMapping.bind(mapController)),
 );
 
 router.get(
-    "/:id/mappings",
-    asyncHandler(mapController.getSvgMappings.bind(mapController)),
+  "/:id/mappings",
+  asyncHandler(mapController.getSvgMappings.bind(mapController)),
 );
 
 router.delete(
-    "/mappings/:mappingId",
-    asyncHandler(mapController.removeSvgMapping.bind(mapController)),
+  "/mappings/:mappingId",
+  asyncHandler(mapController.removeSvgMapping.bind(mapController)),
 );
 
 export { router as mapRouter };

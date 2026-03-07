@@ -16,39 +16,45 @@ const controller = new ReligionController(service);
 
 // POST /api/religions
 router.post(
-    "/",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.createReligion(req, res)),
+  "/",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.createReligion(req, res)),
 );
 
 // GET /api/religions
 router.get(
-    "/",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getReligions(req, res)),
+  "/",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getReligions(req, res)),
 );
 
 // GET /api/religions/:id
 router.get(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.getReligionById(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.getReligionById(req, res)),
 );
 
 // PATCH /api/religions/:id
 router.patch(
-    "/:id",
-    authenticateToken,
-    upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'images', maxCount: 20 }]),
-    asyncHandler((req, res) => controller.updateReligion(req, res)),
+  "/:id",
+  authenticateToken,
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "images", maxCount: 20 },
+  ]),
+  asyncHandler((req, res) => controller.updateReligion(req, res)),
 );
 
 // DELETE /api/religions/:id
 router.delete(
-    "/:id",
-    authenticateToken,
-    asyncHandler((req, res) => controller.deleteReligion(req, res)),
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.deleteReligion(req, res)),
 );
 
 export default router;

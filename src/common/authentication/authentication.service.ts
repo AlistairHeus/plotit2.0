@@ -10,7 +10,7 @@ import type {
   LoginRequest,
   RefreshToken,
   SecureLoginResponse,
-  SecureRefreshTokenResponse
+  SecureRefreshTokenResponse,
 } from "./authentication.types";
 import { parseExpiryTime } from "./authentication.utils";
 import { RefreshTokenRepository } from "./refresh-token.repository";
@@ -57,12 +57,14 @@ export class AuthenticationService {
   async refreshAccessTokenSecure(
     refreshToken: string,
   ): Promise<SecureRefreshTokenResponse> {
-    const isValid = await this.refreshTokenRepository.isTokenValid(refreshToken);
+    const isValid =
+      await this.refreshTokenRepository.isTokenValid(refreshToken);
     if (!isValid) {
       throw new Error(AUTH_ERRORS.REFRESH_TOKEN_INVALID);
     }
 
-    const tokenDataResult = await this.refreshTokenRepository.findByToken(refreshToken);
+    const tokenDataResult =
+      await this.refreshTokenRepository.findByToken(refreshToken);
     if (!tokenDataResult.success) throw tokenDataResult.error;
     const tokenData = tokenDataResult.data;
 
@@ -142,12 +144,14 @@ export class AuthenticationService {
     return jwt.sign(payload, AUTH_CONSTANTS.JWT_SECRET, options);
   }
 
-  private async generateRefreshToken(userId: string): Promise<Result<RefreshToken>> {
+  private async generateRefreshToken(
+    userId: string,
+  ): Promise<Result<RefreshToken>> {
     const token = this.generateSecureToken();
     const expiresAt = new Date();
     expiresAt.setTime(
       expiresAt.getTime() +
-      parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN),
+        parseExpiryTime(AUTH_CONSTANTS.JWT_REFRESH_EXPIRES_IN),
     );
 
     return await this.refreshTokenRepository.create({
