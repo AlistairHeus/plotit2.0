@@ -43,7 +43,7 @@ export class CharacterService {
     }
 
     async getCharacters(queryParams: CharacterQueryParams): Promise<PaginatedResponse<Character>> {
-        const result = await this.characterRepository.findAll(queryParams);
+        const result = await this.characterRepository.findAllWithRelations(queryParams);
         if (!result.success) throw result.error;
         return result.data;
     }
