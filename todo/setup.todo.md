@@ -107,26 +107,27 @@ The current system excellently handles the static entities of a world (Places, P
 
 ### 1. Factions & Organizations
 Political and social groupings that drive plot, trade, and conflict.
-- [ ] Define Faction Schema (`name`, `type` [Guild, Government, Cult, etc.], `influence`, `wealth`)
-- [ ] Establish Relations: Faction to `Region` (headquarters/territory), Faction to `Character` (members/leaders)
-- [ ] Build Faction Server Layer (Repository, Service, Controller, Router)
-- [ ] Build Faction Client Layer (API, UI Pages: List & Detail)
-- [ ] **Challenge**: Implement a "Rivalries/Alliances" self-referencing relation.
+- [x] Define Faction Schema (`name`, `type` [Guild, Government, Cult, etc.], `influence`, `wealth`)
+- [x] Establish Relations: Faction to `Region` (headquarters/territory), Faction to `Character` (members/leaders)
+- [x] Build Faction Server Layer (Repository, Service, Controller, Router)
+- [x] Build Faction Client Layer (API, UI Pages: List & Detail)
 
-### 2. History & Timeline System
+
+### 2. Flora, Fauna, and Materials (The Natural World)
+The ecosystem and resources that populate the world and fuel the economy/magic.
+- [ ] Define Species/Material Schema (`name`, `type` [Plant, Animal, Mineral], `rarity`, `properties`)
+- [ ] Establish Relations: Species to `Region` (habitat), Species to `Power System` (magical catalysts)
+- [ ] Build Natural World Server Layer (Repository, Service, Controller, Router)
+- [ ] Build Natural World Client Layer (API, UI Pages: List & Detail)
+
+
+### 3. History & Timeline System
 The chronological backbone of the world. Essential for tracking cause and effect.
 - [ ] Define Era Schema (e.g., "The First Age", `startYear`, `endYear`)
 - [ ] Define Historical Event Schema (`name`, `date/year`, `description`, `eraId`)
 - [ ] Establish Relations: Event to any entity (Characters born, Constructs built, Regions destroyed, Factions formed)
 - [ ] Build History Server Layer (Repository, Service, Controller, Router)
 - [ ] Build History Client Layer (API, Timeline View UI to visualize events chronologically)
-
-### 3. Flora, Fauna, and Materials (The Natural World)
-The ecosystem and resources that populate the world and fuel the economy/magic.
-- [ ] Define Species/Material Schema (`name`, `type` [Plant, Animal, Monster, Mineral], `rarity`, `properties`)
-- [ ] Establish Relations: Species to `Region` (habitat), Species to `Power System` (magical catalysts)
-- [ ] Build Natural World Server Layer (Repository, Service, Controller, Router)
-- [ ] Build Natural World Client Layer (API, UI Pages: List & Detail)
 
 ### 4. Lore, Myths, & Documents
 Intangible worldbuilding elements that characters interact with or believe in.

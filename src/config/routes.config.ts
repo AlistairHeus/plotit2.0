@@ -11,6 +11,7 @@ import powerSystemRouter from "@/entities/power-system/power-system.router";
 import religionRouter from "@/entities/religion/religion.router";
 import constructRouter from "@/entities/construct/construct.router";
 import factionRouter from "@/entities/faction/faction.router";
+import natureRouter from "@/entities/nature/nature.router";
 
 export const configureRoutes = (app: Express): void => {
   app.get("/health", (_req, res) => {
@@ -56,4 +57,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Faction routes
   app.use("/api/factions", factionRouter);
+
+  // Nature routes
+  app.use("/api/natures", natureRouter);
 };

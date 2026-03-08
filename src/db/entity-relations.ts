@@ -71,6 +71,11 @@ import {
   factionTypeEnum,
   relationshipTypeEnum,
 } from "@/entities/faction/faction.schema";
+import {
+  nature,
+  natureRelations,
+  natureTypeEnum,
+} from "@/entities/nature/nature.schema";
 
 const schema = {
   users,
@@ -125,6 +130,9 @@ const schema = {
   characterRelationships,
   characterRelationshipsRelations,
   relationshipTypeEnum,
+  nature,
+  natureRelations,
+  natureTypeEnum,
 };
 
 export default schema;

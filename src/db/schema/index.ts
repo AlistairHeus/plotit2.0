@@ -11,3 +11,4 @@ export * from "../../entities/universe/universe.schema";
 export * from "../../entities/user/user.constants";
 export * from "../../entities/user/user.schema";
 export * from "../../entities/faction/faction.schema";
+export * from "../../entities/nature/nature.schema";
