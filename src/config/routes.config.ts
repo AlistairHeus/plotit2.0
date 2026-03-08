@@ -10,6 +10,7 @@ import characterRouter from "@/entities/character/character.router";
 import powerSystemRouter from "@/entities/power-system/power-system.router";
 import religionRouter from "@/entities/religion/religion.router";
 import constructRouter from "@/entities/construct/construct.router";
+import factionRouter from "@/entities/faction/faction.router";
 
 export const configureRoutes = (app: Express): void => {
   app.get("/health", (_req, res) => {
@@ -52,4 +53,7 @@ export const configureRoutes = (app: Express): void => {
 
   // Construct routes
   app.use("/api/constructs", constructRouter);
+
+  // Faction routes
+  app.use("/api/factions", factionRouter);
 };

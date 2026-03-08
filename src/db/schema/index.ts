@@ -10,4 +10,4 @@ export * from "../../entities/religion/religion.schema";
 export * from "../../entities/universe/universe.schema";
 export * from "../../entities/user/user.constants";
 export * from "../../entities/user/user.schema";
-export * from "../../entities/map/map.schema";
+export * from "../../entities/faction/faction.schema";

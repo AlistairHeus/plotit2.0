@@ -87,9 +87,15 @@ export class MapRepository {
 
   async update(id: string, data: UpdateMap): Promise<Result<MapType>> {
     try {
+      const updateData: Partial<typeof maps.$inferInsert> = {};
+      if (data.name !== undefined) updateData.name = data.name;
+      if (data.universeId !== undefined) updateData.universeId = data.universeId;
+      if (data.regionId !== undefined) updateData.regionId = data.regionId;
+      if (data.imageUrl) updateData.imageUrl = data.imageUrl;
+
       const [result] = await db
         .update(maps)
-        .set({ ...(data), updatedAt: new Date() })
+        .set({ ...updateData, updatedAt: new Date() })
         .where(eq(maps.id, id))
         .returning();
 

@@ -169,6 +169,48 @@
       "when": 1772796320400,
       "tag": "0023_strong_sinister_six",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1772912409725,
+      "tag": "0024_brainy_expediter",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1772914076705,
+      "tag": "0025_brown_slipstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1772914599065,
+      "tag": "0026_military_richard_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1772925023441,
+      "tag": "0027_gorgeous_swordsman",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1772925551440,
+      "tag": "0028_wakeful_falcon",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1772926848233,
+      "tag": "0029_complete_sir_ram",
+      "breakpoints": true
     }
   ]
 }

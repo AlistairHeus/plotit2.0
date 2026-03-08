@@ -4,14 +4,13 @@ import { NotFoundError } from "@/common/error.types";
 import type { FactionService } from "@/entities/faction/faction.service";
 import {
   createFactionSchema,
-  factionQuerySchema,
   updateFactionSchema,
+  factionQuerySchema,
+  createRelationshipSchema,
+  updateRelationshipSchema,
+  relationshipQuerySchema,
 } from "@/entities/faction/faction.validation";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "@/middleware/validation.middleware";
+import { validateBody, validateParams, validateQuery } from "@/middleware/validation.middleware";
 import log from "@/utils/logger";
 
 export class FactionController {
@@ -21,97 +20,68 @@ export class FactionController {
     this.factionService = factionService;
   }
 
+  // ── Factions ────────────────────────────────────────────────────────────────
+
   async createFaction(req: Request, res: Response): Promise<void> {
-    const factionData = validateBody(req.body, createFactionSchema);
-    const files =
-      req.files && !Array.isArray(req.files) ? req.files : undefined;
-
-    const faction = await this.factionService.createFaction(factionData, files);
-
-    log.info("Faction created successfully", {
-      factionId: faction.id,
-      operation: "create_faction",
-    });
-
-    res.status(201).json({
-      success: true,
-      data: faction,
-      message: "Faction created successfully",
-    });
+    const data = validateBody(req.body, createFactionSchema);
+    const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+    const faction = await this.factionService.createFaction(data, files);
+    log.info("Faction created", { factionId: faction.id });
+    res.status(201).json({ success: true, data: faction, message: "Faction created successfully" });
   }
 
   async getFactions(req: Request, res: Response): Promise<void> {
-    const factionData = validateQuery(req.query, factionQuerySchema);
-
-    const result = await this.factionService.getFactions(factionData);
-
-    log.info("Factions retrieved successfully", {
-      count: result.data.length,
-      totalItems: result.pagination.totalItems,
-      currentPage: result.pagination.currentPage,
-      operation: "get_factions",
-    });
-
-    res.status(200).json({
-      success: true,
-      data: result.data,
-      pagination: result.pagination,
-      message: "Factions retrieved successfully",
-    });
+    const query = validateQuery(req.query, factionQuerySchema);
+    const result = await this.factionService.getFactions(query);
+    res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
   }
 
   async getFactionById(req: Request, res: Response): Promise<void> {
-    const factionId = validateParams(req.params.id, paramsSchema);
-
-    const faction = await this.factionService.getFactionById(factionId);
-
-    if (!faction) {
-      throw new NotFoundError("Faction", factionId);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: faction,
-      message: "Faction retrieved successfully",
-    });
+    const id = validateParams(req.params.id, paramsSchema);
+    const faction = await this.factionService.getFactionById(id);
+    if (!faction) throw new NotFoundError("Faction", id);
+    res.status(200).json({ success: true, data: faction });
   }
 
   async updateFaction(req: Request, res: Response): Promise<void> {
-    const factionId = validateParams(req.params.id, paramsSchema);
-    const factionData = validateBody(req.body, updateFactionSchema);
-    const files =
-      req.files && !Array.isArray(req.files) ? req.files : undefined;
-
-    const faction = await this.factionService.updateFaction(
-      factionId,
-      factionData,
-      files,
-    );
-
-    log.info("Faction updated successfully", {
-      factionId: faction.id,
-      operation: "update_faction",
-    });
-
-    res.status(200).json({
-      success: true,
-      data: faction,
-      message: "Faction updated successfully",
-    });
+    const id = validateParams(req.params.id, paramsSchema);
+    const data = validateBody(req.body, updateFactionSchema);
+    const files = req.files && !Array.isArray(req.files) ? req.files : undefined;
+    const faction = await this.factionService.updateFaction(id, data, files);
+    res.status(200).json({ success: true, data: faction, message: "Faction updated successfully" });
   }
 
   async deleteFaction(req: Request, res: Response): Promise<void> {
-    const validationResult = validateParams(req.params.id, paramsSchema);
+    const id = validateParams(req.params.id, paramsSchema);
+    await this.factionService.deleteFaction(id);
+    res.status(200).json({ success: true, message: "Faction deleted successfully" });
+  }
 
-    await this.factionService.deleteFaction(validationResult);
+  // ── Character Relationships ───────────────────────────────────────────────────
 
-    log.info("Faction deleted successfully", {
-      operation: "delete_faction",
-    });
+  async getRelationships(req: Request, res: Response): Promise<void> {
+    const query = validateQuery(req.query, relationshipQuerySchema);
+    const relationships = await this.factionService.getRelationships(query);
+    res.status(200).json({ success: true, data: relationships });
+  }
 
-    res.status(200).json({
-      success: true,
-      message: "Faction deleted successfully",
-    });
+  async createRelationship(req: Request, res: Response): Promise<void> {
+    const data = validateBody(req.body, createRelationshipSchema);
+    const relationship = await this.factionService.createRelationship(data);
+    log.info("Character relationship created", { id: relationship.id, type: relationship.type });
+    res.status(201).json({ success: true, data: relationship, message: "Relationship created successfully" });
+  }
+
+  async updateRelationship(req: Request, res: Response): Promise<void> {
+    const id = validateParams(req.params.id, paramsSchema);
+    const data = validateBody(req.body, updateRelationshipSchema);
+    const relationship = await this.factionService.updateRelationship(id, data);
+    res.status(200).json({ success: true, data: relationship, message: "Relationship updated successfully" });
+  }
+
+  async deleteRelationship(req: Request, res: Response): Promise<void> {
+    const id = validateParams(req.params.id, paramsSchema);
+    await this.factionService.deleteRelationship(id);
+    res.status(200).json({ success: true, message: "Relationship deleted successfully" });
   }
 }

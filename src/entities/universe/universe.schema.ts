@@ -8,6 +8,7 @@ import { rootsOfPower } from "@/entities/power-system/power-system.schema";
 import { races } from "@/entities/race/race.schema";
 import { regions } from "@/entities/region/region.schema";
 import { religions } from "@/entities/religion/religion.schema";
+import { factions } from "@/entities/faction/faction.schema";
 import { users } from "@/entities/user/user.schema";
 
 export const universes = pgTable("universes", {
@@ -34,4 +35,5 @@ export const universesRelations = relations(universes, ({ one, many }) => ({
   regions: many(regions),
   constructs: many(constructs),
   maps: many(maps),
+  factions: many(factions),
 }));

@@ -4,17 +4,28 @@ import { paginate } from "@/common/pagination/pagination.service";
 import type {
   PaginatedResponse,
   PaginationConfig,
+  PaginationParams,
 } from "@/common/pagination/pagination.types";
 import db from "@/db/connection";
-import { factions } from "@/entities/faction/faction.schema";
+import {
+  characterRelationships,
+  factions,
+} from "@/entities/faction/faction.schema";
 import type {
+  CharacterRelationship,
+  CharacterRelationshipWithCharacters,
   CreateFaction,
+  CreateRelationship,
   Faction,
   FactionQueryParams,
   FactionWithRelations,
+  RelationshipQueryParams,
   UpdateFaction,
+  UpdateRelationship,
 } from "@/entities/faction/faction.types";
-import { eq, type SQL } from "drizzle-orm";
+import { and, eq, or, type SQL } from "drizzle-orm";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const paginationConfig: PaginationConfig<typeof factions> = {
   table: factions,
@@ -29,288 +40,149 @@ const paginationConfig: PaginationConfig<typeof factions> = {
   defaultSortBy: "updatedAt",
 };
 
-function buildWhereConditions(queryParams: FactionQueryParams): SQL[] {
-  const whereConditions: SQL[] = [];
-
-  if ("name" in queryParams && typeof queryParams.name === "string") {
-    whereConditions.push(eq(factions.name, queryParams.name));
-  }
-
-  if (
-    "universeId" in queryParams &&
-    typeof queryParams.universeId === "string"
-  ) {
-    whereConditions.push(eq(factions.universeId, queryParams.universeId));
-  }
-
-  if (
-    "headquartersId" in queryParams &&
-    typeof queryParams.headquartersId === "string"
-  ) {
-    whereConditions.push(
-      eq(factions.headquartersId, queryParams.headquartersId),
-    );
-  }
-
-  if ("parentId" in queryParams && typeof queryParams.parentId === "string") {
-    whereConditions.push(eq(factions.parentId, queryParams.parentId));
-  }
-
-  if ("type" in queryParams && queryParams.type) {
-    whereConditions.push(eq(factions.type, queryParams.type));
-  }
-
-  return whereConditions;
+function buildFactionWhere(queryParams: FactionQueryParams): SQL[] {
+  const where: SQL[] = [];
+  if (queryParams.universeId) where.push(eq(factions.universeId, queryParams.universeId));
+  if (queryParams.name) where.push(eq(factions.name, queryParams.name));
+  if (queryParams.type) where.push(eq(factions.type, queryParams.type));
+  return where;
 }
+
+function toPaginationParams(p: FactionQueryParams): PaginationParams {
+  const sortOrderRaw = p.sortOrder;
+  return {
+    limit: p.limit,
+    page: p.page,
+    offset: p.offset,
+    sortBy: p.sortBy,
+    search: p.search,
+    ...(sortOrderRaw === "asc" || sortOrderRaw === "desc" ? { sortOrder: sortOrderRaw } : {}),
+  };
+}
+
+// ─── Faction CRUD ─────────────────────────────────────────────────────────────
+
 export class FactionRepository {
   async create(data: CreateFaction): Promise<Result<Faction>> {
     try {
       const [result] = await db.insert(factions).values(data).returning();
-      if (!result) {
-        return {
-          success: false,
-          error: new DatabaseError("Failed to create faction"),
-        };
-      }
+      if (!result) return { success: false, error: new DatabaseError("Failed to create faction") };
       return { success: true, data: result };
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to create faction",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create faction", new Error(String(error))) };
     }
   }
 
   async update(id: string, data: UpdateFaction): Promise<Result<Faction>> {
     try {
-      const [result] = await db
-        .update(factions)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(factions.id, id))
-        .returning();
-
-      if (!result) {
-        return { success: false, error: new NotFoundError("Faction", id) };
-      }
-
+      const [result] = await db.update(factions).set({ ...data, updatedAt: new Date() }).where(eq(factions.id, id)).returning();
+      if (!result) return { success: false, error: new NotFoundError("Faction", id) };
       return { success: true, data: result };
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to update faction",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update faction", new Error(String(error))) };
     }
   }
 
   async delete(id: string): Promise<Result<boolean>> {
     try {
-      const [result] = await db
-        .delete(factions)
-        .where(eq(factions.id, id))
-        .returning({ id: factions.id });
-
+      const [result] = await db.delete(factions).where(eq(factions.id, id)).returning({ id: factions.id });
       return { success: true, data: result !== undefined };
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to delete faction",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete faction", new Error(String(error))) };
     }
   }
 
-  async findAll(
-    queryParams: FactionQueryParams,
-  ): Promise<Result<PaginatedResponse<Faction>>> {
+  async findAll(queryParams: FactionQueryParams): Promise<Result<PaginatedResponse<Faction>>> {
     try {
-      const dynamicConditions = buildWhereConditions(queryParams);
-
       const configWithConditions = {
         ...paginationConfig,
-        whereConditions: [
-          ...(paginationConfig.whereConditions ?? []),
-          ...dynamicConditions,
-        ],
+        whereConditions: [...(paginationConfig.whereConditions ?? []), ...buildFactionWhere(queryParams)],
       };
+      const queryBuilder = async ({ where, orderBy, limit, offset }: { where: SQL | undefined; orderBy: SQL; limit: number; offset: number }) =>
+        db.query.factions.findMany({ where, orderBy: [orderBy], limit, offset });
 
-      const queryBuilder = async ({
-        where,
-        orderBy,
-        limit,
-        offset,
-      }: {
-        where: SQL | undefined;
-        orderBy: SQL;
-        limit: number;
-        offset: number;
-      }) => {
-        return await db.query.factions.findMany({
-          where,
-          orderBy: [orderBy],
-          limit,
-          offset,
-        });
-      };
-
-      return await paginate<Faction>(
-        configWithConditions,
-        queryParams,
-        queryBuilder,
-      );
+      return await paginate<Faction>(configWithConditions, toPaginationParams(queryParams), queryBuilder);
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to find factions",
-              new Error(String(error)),
-            ),
-      };
-    }
-  }
-
-  async findAllWithRelations(
-    queryParams: FactionQueryParams,
-  ): Promise<Result<PaginatedResponse<FactionWithRelations>>> {
-    try {
-      const dynamicConditions = buildWhereConditions(queryParams);
-
-      const configWithConditions = {
-        ...paginationConfig,
-        whereConditions: [
-          ...(paginationConfig.whereConditions ?? []),
-          ...dynamicConditions,
-        ],
-      };
-
-      const queryBuilder = async ({
-        where,
-        orderBy,
-        limit,
-        offset,
-      }: {
-        where: SQL | undefined;
-        orderBy: SQL;
-        limit: number;
-        offset: number;
-      }) => {
-        return await db.query.factions.findMany({
-          with: {
-            universe: true,
-            headquarters: true,
-            parent: true,
-            subFactions: true,
-            members: {
-              with: {
-                character: true,
-              },
-            },
-          },
-          where,
-          orderBy: [orderBy],
-          limit,
-          offset,
-        });
-      };
-
-      return await paginate<FactionWithRelations>(
-        configWithConditions,
-        queryParams,
-        queryBuilder,
-      );
-    } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to find factions with relations",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to find factions", new Error(String(error))) };
     }
   }
 
   async findOne(id: string): Promise<Result<Faction>> {
     try {
-      const result = await db.query.factions.findFirst({
-        where: eq(factions.id, id),
-      });
-
-      if (!result) {
-        return { success: false, error: new NotFoundError("Faction", id) };
-      }
-
+      const result = await db.query.factions.findFirst({ where: eq(factions.id, id) });
+      if (!result) return { success: false, error: new NotFoundError("Faction", id) };
       return { success: true, data: result };
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to find faction",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to find faction", new Error(String(error))) };
     }
   }
 
-  async findOneWithRelations(
-    id: string,
-  ): Promise<Result<FactionWithRelations>> {
+  async findOneWithRelations(id: string): Promise<Result<FactionWithRelations>> {
     try {
       const result = await db.query.factions.findFirst({
         where: eq(factions.id, id),
-        with: {
-          universe: true,
-          headquarters: true,
-          parent: true,
-          subFactions: true,
-          members: {
-            with: {
-              character: true,
-            },
-          },
-        },
+        with: { universe: true, relationships: true },
       });
-
-      if (!result) {
-        return { success: false, error: new NotFoundError("Faction", id) };
-      }
-
+      if (!result) return { success: false, error: new NotFoundError("Faction", id) };
       return { success: true, data: result };
     } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error
-            ? error
-            : new DatabaseError(
-              "Failed to find faction with relations",
-              new Error(String(error)),
-            ),
-      };
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to find faction", new Error(String(error))) };
+    }
+  }
+
+  // ── Character Relationships ───────────────────────────────────────────────────
+
+  async createRelationship(data: CreateRelationship): Promise<Result<CharacterRelationship>> {
+    try {
+      const [result] = await db.insert(characterRelationships).values(data).returning();
+      if (!result) return { success: false, error: new DatabaseError("Failed to create relationship") };
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to create relationship", new Error(String(error))) };
+    }
+  }
+
+  async updateRelationship(id: string, data: UpdateRelationship): Promise<Result<CharacterRelationship>> {
+    try {
+      const [result] = await db.update(characterRelationships).set({ ...data, updatedAt: new Date() }).where(eq(characterRelationships.id, id)).returning();
+      if (!result) return { success: false, error: new NotFoundError("Relationship", id) };
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to update relationship", new Error(String(error))) };
+    }
+  }
+
+  async deleteRelationship(id: string): Promise<Result<boolean>> {
+    try {
+      const [result] = await db.delete(characterRelationships).where(eq(characterRelationships.id, id)).returning({ id: characterRelationships.id });
+      return { success: true, data: result !== undefined };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to delete relationship", new Error(String(error))) };
+    }
+  }
+
+  async findRelationships(queryParams: RelationshipQueryParams): Promise<Result<CharacterRelationshipWithCharacters[]>> {
+    try {
+      const where: SQL[] = [];
+      if (queryParams.universeId) where.push(eq(characterRelationships.universeId, queryParams.universeId));
+      if (queryParams.factionId) where.push(eq(characterRelationships.factionId, queryParams.factionId));
+      if (queryParams.type) where.push(eq(characterRelationships.type, queryParams.type));
+      if (queryParams.sourceCharacterId) {
+        const orCondition = or(
+          eq(characterRelationships.sourceCharacterId, queryParams.sourceCharacterId),
+          eq(characterRelationships.targetCharacterId, queryParams.sourceCharacterId),
+        );
+        if (orCondition) where.push(orCondition);
+      }
+
+      const results = await db.query.characterRelationships.findMany({
+        where: where.length > 0 ? and(...where) : undefined,
+        with: { source: true, target: true, faction: true },
+      });
+
+      return { success: true, data: results };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error : new DatabaseError("Failed to find relationships", new Error(String(error))) };
     }
   }
 }

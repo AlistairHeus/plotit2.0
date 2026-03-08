@@ -64,12 +64,14 @@ import {
 } from "@/entities/universe/universe.schema";
 import { users, usersRelations } from "@/entities/user/user.schema";
 import {
+  characterRelationships,
+  characterRelationshipsRelations,
   factions,
   factionsRelations,
-  factionMembers,
-  factionMembersRelations,
   factionTypeEnum,
+  relationshipTypeEnum,
 } from "@/entities/faction/faction.schema";
+
 const schema = {
   users,
   usersRelations,
@@ -119,9 +121,10 @@ const schema = {
   mapSvgMappingsRelations,
   factions,
   factionsRelations,
-  factionMembers,
-  factionMembersRelations,
   factionTypeEnum,
+  characterRelationships,
+  characterRelationshipsRelations,
+  relationshipTypeEnum,
 };
 
 export default schema;
