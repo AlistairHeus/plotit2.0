@@ -14,6 +14,7 @@ import {
   NatureWithRelations,
   UpdateNature,
   NatureType,
+  NatureOccurance,
 } from "@/entities/nature/nature.types";
 import { eq, type SQL } from "drizzle-orm";
 
@@ -24,6 +25,7 @@ const paginationConfig: PaginationConfig<typeof nature> = {
     id: nature.id,
     name: nature.name,
     type: nature.type,
+    occurance: nature.occurance,
     createdAt: nature.createdAt,
     updatedAt: nature.updatedAt,
   },
@@ -47,6 +49,12 @@ function buildWhereConditions(queryParams: NatureQueryParams): SQL[] {
   if ("type" in queryParams && queryParams.type) {
     whereConditions.push(
       eq(nature.type, queryParams.type as NatureType),
+    );
+  }
+
+  if ("occurance" in queryParams && queryParams.occurance) {
+    whereConditions.push(
+      eq(nature.occurance, queryParams.occurance as NatureOccurance),
     );
   }
 

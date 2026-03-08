@@ -15,6 +15,12 @@ export const natureTypeEnum = pgEnum("nature_type", [
     "MINERAL",
 ]);
 
+export const occuranceEnum = pgEnum("occurance", [
+    "EXTANT",
+    "EXTINCT",
+    "MYTHICAL",
+]);
+
 export const nature = pgTable(
     "nature",
     {
@@ -25,6 +31,7 @@ export const nature = pgTable(
         name: text("name").notNull(),
         type: natureTypeEnum("type").notNull(),
         description: text("description"),
+        occurance: occuranceEnum("occurance").default("EXTANT"),
         avatarUrl: text("avatar_url"),
         imageUrls: text("image_urls").array().default([]).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),

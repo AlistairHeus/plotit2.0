@@ -13,11 +13,19 @@ export const NatureType = {
   MINERAL: "MINERAL",
 } as const;
 
+export type NatureOccurance = "EXTANT" | "EXTINCT" | "MYTHICAL";
+export const NatureOccurance = {
+  EXTANT: "EXTANT",
+  EXTINCT: "EXTINCT",
+  MYTHICAL: "MYTHICAL",
+} as const;
+
 export interface Nature {
   id: string;
   name: string;
   description: string | null;
   type: NatureType;
+  occurance: NatureOccurance | null;
   universeId: string;
   createdAt: Date;
   updatedAt: Date;

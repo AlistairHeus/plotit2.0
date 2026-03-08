@@ -3,6 +3,7 @@ export const sortableNatureFields = [
   "id",
   "name",
   "type",
+  "occurance",
   "createdAt",
   "updatedAt",
 ] as const;
