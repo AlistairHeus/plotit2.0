@@ -76,10 +76,7 @@ export class MapService {
       if (existingMapResult.success && existingMapResult.data.imageUrl) {
         try {
           const oldUrl = existingMapResult.data.imageUrl;
-          const relativePath = oldUrl.split("/uploads/")[1];
-          if (relativePath) {
-            await this.fileService.delete(relativePath);
-          }
+          void this.fileService.moveToTrash(oldUrl);
         } catch (error) {
           console.error("Failed to delete old map image:", error);
         }
@@ -103,10 +100,7 @@ export class MapService {
     if (existingMapResult.success && existingMapResult.data.imageUrl) {
       try {
         const oldUrl = existingMapResult.data.imageUrl;
-        const relativePath = oldUrl.split("/uploads/")[1];
-        if (relativePath) {
-          await this.fileService.delete(relativePath);
-        }
+        void this.fileService.moveToTrash(oldUrl);
       } catch (error) {
         console.error("Failed to delete map image during map deletion:", error);
       }

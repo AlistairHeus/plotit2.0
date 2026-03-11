@@ -56,6 +56,11 @@ export class FactionService {
   }
 
   async updateFaction(id: string, data: UpdateFaction, files?: Record<string, Express.Multer.File[]>): Promise<Faction> {
+    const existing = await this.factionRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls;
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(files.avatar[0], "faction");
@@ -68,12 +73,30 @@ export class FactionService {
         data.imageUrls = [...(Array.isArray(data.imageUrls) ? data.imageUrls : []), ...imageUrls];
       }
     }
+
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls;
+      const removedImages = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+      removedImages.forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.factionRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deleteFaction(id: string): Promise<boolean> {
+    const existing = await this.factionRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      existing.data.imageUrls.forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.factionRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;

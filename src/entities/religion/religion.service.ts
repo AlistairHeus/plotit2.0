@@ -69,6 +69,11 @@ export class ReligionService {
     data: UpdateReligion,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<Religion> {
+    const existing = await this.religionRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls;
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -90,12 +95,30 @@ export class ReligionService {
         data.imageUrls = [...currentImageUrls, ...imageUrls];
       }
     }
+
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls;
+      const removedImages = oldImageUrls.filter(url => !newImageUrls.includes(url));
+      removedImages.forEach(url => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.religionRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deleteReligion(id: string): Promise<boolean> {
+    const existing = await this.religionRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      existing.data.imageUrls.forEach(url => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.religionRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;

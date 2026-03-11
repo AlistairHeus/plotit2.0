@@ -33,7 +33,7 @@ export class CelestialService {
     private starRepository: StarRepository,
     private planetRepository: PlanetRepository,
     private fileService: IFileService,
-  ) {}
+  ) { }
 
   // --- GALAXY ---
   async createGalaxy(
@@ -83,6 +83,11 @@ export class CelestialService {
     data: UpdateGalaxy,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<Galaxy> {
+    const existing = await this.galaxyRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls ?? [];
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -102,12 +107,29 @@ export class CelestialService {
       }
     }
 
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls ?? [];
+      const removedImages = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+      removedImages.forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.galaxyRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deleteGalaxy(id: string): Promise<boolean> {
+    const existing = await this.galaxyRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      (existing.data.imageUrls ?? []).forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.galaxyRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;
@@ -161,6 +183,11 @@ export class CelestialService {
     data: UpdateSolarSystem,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<SolarSystem> {
+    const existing = await this.solarSystemRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls ?? [];
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -180,12 +207,29 @@ export class CelestialService {
       }
     }
 
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls ?? [];
+      const removedImages = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+      removedImages.forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.solarSystemRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deleteSolarSystem(id: string): Promise<boolean> {
+    const existing = await this.solarSystemRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      (existing.data.imageUrls ?? []).forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.solarSystemRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;
@@ -239,6 +283,11 @@ export class CelestialService {
     data: UpdateStar,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<Star> {
+    const existing = await this.starRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls ?? [];
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -256,6 +305,15 @@ export class CelestialService {
         );
         data.imageUrls = [...(data.imageUrls ?? []), ...imageUrls];
       }
+    }
+
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls ?? [];
+      const removedImages = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+      removedImages.forEach((url: string) => void this.fileService.moveToTrash(url));
     }
 
     const result = await this.starRepository.update(id, data);
@@ -330,6 +388,11 @@ export class CelestialService {
     data: UpdatePlanet,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<Planet> {
+    const existing = await this.planetRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls ?? [];
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -369,12 +432,29 @@ export class CelestialService {
       }
     }
 
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls ?? [];
+      const removedImages = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+      removedImages.forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.planetRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deletePlanet(id: string): Promise<boolean> {
+    const existing = await this.planetRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      (existing.data.imageUrls ?? []).forEach((url: string) => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.planetRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;

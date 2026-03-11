@@ -5,18 +5,23 @@ export interface IFileService {
   save(file: Express.Multer.File, directory: string): Promise<string>;
   delete(filePath: string): Promise<void>;
   getUrl(filePath: string): string;
+  extractRelativePath(url: string): string | null;
+  moveToTrash(url: string): Promise<void>;
 }
 
 export class LocalFileService implements IFileService {
   private uploadDir: string;
+  private trashDir: string;
   private baseUrl: string;
 
   constructor() {
     this.uploadDir = path.resolve(process.cwd(), "uploads");
+    this.trashDir = path.resolve(process.cwd(), "trash-images");
     this.baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
 
-    // Ensure upload directory exists
+    // Ensure directories exist
     void this.ensureDir(this.uploadDir);
+    void this.ensureDir(this.trashDir);
   }
 
   private async ensureDir(dir: string) {
@@ -50,6 +55,34 @@ export class LocalFileService implements IFileService {
 
   getUrl(relativeFilePath: string): string {
     return `${this.baseUrl}/uploads/${relativeFilePath}`;
+  }
+
+  extractRelativePath(url: string): string | null {
+    if (!url) return null;
+    const parts = url.split("/uploads/");
+    if (parts.length > 1 && parts[1]) {
+      return parts[1];
+    }
+    return null;
+  }
+
+  async moveToTrash(url: string): Promise<void> {
+    const relativePath = this.extractRelativePath(url);
+    if (!relativePath) return;
+
+    const sourcePath = path.join(this.uploadDir, relativePath);
+    const fileName = path.basename(relativePath);
+    const destPath = path.join(this.trashDir, fileName);
+
+    try {
+      await fs.access(sourcePath);
+      await fs.rename(sourcePath, destPath);
+    } catch (error) {
+      if (typeof error === 'object' && error !== null && 'code' in error && error.code === "ENOENT") {
+        return;
+      }
+      throw error;
+    }
   }
 }
 

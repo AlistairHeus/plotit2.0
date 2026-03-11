@@ -115,10 +115,10 @@ Political and social groupings that drive plot, trade, and conflict.
 
 ### 2. Flora, Fauna, and Materials (The Natural World)
 The ecosystem and resources that populate the world and fuel the economy/magic.
-- [ ] Define Species/Material Schema (`name`, `type` [Plant, Animal, Mineral], `rarity`, `properties`)
-- [ ] Establish Relations: Species to `Region` (habitat), Species to `Power System` (magical catalysts)
-- [ ] Build Natural World Server Layer (Repository, Service, Controller, Router)
-- [ ] Build Natural World Client Layer (API, UI Pages: List & Detail)
+- [x] Define Species/Material Schema (`name`, `type` [Plant, Animal, Mineral], `rarity`, `properties`)
+- [x] Establish Relations: Species to `Region` (habitat), Species to `Power System` (magical catalysts)
+- [x] Build Natural World Server Layer (Repository, Service, Controller, Router)
+- [x] Build Natural World Client Layer (API, UI Pages: List & Detail)
 
 
 ### 3. History & Timeline System

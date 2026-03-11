@@ -66,6 +66,11 @@ export class RegionService {
     data: UpdateRegion,
     files?: Record<string, Express.Multer.File[]>,
   ): Promise<Region> {
+    const existing = await this.regionRepository.findOneWithRelations(id);
+    if (!existing.success) throw existing.error;
+    const oldAvatarUrl = existing.data.avatarUrl;
+    const oldImageUrls = existing.data.imageUrls;
+
     if (files) {
       if (files.avatar && files.avatar.length > 0 && files.avatar[0]) {
         const avatarPath = await this.fileService.save(
@@ -87,12 +92,30 @@ export class RegionService {
         data.imageUrls = [...currentImageUrls, ...imageUrls];
       }
     }
+
+    if (data.avatarUrl !== undefined && data.avatarUrl !== oldAvatarUrl) {
+      if (oldAvatarUrl) void this.fileService.moveToTrash(oldAvatarUrl);
+    }
+    if (data.imageUrls !== undefined) {
+      const newImageUrls = data.imageUrls;
+      const removedImages = oldImageUrls.filter(url => !newImageUrls.includes(url));
+      removedImages.forEach(url => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.regionRepository.update(id, data);
     if (!result.success) throw result.error;
     return result.data;
   }
 
   async deleteRegion(id: string): Promise<boolean> {
+    const existing = await this.regionRepository.findOneWithRelations(id);
+    if (existing.success) {
+      if (existing.data.avatarUrl) {
+        void this.fileService.moveToTrash(existing.data.avatarUrl);
+      }
+      existing.data.imageUrls.forEach(url => void this.fileService.moveToTrash(url));
+    }
+
     const result = await this.regionRepository.delete(id);
     if (!result.success) throw result.error;
     return result.data;
