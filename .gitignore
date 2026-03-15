@@ -176,8 +176,11 @@ Thumbs.db
 # drizzle/
 
 # Backup files
+backups/
 *.bak
 *.backup
+*.tar.gz
+*.sql.gz
 
 # Test files
 test-results/
