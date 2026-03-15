@@ -175,13 +175,6 @@ Thumbs.db
 # Uncomment if you want to ignore all migrations
 # drizzle/
 
-# Backup files
-backups/
-*.bak
-*.backup
-*.tar.gz
-*.sql.gz
-
 # Test files
 test-results/
 coverage/
