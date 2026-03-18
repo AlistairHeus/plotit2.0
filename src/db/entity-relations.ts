@@ -76,6 +76,10 @@ import {
   natureRelations,
   natureTypeEnum,
 } from "@/entities/nature/nature.schema";
+import {
+  ideaBoards,
+  ideaBoardsRelations,
+} from "@/entities/idea-board/idea-board.schema";
 
 const schema = {
   users,
@@ -133,6 +137,8 @@ const schema = {
   nature,
   natureRelations,
   natureTypeEnum,
+  ideaBoards,
+  ideaBoardsRelations,
 };
 
 export default schema;

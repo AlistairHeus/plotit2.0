@@ -225,6 +225,13 @@
       "when": 1772991840302,
       "tag": "0031_magenta_cardiac",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1773858550455,
+      "tag": "0032_late_salo",
+      "breakpoints": true
     }
   ]
 }
