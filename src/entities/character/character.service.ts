@@ -1,17 +1,20 @@
+import { eventBus } from "@/common/events/event-bus";
+import { CharacterPayload } from "@/common/demitrei/demitrei.types";
+import type { IFileService } from "@/common/file/file.service";
 import type { PaginatedResponse } from "@/common/pagination/pagination.types";
 import type { CharacterRepository } from "@/entities/character/character.repository";
 import type {
-  CreateCharacter,
   Character,
   CharacterQueryParams,
   CharacterWithRelations,
-  UpdateCharacter,
+  CreateCharacter,
   SyncCharacterPowerAccess,
+  UpdateCharacter,
 } from "@/entities/character/character.types";
 import type { CharacterPowerAccess } from "@/entities/power-system/power-system.types";
-import type { IFileService } from "@/common/file/file.service";
 
 export class CharacterService {
+
   private characterRepository: CharacterRepository;
   private fileService: IFileService;
 
@@ -50,6 +53,9 @@ export class CharacterService {
     }
     const result = await this.characterRepository.create(data);
     if (!result.success) throw result.error;
+    
+    eventBus.emit("character.created", { id: result.data.id });
+
     return result.data;
   }
 
@@ -111,6 +117,9 @@ export class CharacterService {
 
     const result = await this.characterRepository.update(id, data);
     if (!result.success) throw result.error;
+
+    eventBus.emit("character.updated", { id: result.data.id });
+
     return result.data;
   }
 
@@ -125,6 +134,9 @@ export class CharacterService {
 
     const result = await this.characterRepository.delete(id);
     if (!result.success) throw result.error;
+
+    eventBus.emit("character.deleted", { id });
+
     return result.data;
   }
 
@@ -145,4 +157,54 @@ export class CharacterService {
     if (!result.success) throw result.error;
     return result.data;
   }
+
+  async syncAllToDemitrei(): Promise<{ total: number }> {
+    const result = await this.characterRepository.findAllWithRelations({
+      limit: 1000,
+      page: 1,
+      sortBy: "name",
+      sortOrder: "asc",
+    });
+    if (!result.success) throw result.error;
+
+    for (const char of result.data.data) {
+      // Re-emitting the 'created' event triggers the DemitreiSubscriber sync
+      eventBus.emit("character.created", { id: char.id });
+    }
+
+    return { total: result.data.pagination.totalItems };
+  }
+
+  async getDemitreiPayload(id: string): Promise<CharacterPayload> {
+    const result = await this.characterRepository.findOneWithRelations(id);
+    if (!result.success) throw result.error;
+
+    const char = result.data;
+
+    let content = `${char.name} is a ${char.type?.toLowerCase() ?? "character"}`;
+    if (char.race) content += ` of the ${char.race.name} race`;
+    if (char.ethnicGroup) content += `, belonging to the ${char.ethnicGroup.name} ethnic group`;
+    content += `. They exist within the ${char.universe.name} universe.`;
+
+    if (char.background) {
+      content += `\n\nBackground: ${char.background}`;
+    }
+
+    return {
+      id: char.id,
+      type: "Character",
+      name: char.name,
+      content,
+      metadata: {
+        type: char.type ?? null,
+        gender: char.gender ?? null,
+        age: char.age ?? null,
+        benched: char.benched,
+        universe: char.universe.name,
+        race: char.race?.name ?? null,
+        ethnicGroup: char.ethnicGroup?.name ?? null,
+      },
+    };
+  }
+
 }

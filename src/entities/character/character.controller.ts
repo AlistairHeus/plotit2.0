@@ -158,4 +158,19 @@ export class CharacterController {
         message: "Power access synced successfully",
       });
   }
+
+  async syncAllToDemitrei(_req: Request, res: Response): Promise<void> {
+    const result = await this.characterService.syncAllToDemitrei();
+
+    log.info("Bulk synchronization to Demitrei triggered", {
+      total: result.total,
+      operation: "sync_all_demitrei",
+    });
+
+    res.status(200).json({
+      success: true,
+      data: result,
+      message: `Bulk synchronization triggered for ${String(result.total)} characters.`,
+    });
+  }
 }

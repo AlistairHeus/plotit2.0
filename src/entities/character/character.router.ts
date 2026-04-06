@@ -13,6 +13,13 @@ const repository = new CharacterRepository();
 const service = new CharacterService(repository, fileService);
 const controller = new CharacterController(service);
 
+// --- Character Bulk Actions ---
+router.post(
+  "/sync-demitrei",
+  authenticateToken,
+  asyncHandler((req, res) => controller.syncAllToDemitrei(req, res)),
+);
+
 // --- Character CRUD ---
 // POST   /api/characters
 router.post(
@@ -62,6 +69,13 @@ router.put(
   "/:id/power-access",
   authenticateToken,
   asyncHandler((req, res) => controller.syncPowerAccess(req, res)),
+);
+
+// DELETE /api/characters/:id
+router.delete(
+  "/:id",
+  authenticateToken,
+  asyncHandler((req, res) => controller.deleteCharacter(req, res)),
 );
 
 export default router;

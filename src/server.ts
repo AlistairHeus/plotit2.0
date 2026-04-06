@@ -1,13 +1,11 @@
-import dotenv from "dotenv";
+import "dotenv/config";
+import "@/common/demitrei/demitrei.subscriber";
 import { createApp } from "@/utils/app";
 import {
   serverConfig,
   setupGracefulShutdown,
   startServer,
 } from "@/utils/server-lifecycle";
-
-// Load environment variables
-dotenv.config();
 
 // Create application instance
 const app = createApp();
