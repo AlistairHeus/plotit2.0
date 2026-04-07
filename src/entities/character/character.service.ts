@@ -7,6 +7,7 @@ import type {
   Character,
   CharacterQueryParams,
   CharacterWithRelations,
+  CharacterWithRelationsLean,
   CreateCharacter,
   SyncCharacterPowerAccess,
   UpdateCharacter,
@@ -61,7 +62,7 @@ export class CharacterService {
 
   async getCharacters(
     queryParams: CharacterQueryParams,
-  ): Promise<PaginatedResponse<Character>> {
+  ): Promise<PaginatedResponse<Character | CharacterWithRelationsLean>> {
     const result =
       await this.characterRepository.findAllWithRelations(queryParams);
     if (!result.success) throw result.error;

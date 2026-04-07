@@ -45,6 +45,7 @@ export const characterQuerySchema = createPaginatedQuerySchema(
     minAge: zodFormNumber(z.number().optional()), // New
     maxAge: zodFormNumber(z.number().optional()), // New
     gender: z.enum(CHARACTER_GENDERS).optional(),
+    lean: zodFormBoolean(z.boolean().optional()),
   },
 );
 

@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   createPaginatedQuerySchema,
   zodFormArray,
+  zodFormBoolean,
   zodFormString,
 } from "@/common/validation.utils";
 import { sortableRaceFields } from "@/entities/race/race.constants";
@@ -27,6 +28,7 @@ export const raceQuerySchema = createPaginatedQuerySchema(
     name: z.string().optional(),
     universeId: z.string().uuid().optional(),
     universeName: z.string().optional(),
+    lean: zodFormBoolean(z.boolean().optional()),
   },
 );
 

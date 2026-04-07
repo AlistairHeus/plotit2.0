@@ -11,6 +11,7 @@ import type {
   Character,
   CharacterQueryParams,
   CharacterWithRelations,
+  CharacterWithRelationsLean,
   CreateCharacter,
   SyncCharacterPowerAccess,
   UpdateCharacter,
@@ -230,11 +231,13 @@ export class CharacterRepository {
       };
     }
   }
-
   async findAllWithRelations(
     queryParams: CharacterQueryParams,
-  ): Promise<Result<PaginatedResponse<CharacterWithRelations>>> {
+  ): Promise<Result<PaginatedResponse<CharacterWithRelations | CharacterWithRelationsLean>>> {
     try {
+      const isLean = "lean" in queryParams && queryParams.lean === true;
+
+      // 1. Centralize the LOGIC (The "Where" and Pagination)
       const configWithConditions = {
         ...paginationConfig,
         whereConditions: [
@@ -243,26 +246,44 @@ export class CharacterRepository {
         ],
       };
 
-      const queryBuilder = async ({
-        where,
-        orderBy,
-        limit,
-        offset,
-      }: {
+      const queryBuilder = async ({ where, orderBy, limit, offset }: {
         where: SQL | undefined;
         orderBy: SQL;
         limit: number;
         offset: number;
-      }) =>
-        db.query.characters.findMany({
-          with: { universe: true, race: true, ethnicGroup: true },
+      }) => {
+        // 2. Branch only the EXECUTION
+        // This allows Drizzle to infer the return type perfectly for each branch.
+        if (isLean) {
+          return db.query.characters.findMany({
+            where,
+            orderBy: [orderBy],
+            limit,
+            offset,
+            columns: {
+              id: true, name: true, background: true,
+              type: true, gender: true, age: true
+            },
+            with: {
+              universe: { columns: { name: true, description: true } },
+              race: { columns: { name: true, description: true, lifespan: true, languages: true } },
+              ethnicGroup: { columns: { name: true } },
+            },
+          });
+        }
+
+        // Full Relation Branch
+        return db.query.characters.findMany({
           where,
           orderBy: [orderBy],
           limit,
           offset,
+          with: { universe: true, race: true, ethnicGroup: true },
         });
+      };
 
-      return await paginate<CharacterWithRelations>(
+      // 3. Paginate handles the union of the two possible return types
+      return await paginate(
         configWithConditions,
         queryParams,
         queryBuilder,

@@ -34,6 +34,23 @@ export interface CharacterWithRelations extends Character {
   powerAccess?: CharacterPowerAccess[];
 }
 
+export interface CharacterWithRelationsLean {
+  id: string;
+  name: string;
+  background: string | null;
+  type: string | null;
+  gender: string | null;
+  age: number | null;
+  universe: { name: string; description: string | null };
+  race: {
+    name: string;
+    description: string | null;
+    lifespan: string | null;
+    languages: string[] | null;
+  } | null;
+  ethnicGroup: { name: string } | null;
+}
+
 export type CreateCharacter = z.infer<typeof createCharacterSchema>;
 export type UpdateCharacter = z.infer<typeof updateCharacterSchema>;
 export type CharacterQueryParams = z.infer<typeof characterQuerySchema>;

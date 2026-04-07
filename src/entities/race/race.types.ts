@@ -38,6 +38,16 @@ export interface RaceWithRelations extends Race {
   ethnicGroups: EthnicGroup[];
 }
 
+export interface RaceWithRelationsLean {
+  id: string;
+  name: string;
+  description: string | null;
+  lifespan: string | null;
+  languages: string[] | null;
+  universe: { name: string; description: string | null };
+  ethnicGroups: { name: string }[];
+}
+
 export type CreateRace = z.infer<typeof createRaceSchema>;
 export type UpdateRace = z.infer<typeof updateRaceSchema>;
 export type RaceQueryParams = z.infer<typeof raceQuerySchema>;

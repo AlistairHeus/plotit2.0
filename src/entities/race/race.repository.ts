@@ -14,6 +14,7 @@ import type {
   Race,
   RaceQueryParams,
   RaceWithRelations,
+  RaceWithRelationsLean,
   UpdateEthnicGroup,
   UpdateRace,
 } from "@/entities/race/race.types";
@@ -186,8 +187,10 @@ export class RaceRepository {
 
   async findAllWithRelations(
     queryParams: RaceQueryParams,
-  ): Promise<Result<PaginatedResponse<RaceWithRelations>>> {
+  ): Promise<Result<PaginatedResponse<RaceWithRelations | RaceWithRelationsLean>>> {
     try {
+      const isLean = "lean" in queryParams && queryParams.lean === true;
+
       const configWithConditions = {
         ...paginationConfig,
         whereConditions: [
@@ -206,16 +209,37 @@ export class RaceRepository {
         orderBy: SQL;
         limit: number;
         offset: number;
-      }) =>
-        db.query.races.findMany({
+      }) => {
+        if (isLean) {
+          return db.query.races.findMany({
+            where,
+            orderBy: [orderBy],
+            limit,
+            offset,
+            columns: {
+              id: true,
+              name: true,
+              description: true,
+              lifespan: true,
+              languages: true,
+            },
+            with: {
+              universe: { columns: { name: true, description: true } },
+              ethnicGroups: { columns: { name: true } },
+            },
+          });
+        }
+
+        return db.query.races.findMany({
           with: { universe: true, ethnicGroups: true },
           where,
           orderBy: [orderBy],
           limit,
           offset,
         });
+      };
 
-      return await paginate<RaceWithRelations>(
+      return await paginate<RaceWithRelations | RaceWithRelationsLean>(
         configWithConditions,
         queryParams,
         queryBuilder,

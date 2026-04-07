@@ -7,6 +7,7 @@ import type {
   Race,
   RaceQueryParams,
   RaceWithRelations,
+  RaceWithRelationsLean,
   UpdateEthnicGroup,
   UpdateRace,
 } from "@/entities/race/race.types";
@@ -52,8 +53,8 @@ export class RaceService {
 
   async getRaces(
     queryParams: RaceQueryParams,
-  ): Promise<PaginatedResponse<Race>> {
-    const result = await this.raceRepository.findAll(queryParams);
+  ): Promise<PaginatedResponse<Race | RaceWithRelationsLean>> {
+    const result = await this.raceRepository.findAllWithRelations(queryParams);
     if (!result.success) throw result.error;
     return result.data;
   }
