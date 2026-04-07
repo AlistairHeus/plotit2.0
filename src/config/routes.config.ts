@@ -13,6 +13,7 @@ import constructRouter from "@/entities/construct/construct.router";
 import factionRouter from "@/entities/faction/faction.router";
 import natureRouter from "@/entities/nature/nature.router";
 import { ideaBoardRouter } from "@/entities/idea-board/idea-board.router";
+import demitreiRouter from "@/common/demitrei/demitrei.router";
 
 export const configureRoutes = (app: Express): void => {
   app.get("/health", (_req, res) => {
@@ -64,4 +65,7 @@ export const configureRoutes = (app: Express): void => {
 
   // IdeaBoard routes
   app.use("/api/idea-boards", ideaBoardRouter);
+
+  // Demitrei AI routes
+  app.use("/api/demitrei", demitreiRouter);
 };
