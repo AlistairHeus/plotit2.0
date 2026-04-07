@@ -31,30 +31,74 @@ const paginationConfig: PaginationConfig<typeof characters> = {
   defaultSortBy: "createdAt",
 };
 
+import { races } from "@/entities/race/race.schema";
+import { universes } from "@/entities/universe/universe.schema";
+import { gte, ilike, inArray, lte } from "drizzle-orm";
+import { CHARACTER_GENDERS, CHARACTER_TYPES } from "@/entities/character/character.constants";
+
 function buildWhereConditions(queryParams: CharacterQueryParams): SQL[] {
   const whereConditions: SQL[] = [];
 
+  // --- 1. Identity Search ---
   if ("name" in queryParams && typeof queryParams.name === "string") {
-    whereConditions.push(eq(characters.name, queryParams.name));
+    whereConditions.push(ilike(characters.name, `%${queryParams.name}%`));
   }
 
-  if (
-    "universeId" in queryParams &&
-    typeof queryParams.universeId === "string"
-  ) {
-    whereConditions.push(eq(characters.universeId, queryParams.universeId));
+  // --- 2. Enum Type Guard (Character Type) ---
+  if ("type" in queryParams && queryParams.type) {
+    const typeValue = queryParams.type;
+    const validType = CHARACTER_TYPES.find((t) => t === typeValue);
+    if (validType) {
+      whereConditions.push(eq(characters.type, validType));
+    }
   }
 
-  if ("raceId" in queryParams && typeof queryParams.raceId === "string") {
-    whereConditions.push(eq(characters.raceId, queryParams.raceId));
-  }
-
-  if ("type" in queryParams && typeof queryParams.type === "string") {
-    whereConditions.push(eq(characters.type, queryParams.type));
-  }
-
+  // --- 3. Boolean Check ---
   if ("benched" in queryParams && typeof queryParams.benched === "boolean") {
     whereConditions.push(eq(characters.benched, queryParams.benched));
+  }
+
+  // --- 4. Age Range Logic ---
+  if ("minAge" in queryParams && typeof queryParams.minAge === "number") {
+    whereConditions.push(gte(characters.age, queryParams.minAge));
+  }
+  if ("maxAge" in queryParams && typeof queryParams.maxAge === "number") {
+    whereConditions.push(lte(characters.age, queryParams.maxAge));
+  }
+
+  // --- 5. Gender Type Guard ---
+  if ("gender" in queryParams && queryParams.gender) {
+    const genderValue = queryParams.gender;
+    const validGender = CHARACTER_GENDERS.find((g) => g === genderValue);
+    if (validGender) {
+      whereConditions.push(eq(characters.gender, validGender));
+    }
+  }
+
+  // --- 6. Relational Filtering (Race) ---
+  if ("raceId" in queryParams && typeof queryParams.raceId === "string") {
+    whereConditions.push(eq(characters.raceId, queryParams.raceId));
+  } else if ("raceName" in queryParams && typeof queryParams.raceName === "string") {
+    const raceNameVal = queryParams.raceName;
+    const raceSubquery = db
+      .select({ id: races.id })
+      .from(races)
+      .where(ilike(races.name, `%${raceNameVal}%`));
+
+    whereConditions.push(inArray(characters.raceId, raceSubquery));
+  }
+
+  // --- 7. Relational Filtering (Universe) ---
+  if ("universeId" in queryParams && typeof queryParams.universeId === "string") {
+    whereConditions.push(eq(characters.universeId, queryParams.universeId));
+  } else if ("universeName" in queryParams && typeof queryParams.universeName === "string") {
+    const universeNameVal = queryParams.universeName;
+    const universeSubquery = db
+      .select({ id: universes.id })
+      .from(universes)
+      .where(ilike(universes.name, `%${universeNameVal}%`));
+
+    whereConditions.push(inArray(characters.universeId, universeSubquery));
   }
 
   return whereConditions;
@@ -85,9 +129,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to create character",
-                new Error(String(error)),
-              ),
+              "Failed to create character",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -110,9 +154,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to update character",
-                new Error(String(error)),
-              ),
+              "Failed to update character",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -131,9 +175,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to delete character",
-                new Error(String(error)),
-              ),
+              "Failed to delete character",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -180,9 +224,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to find characters",
-                new Error(String(error)),
-              ),
+              "Failed to find characters",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -230,9 +274,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to find characters with relations",
-                new Error(String(error)),
-              ),
+              "Failed to find characters with relations",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -252,9 +296,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to find character",
-                new Error(String(error)),
-              ),
+              "Failed to find character",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -282,9 +326,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to find character with relations",
-                new Error(String(error)),
-              ),
+              "Failed to find character with relations",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -310,9 +354,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to fetch character power access",
-                new Error(String(error)),
-              ),
+              "Failed to fetch character power access",
+              new Error(String(error)),
+            ),
       };
     }
   }
@@ -360,9 +404,9 @@ export class CharacterRepository {
           error instanceof Error
             ? error
             : new DatabaseError(
-                "Failed to sync character power access",
-                new Error(String(error)),
-              ),
+              "Failed to sync character power access",
+              new Error(String(error)),
+            ),
       };
     }
   }

@@ -14,7 +14,7 @@ const PYTHON_API = "http://127.0.0.1:8000";
 /**
  * Shared logic for proxying streams from Python to the client.
  */
-async function proxyStream(path: string, body: object, res: Response) {
+async function proxyStream(path: string, body: object, res: Response, authHeader?: string) {
   console.log(`[Demitrei Proxy]: Hitting ${path}...`);
 
   const abortController = new AbortController();
@@ -22,7 +22,10 @@ async function proxyStream(path: string, body: object, res: Response) {
   try {
     const response = await fetch(`${PYTHON_API}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        ...(authHeader ? { "Authorization": authHeader } : {})
+      },
       body: JSON.stringify(body),
       signal: abortController.signal,
     });
@@ -90,7 +93,7 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     console.log("\n[Demitrei Proxy]: POST /ask received");
     const { question } = validateBody<z.infer<typeof askSchema>>(req.body, askSchema);
-    await proxyStream("/api/ask", { question }, res);
+    await proxyStream("/api/ask", { question }, res, req.headers.authorization);
   })
 );
 export default router;

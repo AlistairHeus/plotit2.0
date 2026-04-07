@@ -40,6 +40,11 @@ export const characterQuerySchema = createPaginatedQuerySchema(
     raceId: zodFormUUID(z.string().uuid().optional()),
     type: z.enum(CHARACTER_TYPES).optional(),
     benched: zodFormBoolean(z.boolean().optional()),
+    universeName: z.string().optional(), // New
+    raceName: z.string().optional(),     // New: "Arboreal"
+    minAge: zodFormNumber(z.number().optional()), // New
+    maxAge: zodFormNumber(z.number().optional()), // New
+    gender: z.enum(CHARACTER_GENDERS).optional(),
   },
 );
 
