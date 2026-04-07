@@ -26,6 +26,7 @@ export const raceQuerySchema = createPaginatedQuerySchema(
   {
     name: z.string().optional(),
     universeId: z.string().uuid().optional(),
+    universeName: z.string().optional(),
   },
 );
 

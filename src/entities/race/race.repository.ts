@@ -31,18 +31,37 @@ const paginationConfig: PaginationConfig<typeof races> = {
   defaultSortBy: "createdAt",
 };
 
+import { universes } from "@/entities/universe/universe.schema";
+import { ilike, inArray } from "drizzle-orm";
+
 function buildWhereConditions(queryParams: RaceQueryParams): SQL[] {
   const whereConditions: SQL[] = [];
 
+  // --- 1. Identity Search (Fuzzy) ---
   if ("name" in queryParams && typeof queryParams.name === "string") {
-    whereConditions.push(eq(races.name, queryParams.name));
+    whereConditions.push(ilike(races.name, `%${queryParams.name}%`));
   }
 
+  // --- 2. Universe ID Filter ---
   if (
     "universeId" in queryParams &&
     typeof queryParams.universeId === "string"
   ) {
     whereConditions.push(eq(races.universeId, queryParams.universeId));
+  }
+
+  // --- 3. Relational Filtering (Universe Name) ---
+  if (
+    "universeName" in queryParams &&
+    typeof queryParams.universeName === "string"
+  ) {
+    const universeNameVal = queryParams.universeName;
+    const universeSubquery = db
+      .select({ id: universes.id })
+      .from(universes)
+      .where(ilike(universes.name, `%${universeNameVal}%`));
+
+    whereConditions.push(inArray(races.universeId, universeSubquery));
   }
 
   return whereConditions;
