@@ -50,6 +50,16 @@ export interface RegionWithRelations extends Region {
   svgMappings: SvgMapping[];
 }
 
+export interface RegionWithRelationsLean {
+  id: string;
+  name: string;
+  description: string | null;
+  type: RegionType;
+  universe: { name: string; description: string | null };
+  planet: { name: string; description: string | null } | null;
+  parent: { name: string, type: RegionType } | null;
+}
+
 export type CreateRegion = z.infer<typeof createRegionSchema>;
 export type UpdateRegion = z.infer<typeof updateRegionSchema>;
 export type RegionQueryParams = z.infer<typeof regionQuerySchema>;

@@ -4,6 +4,8 @@ import type {
   CreateRegion,
   Region,
   RegionQueryParams,
+  RegionWithRelations,
+  RegionWithRelationsLean,
   UpdateRegion,
 } from "@/entities/region/region.types";
 import type { IFileService } from "@/common/file/file.service";
@@ -49,13 +51,13 @@ export class RegionService {
 
   async getRegions(
     queryParams: RegionQueryParams,
-  ): Promise<PaginatedResponse<Region>> {
-    const result = await this.regionRepository.findAll(queryParams);
+  ): Promise<PaginatedResponse<Region | RegionWithRelationsLean>> {
+    const result = await this.regionRepository.findAllWithRelations(queryParams);
     if (!result.success) throw result.error;
     return result.data;
   }
 
-  async getRegionById(id: string): Promise<Region | null> {
+  async getRegionById(id: string): Promise<RegionWithRelations | null> {
     const result = await this.regionRepository.findOneWithRelations(id);
     if (!result.success) return null;
     return result.data;
