@@ -1,0 +1,255 @@
+Character:
+  type: object
+  required:
+    - id
+    - universeId
+    - name
+    - imageUrls
+    - benched
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    universeId:
+      type: string
+      format: uuid
+    raceId:
+      type: string
+      format: uuid
+      nullable: true
+    ethnicGroupId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+    background:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+      nullable: true
+    gender:
+      type: string
+      enum: [Male, Female, Unspecified]
+      default: Unspecified
+    age:
+      type: integer
+      nullable: true
+    avatarUrl:
+      type: string
+      format: uri
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+    benched:
+      type: boolean
+      default: false
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    deletedAt:
+      type: string
+      format: date-time
+      nullable: true
+
+CharacterWithRelations:
+  allOf:
+    - $ref: '#/Character'
+    - type: object
+      properties:
+        universe:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        race:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        ethnicGroup:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+
+CharacterCreate:
+  type: object
+  required:
+    - universeId
+    - name
+  properties:
+    universeId:
+      type: string
+      format: uuid
+    raceId:
+      type: string
+      format: uuid
+      nullable: true
+    ethnicGroupId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+      minLength: 1
+      maxLength: 255
+    background:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+      nullable: true
+    gender:
+      type: string
+      enum: [Male, Female, Unspecified]
+      default: Unspecified
+    age:
+      type: integer
+      nullable: true
+    avatarUrl:
+      type: string
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+    benched:
+      type: boolean
+      default: false
+
+CharacterUpdate:
+  type: object
+  properties:
+    raceId:
+      type: string
+      format: uuid
+      nullable: true
+    ethnicGroupId:
+      type: string
+      format: uuid
+      nullable: true
+    name:
+      type: string
+      minLength: 1
+      maxLength: 255
+    background:
+      type: string
+      nullable: true
+    type:
+      type: string
+      enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+      nullable: true
+    gender:
+      type: string
+      enum: [Male, Female, Unspecified]
+    age:
+      type: integer
+      nullable: true
+    avatarUrl:
+      type: string
+      nullable: true
+    imageUrls:
+      type: array
+      items:
+        type: string
+    benched:
+      type: boolean
+
+CharacterResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      $ref: '#/CharacterWithRelations'
+    message:
+      type: string
+
+CharacterListResponse:
+  allOf:
+    - $ref: '../common/shared.yaml#/components/schemas/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/Character'
+
+CharacterPowerAccess:
+  type: object
+  properties:
+    powerSystemId:
+      type: string
+      format: uuid
+      nullable: true
+    subSystemId:
+      type: string
+      format: uuid
+      nullable: true
+    categoryId:
+      type: string
+      format: uuid
+      nullable: true
+    abilityId:
+      type: string
+      format: uuid
+      nullable: true
+
+CharacterPowerAccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: array
+      items:
+        $ref: '#/CharacterPowerAccess'
+    message:
+      type: string
+
+SyncPowerAccessRequest:
+  type: object
+  properties:
+    powers:
+      type: array
+      items:
+        $ref: '#/CharacterPowerAccess'
+
+SyncDemitreiResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: object
+      properties:
+        total:
+          type: integer
+    message:
+      type: string

@@ -3,6 +3,7 @@
     summary: Get all regions
     tags:
       - Regions
+    operationId: listRegions
     security:
       - bearerAuth: []
     parameters:
@@ -53,11 +54,18 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/RegionListResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   post:
     summary: Create a new region
     tags:
       - Regions
+    operationId: createRegion
     security:
       - bearerAuth: []
     requestBody:
@@ -75,12 +83,23 @@
               $ref: './schemas.yaml#/RegionResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}:
   get:
     summary: Get a region by ID
     tags:
       - Regions
+    operationId: getRegionById
     security:
       - bearerAuth: []
     parameters:
@@ -97,13 +116,24 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/RegionResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Region not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   put:
     summary: Update a region by ID
     tags:
       - Regions
+    operationId: updateRegion
     security:
       - bearerAuth: []
     parameters:
@@ -126,13 +156,24 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/RegionResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Region not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   delete:
     summary: Delete a region by ID
     tags:
       - Regions
+    operationId: deleteRegion
     security:
       - bearerAuth: []
     parameters:
@@ -145,3 +186,24 @@
     responses:
       '200':
         description: Region deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Region not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

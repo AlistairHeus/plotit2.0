@@ -1,0 +1,392 @@
+/:
+  get:
+    tags:
+      - Characters
+    summary: Get all characters
+    description: Retrieves a paginated list of characters. Supports filtering by name, universe, race, type, and benched status.
+    operationId: listCharacters
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../common/shared.yaml#/components/parameters/page'
+      - $ref: '../common/shared.yaml#/components/parameters/limit'
+      - $ref: '../common/shared.yaml#/components/parameters/sortBy'
+      - $ref: '../common/shared.yaml#/components/parameters/sortOrder'
+      - $ref: '../common/shared.yaml#/components/parameters/search'
+      - in: query
+        name: name
+        description: Filter by character name
+        schema:
+          type: string
+      - in: query
+        name: universeId
+        description: Filter by universe ID
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: raceId
+        description: Filter by race ID
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: type
+        description: Filter by character type
+        schema:
+          type: string
+          enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+      - in: query
+        name: benched
+        description: Filter by benched status
+        schema:
+          type: boolean
+    responses:
+      '200':
+        description: A list of characters
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterListResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+  post:
+    tags:
+      - Characters
+    summary: Create a new character
+    description: Creates a new character record. Supports image/avatar uploads via multipart/form-data.
+    operationId: createCharacter
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - universeId
+              - name
+            properties:
+              universeId:
+                type: string
+                format: uuid
+              raceId:
+                type: string
+                format: uuid
+                nullable: true
+              ethnicGroupId:
+                type: string
+                format: uuid
+                nullable: true
+              name:
+                type: string
+              background:
+                type: string
+                nullable: true
+              type:
+                type: string
+                enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+                nullable: true
+              gender:
+                type: string
+                enum: [Male, Female, Unspecified]
+              age:
+                type: integer
+                nullable: true
+              benched:
+                type: boolean
+              avatar:
+                type: string
+                format: binary
+                description: Character avatar image
+              images:
+                type: array
+                items:
+                  type: string
+                  format: binary
+                description: Optional character gallery images (max 20)
+    responses:
+      '201':
+        description: Character created successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterResponse'
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+/{id}:
+  get:
+    tags:
+      - Characters
+    summary: Get a character by ID
+    description: Returns a single character including its related universe, race, and ethnic group.
+    operationId: getCharacterById
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: The character details
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Character not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+  patch:
+    tags:
+      - Characters
+    summary: Update a character by ID
+    description: Updates character metadata and optionally uploads new images or avatar.
+    operationId: updateCharacter
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              raceId:
+                type: string
+                format: uuid
+                nullable: true
+              ethnicGroupId:
+                type: string
+                format: uuid
+                nullable: true
+              name:
+                type: string
+              background:
+                type: string
+                nullable: true
+              type:
+                type: string
+                enum: [Protagonist, Antagonist, Supporting, Minor, Background]
+                nullable: true
+              gender:
+                type: string
+                enum: [Male, Female, Unspecified]
+              age:
+                type: integer
+                nullable: true
+              benched:
+                type: boolean
+              avatar:
+                type: string
+                format: binary
+                description: New character avatar image
+              images:
+                type: array
+                items:
+                  type: string
+                  format: binary
+                description: Additional character gallery images
+    responses:
+      '200':
+        description: Character updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterResponse'
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Character not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+  delete:
+    tags:
+      - Characters
+    summary: Delete a character by ID
+    description: Permanently deletes a character and its associated file assets.
+    operationId: deleteCharacter
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Character deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Character not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+/{id}/power-access:
+  get:
+    tags:
+      - Characters
+    summary: Get power access for a character
+    description: Retrieves all power system assignments (sub-systems, abilities, etc.) for the specified character.
+    operationId: getCharacterPowerAccess
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: List of character power access
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterPowerAccessResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Character not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+  put:
+    tags:
+      - Characters
+    summary: Sync power access for a character
+    description: Overwrites the character's power system assignments with a new set.
+    operationId: syncCharacterPowerAccess
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/SyncPowerAccessRequest'
+    responses:
+      '200':
+        description: Power access synced successfully
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/CharacterPowerAccessResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Character not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+
+/sync-demitrei:
+  post:
+    tags:
+      - Characters
+    summary: Bulk synchronize characters to Demitrei AI
+    description: Triggers a bulk update for all characters in the Demitrei RAG system. Use this when manual sync is needed or after large imports.
+    operationId: syncDemitreiBulk
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Bulk synchronization triggered
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/SyncDemitreiResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

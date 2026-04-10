@@ -4,6 +4,7 @@
       - Races
     summary: Create a new race
     description: Creates a new race within a universe.
+    operationId: createRace
     security:
       - bearerAuth: []
     requestBody:
@@ -21,14 +22,23 @@
               $ref: './schemas.yaml#/RaceResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   get:
     tags:
       - Races
     summary: Get all races
     description: Retrieves a paginated list of races. Filter by universe using query params.
+    operationId: listRaces
     security:
       - bearerAuth: []
     parameters:
@@ -55,6 +65,10 @@
               $ref: './schemas.yaml#/RaceListResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}:
   get:
@@ -62,6 +76,7 @@
       - Races
     summary: Get a race by ID
     description: Retrieves a single race by its UUID, including its universe and ethnic groups.
+    operationId: getRaceById
     security:
       - bearerAuth: []
     parameters:
@@ -80,14 +95,23 @@
               $ref: './schemas.yaml#/RaceResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   put:
     tags:
       - Races
     summary: Update a race
     description: Updates an existing race by its ID.
+    operationId: updateRace
     security:
       - bearerAuth: []
     parameters:
@@ -112,16 +136,29 @@
               $ref: './schemas.yaml#/RaceResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   delete:
     tags:
       - Races
     summary: Delete a race
     description: Deletes a race by its ID.
+    operationId: deleteRace
     security:
       - bearerAuth: []
     parameters:
@@ -141,16 +178,20 @@
               properties:
                 success:
                   type: boolean
-                  example: true
-                data:
-                  type: boolean
-                  example: true
                 message:
                   type: string
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}/ethnic-groups:
   post:
@@ -158,6 +199,7 @@
       - Races
     summary: Create an ethnic group
     description: Creates a new ethnic group belonging to the specified race.
+    operationId: createEthnicGroup
     security:
       - bearerAuth: []
     parameters:
@@ -182,14 +224,23 @@
               $ref: './schemas.yaml#/EthnicGroupResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   get:
     tags:
       - Races
     summary: Get ethnic groups for a race
     description: Returns all ethnic groups that belong to the specified race.
+    operationId: listEthnicGroups
     security:
       - bearerAuth: []
     parameters:
@@ -208,12 +259,17 @@
               $ref: './schemas.yaml#/EthnicGroupListResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}/ethnic-groups/{groupId}:
   get:
     tags:
       - Races
     summary: Get an ethnic group by ID
+    operationId: getEthnicGroupById
     security:
       - bearerAuth: []
     parameters:
@@ -238,13 +294,22 @@
               $ref: './schemas.yaml#/EthnicGroupResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   put:
     tags:
       - Races
     summary: Update an ethnic group
+    operationId: updateEthnicGroup
     security:
       - bearerAuth: []
     parameters:
@@ -275,15 +340,28 @@
               $ref: './schemas.yaml#/EthnicGroupResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   delete:
     tags:
       - Races
     summary: Delete an ethnic group
+    operationId: deleteEthnicGroup
     security:
       - bearerAuth: []
     parameters:
@@ -309,10 +387,17 @@
               properties:
                 success:
                   type: boolean
-                  example: true
                 message:
                   type: string
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

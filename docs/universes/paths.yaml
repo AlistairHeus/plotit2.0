@@ -3,6 +3,7 @@
     summary: Get all universes
     tags:
       - Universes
+    operationId: listUniverses
     security:
       - bearerAuth: []
     parameters:
@@ -23,11 +24,18 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UniverseListResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   post:
     summary: Create a new universe
     tags:
       - Universes
+    operationId: createUniverse
     security:
       - bearerAuth: []
     requestBody:
@@ -45,12 +53,23 @@
               $ref: './schemas.yaml#/UniverseResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}:
   get:
     summary: Get a universe by ID
     tags:
       - Universes
+    operationId: getUniverseById
     security:
       - bearerAuth: []
     parameters:
@@ -67,13 +86,24 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UniverseResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Universe not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   put:
     summary: Update a universe by ID
     tags:
       - Universes
+    operationId: updateUniverse
     security:
       - bearerAuth: []
     parameters:
@@ -96,13 +126,24 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UniverseResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Universe not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   delete:
     summary: Delete a universe by ID
     tags:
       - Universes
+    operationId: deleteUniverse
     security:
       - bearerAuth: []
     parameters:
@@ -115,3 +156,24 @@
     responses:
       '200':
         description: Universe deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Universe not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

@@ -4,6 +4,7 @@
       - Maps
     summary: Create a new map
     description: Creates a new map instance. Required to upload an image along with the metadata.
+    operationId: createMap
     security:
       - bearerAuth: []
     requestBody:
@@ -38,14 +39,23 @@
               $ref: './schemas.yaml#/MapResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   get:
     tags:
       - Maps
     summary: Get all maps
     description: Retrieves a paginated list of all maps based on query parameters.
+    operationId: listMaps
     security:
       - bearerAuth: []
     parameters:
@@ -77,6 +87,10 @@
               $ref: './schemas.yaml#/MapListResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}:
   get:
@@ -84,6 +98,7 @@
       - Maps
     summary: Get a map by ID
     description: Retrieves a single map by its UUID.
+    operationId: getMapById
     security:
       - bearerAuth: []
     parameters:
@@ -102,14 +117,23 @@
               $ref: './schemas.yaml#/MapResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   put:
     tags:
       - Maps
     summary: Update a map
     description: Updates an existing map by its ID. Can optionally include a new image.
+    operationId: updateMap
     security:
       - bearerAuth: []
     parameters:
@@ -147,16 +171,29 @@
               $ref: './schemas.yaml#/MapResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   delete:
     tags:
       - Maps
     summary: Delete a map
     description: Deletes a map by its ID.
+    operationId: deleteMap
     security:
       - bearerAuth: []
     parameters:
@@ -176,16 +213,20 @@
               properties:
                 success:
                   type: boolean
-                  example: true
-                data:
-                  type: boolean
-                  example: true
                 message:
                   type: string
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}/svg:
   post:
@@ -193,6 +234,7 @@
       - Maps
     summary: Add an SVG Mapping
     description: Link a specific SVG element to a region within the map.
+    operationId: addSvgMapping
     security:
       - bearerAuth: []
     parameters:
@@ -215,14 +257,31 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/SvgMappingResponse'
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   get:
     tags:
       - Maps
     summary: Get SVG Mappings for Map
     description: Retrieve all SVG mappings associated with a specific map.
+    operationId: listSvgMappings
     security:
       - bearerAuth: []
     parameters:
@@ -241,6 +300,16 @@
               $ref: './schemas.yaml#/SvgMappingListResponse'
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}/svg/{mappingId}:
   delete:
@@ -248,6 +317,7 @@
       - Maps
     summary: Delete an SVG Mapping
     description: Removes a specific SVG mapping by its ID from the map.
+    operationId: deleteSvgMapping
     security:
       - bearerAuth: []
     parameters:
@@ -273,11 +343,17 @@
               properties:
                 success:
                   type: boolean
-                  example: true
-                data:
-                  type: boolean
-                  example: true
                 message:
                   type: string
       '401':
         description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

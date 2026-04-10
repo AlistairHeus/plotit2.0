@@ -3,6 +3,9 @@
     summary: Get all users (Paginated)
     tags:
       - Users
+    operationId: listUsers
+    security:
+      - bearerAuth: []
     parameters:
       - $ref: '../common/shared.yaml#/components/parameters/page'
       - $ref: '../common/shared.yaml#/components/parameters/limit'
@@ -16,11 +19,20 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UserListResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   post:
     summary: Create a new user
     tags:
       - Users
+    operationId: createUser
+    security:
+      - bearerAuth: []
     requestBody:
       required: true
       content:
@@ -36,12 +48,25 @@
               $ref: './schemas.yaml#/UserResponse'
       '400':
         description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /{id}:
   get:
     summary: Get a user by ID
     tags:
       - Users
+    operationId: getUserById
+    security:
+      - bearerAuth: []
     parameters:
       - in: path
         name: id
@@ -56,13 +81,26 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UserResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
   patch:
     summary: Update a user by ID
     tags:
       - Users
+    operationId: updateUser
+    security:
+      - bearerAuth: []
     parameters:
       - in: path
         name: id
@@ -83,13 +121,26 @@
           application/json:
             schema:
               $ref: './schemas.yaml#/UserResponse'
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '404':
         description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
         
   delete:
     summary: Delete a user by ID
     tags:
       - Users
+    operationId: deleteUser
+    security:
+      - bearerAuth: []
     parameters:
       - in: path
         name: id
@@ -100,3 +151,24 @@
     responses:
       '200':
         description: User deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

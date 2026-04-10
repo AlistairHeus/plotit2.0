@@ -3,15 +3,21 @@ info:
   title: PlotIt API
   description: A production-ready Express.js template with TypeScript, Drizzle ORM, and JWT Authentication
   version: 1.0.1
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:8080/api
-    description: Local development server
+  - url: https://api.plotit-app.com/v1
+    description: Production API
   - url: /api
-    description: Relative server URL
+    description: Relative API path
 components:
   securitySchemes:
     bearerAuth:
-      $ref: './common/shared.yaml#/components/securitySchemes/bearerAuth'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter the token with the `Bearer ` prefix, e.g. "Bearer abcde12345".
 paths:
   /auth/login:
     $ref: './auth/paths.yaml#/~1login'
@@ -65,3 +71,11 @@ paths:
     $ref: './celestials/paths.yaml#/~1planets'
   /celestials/planets/{id}:
     $ref: './celestials/paths.yaml#/~1planets~1{id}'
+  /characters:
+    $ref: './characters/paths.yaml#/~1'
+  /characters/sync-demitrei:
+    $ref: './characters/paths.yaml#/~1sync-demitrei'
+  /characters/{id}:
+    $ref: './characters/paths.yaml#/~1{id}'
+  /characters/{id}/power-access:
+    $ref: './characters/paths.yaml#/~1{id}~1power-access'

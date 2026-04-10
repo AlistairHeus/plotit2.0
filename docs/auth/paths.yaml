@@ -3,6 +3,8 @@
     summary: Login user
     tags:
       - Auth
+    operationId: loginUser
+    security: []
     requestBody:
       required: true
       content:
@@ -28,34 +30,65 @@
                       $ref: '../users/schemas.yaml#/User'
       '400':
         description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
       '401':
         description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /refresh:
   post:
     summary: Refresh authentication token
     tags:
       - Auth
+    operationId: refreshToken
+    security: []
     responses:
       '200':
         description: Token refreshed
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /logout:
   post:
     summary: Logout user
     tags:
       - Auth
+    operationId: logoutUser
+    security: []
     responses:
       '200':
         description: Successfully logged out
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'
 
 /verify:
   get:
     summary: Verify the current token
     tags:
       - Auth
+    operationId: verifyToken
     security:
       - bearerAuth: []
     responses:
       '200':
         description: Token is valid
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../common/shared.yaml#/components/schemas/ErrorResponse'

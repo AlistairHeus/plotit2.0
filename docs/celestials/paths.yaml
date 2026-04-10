@@ -2,6 +2,7 @@
   get:
     summary: Get all galaxies
     tags: [Galaxies]
+    operationId: listGalaxies
     security: [{bearerAuth: []}]
     parameters:
       - $ref: '../common/shared.yaml#/components/parameters/page'
@@ -24,10 +25,16 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/GalaxyListResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   post:
     summary: Create a new galaxy
     tags: [Galaxies]
+    operationId: createGalaxy
     security: [{bearerAuth: []}]
     requestBody:
       required: true
@@ -40,11 +47,22 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/GalaxyResponse'}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /galaxies/{id}:
   get:
     summary: Get galaxy by ID
     tags: [Galaxies]
+    operationId: getGalaxyById
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -57,11 +75,21 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/GalaxyResponse'}
-      '404': {description: Galaxy not found}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Galaxy not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   patch:
     summary: Update a galaxy
     tags: [Galaxies]
+    operationId: updateGalaxy
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -79,11 +107,26 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/GalaxyResponse'}
-      '404': {description: Galaxy not found}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Galaxy not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   delete:
     summary: Delete a galaxy
     tags: [Galaxies]
+    operationId: deleteGalaxy
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -91,13 +134,31 @@
         required: true
         schema: {type: string, format: uuid}
     responses:
-      '200': {description: Galaxy deleted}
-      '404': {description: Galaxy not found}
+      '200':
+        description: Galaxy deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success: {type: boolean}
+                message: {type: string}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Galaxy not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /solar-systems:
   get:
     summary: Get all solar systems
     tags: [Solar Systems]
+    operationId: listSolarSystems
     security: [{bearerAuth: []}]
     parameters:
       - $ref: '../common/shared.yaml#/components/parameters/page'
@@ -117,10 +178,16 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/SolarSystemListResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   post:
     summary: Create a new solar system
     tags: [Solar Systems]
+    operationId: createSolarSystem
     security: [{bearerAuth: []}]
     requestBody:
       required: true
@@ -133,11 +200,22 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /solar-systems/{id}:
   get:
     summary: Get solar system by ID
     tags: [Solar Systems]
+    operationId: getSolarSystemById
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -150,11 +228,21 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
-      '404': {description: Solar system not found}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Solar system not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   patch:
     summary: Update a solar system
     tags: [Solar Systems]
+    operationId: updateSolarSystem
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -172,11 +260,26 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/SolarSystemResponse'}
-      '404': {description: Solar system not found}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Solar system not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   delete:
     summary: Delete a solar system
     tags: [Solar Systems]
+    operationId: deleteSolarSystem
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -184,13 +287,31 @@
         required: true
         schema: {type: string, format: uuid}
     responses:
-      '200': {description: Solar system deleted}
-      '404': {description: Solar system not found}
+      '200':
+        description: Solar system deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success: {type: boolean}
+                message: {type: string}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Solar system not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /stars:
   get:
     summary: Get all stars
     tags: [Stars]
+    operationId: listStars
     security: [{bearerAuth: []}]
     parameters:
       - $ref: '../common/shared.yaml#/components/parameters/page'
@@ -213,10 +334,16 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/StarListResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   post:
     summary: Create a new star
     tags: [Stars]
+    operationId: createStar
     security: [{bearerAuth: []}]
     requestBody:
       required: true
@@ -229,11 +356,22 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/StarResponse'}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /stars/{id}:
   get:
     summary: Get star by ID
     tags: [Stars]
+    operationId: getStarById
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -246,11 +384,21 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/StarResponse'}
-      '404': {description: Star not found}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Star not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   patch:
     summary: Update a star
     tags: [Stars]
+    operationId: updateStar
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -268,11 +416,26 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/StarResponse'}
-      '404': {description: Star not found}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Star not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   delete:
     summary: Delete a star
     tags: [Stars]
+    operationId: deleteStar
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -280,13 +443,31 @@
         required: true
         schema: {type: string, format: uuid}
     responses:
-      '200': {description: Star deleted}
-      '404': {description: Star not found}
+      '200':
+        description: Star deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success: {type: boolean}
+                message: {type: string}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Star not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /planets:
   get:
     summary: Get all planets
     tags: [Planets]
+    operationId: listPlanets
     security: [{bearerAuth: []}]
     parameters:
       - $ref: '../common/shared.yaml#/components/parameters/page'
@@ -312,10 +493,16 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/PlanetListResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   post:
     summary: Create a new planet
     tags: [Planets]
+    operationId: createPlanet
     security: [{bearerAuth: []}]
     requestBody:
       required: true
@@ -328,11 +515,22 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/PlanetResponse'}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
 /planets/{id}:
   get:
     summary: Get planet by ID
     tags: [Planets]
+    operationId: getPlanetById
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -345,11 +543,21 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/PlanetResponse'}
-      '404': {description: Planet not found}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Planet not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   patch:
     summary: Update a planet
     tags: [Planets]
+    operationId: updatePlanet
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -367,11 +575,26 @@
         content:
           application/json:
             schema: {$ref: './schemas.yaml#/PlanetResponse'}
-      '404': {description: Planet not found}
+      '400':
+        description: Validation error
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Planet not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
 
   delete:
     summary: Delete a planet
     tags: [Planets]
+    operationId: deletePlanet
     security: [{bearerAuth: []}]
     parameters:
       - in: path
@@ -379,5 +602,22 @@
         required: true
         schema: {type: string, format: uuid}
     responses:
-      '200': {description: Planet deleted}
-      '404': {description: Planet not found}
+      '200':
+        description: Planet deleted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success: {type: boolean}
+                message: {type: string}
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
+      '404':
+        description: Planet not found
+        content:
+          application/json:
+            schema: {$ref: '../common/shared.yaml#/components/schemas/ErrorResponse'}
